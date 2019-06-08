@@ -1,0 +1,4 @@
+name = "DataEnvelopmentAnalysis"
+uuid = "a100299e-89d6-11e9-0fa0-2daf497e6a05"
+authors = ["Javier Barbero <jbarberoeco@gmail.com>"]
+version = "0.1.0"
