@@ -111,7 +111,25 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
 
 end
 
+function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::RadialDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+end
 
+function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::RadialDEAModel
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::RadialDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+end
 
 function Base.show(io::IO, x::RadialDEAModel)
     compact = get(io, :compact, false)
