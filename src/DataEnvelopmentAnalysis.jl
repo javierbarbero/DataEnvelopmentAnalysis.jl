@@ -22,12 +22,13 @@ module DataEnvelopmentAnalysis
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
     TechnicalDEAModel, RadialDEAModel,
     # Technical models
-    dea,
+    dea, deaadd,
     efficiency,
     nobs, ninputs, noutputs, peers
 
     # Include code of functions
     include("technical.jl")
     include("dea.jl")
+    include("deaadd.jl")
 
 end # module
