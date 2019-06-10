@@ -21,7 +21,7 @@ struct RadialDEAModel <: AbstractRadialDEAModel
     s::Int64
     orient::Symbol
     rts::Symbol
-    eff::Matrix
+    eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
 end
 
@@ -34,7 +34,7 @@ julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 julia> deaio = dea(X, Y);
 julia> efficiency(deaio)
-11×1 Array{Float64,2}:
+11-element Array{Float64,1}:
  1.0
  0.6222896790980051
  0.8198562443845464
@@ -45,7 +45,7 @@ julia> efficiency(deaio)
  0.7576690895651103
  0.8201058201058201
  0.49056603773584917
- 1.0
+ 1.0            
 ```
 """
 efficiency(model::AbstractTechnicalDEAModel) = model.eff

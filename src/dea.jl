@@ -61,7 +61,7 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
     n = nx
     nref = nrefx
 
-    efficiency = zeros(n, 1)
+    efficiency = zeros(n)
     lambdaeff = spzeros(n, nref)
 
     for i=1:n
@@ -148,7 +148,7 @@ function Base.show(io::IO, x::RadialDEAModel)
         print(io, "Orientation = ", string(x.orient))
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(eff, ["efficiency"], ["$i" for i in 1:n]))
+        show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
     else
 
     end
