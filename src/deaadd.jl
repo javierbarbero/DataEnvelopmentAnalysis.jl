@@ -160,6 +160,90 @@ function deaadd(X::Vector, Y::Vector; rts::Symbol = :VRS, wX::Vector = ones(size
     return deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
+"""
+    deaadd(X, Y. model)
+Computes related data envelopment analysis weighted additive models for inputs `X` and outputs `Y`.
+
+Model specification:
+- :Ones: standard additive DEA model.
+- :MIP: Measure of Inefficiency Proportions. (Cooper et al., 1999)
+
+### Optional Arguments
+- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
+returns to scale `:VRS`.
+- `Xref=X`: reference set of inputs to which evaluate the units.
+- `Yref=Y`: reference set of outputs to which evaluate the units.
+
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+julia> deaadd(X, Y, :MIP
+Weighted Additive DEA Model
+DMUs = 11; Inputs = 2; Outputs = 1
+Weights = MIP; Returns to Scale = VRS
+─────────────────────────────────────────────────────
+      efficiency       slackX1  slackX2       slackY1
+─────────────────────────────────────────────────────
+1    0.0           0.0              0.0   0.0
+2    0.507519      0.0              0.0   7.10526
+3    0.0           0.0              0.0   0.0
+4   -4.72586e-17  -8.03397e-16      0.0   0.0
+5    2.20395       0.0              0.0  17.6316
+6    1.31279e-16   8.10382e-16      0.0   8.64407e-16
+7    0.0           0.0              0.0   0.0
+8    0.0           0.0              0.0   0.0
+9    0.0           0.0              0.0   0.0
+10   1.04322      17.0             15.0   1.0
+11   0.235294      0.0              4.0   0.0
+─────────────────────────────────────────────────────
+```
+"""
+function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y)::AdditiveDEAModel
+
+    if model == :Ones
+        # Standard Additive DEA model
+        wX = ones(size(X))
+        wY = ones(size(Y))
+        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    elseif model == :MIP
+        # Measure of Inefficiency Proportions
+        wX = 1 ./ X
+        wY = 1 ./ Y
+        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    end
+
+    return AdditiveDEAModel(result.n,
+                            result.m,
+                            result.s,
+                            result.rts,
+                            result.eff,
+                            result.slackX,
+                            result.slackY,
+                            result.lambda,
+                            model)
+end
+
+function deaadd(X::Vector, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function deaadd(X::Matrix, Y::Vector, model::Symbol; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function deaadd(X::Vector, Y::Vector, model::Symbol; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
+end
+
 function Base.show(io::IO, x::AdditiveDEAModel)
     compact = get(io, :compact, false)
 

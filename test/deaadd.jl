@@ -71,4 +71,84 @@
     deaadddefault = deaadd(X, Y)
     @test efficiency(deaaddvrs1) ≈ efficiency(deaadddefault)
 
+    # Test model :Ones equals no model specified
+    deaaddones = deaadd(X, Y, :Ones)
+    @test deaaddones.weights == :Ones
+    @test efficiency(deaaddones) ≈ efficiency(deaadddefault)
+
+    # MIP CRS
+    deaaddmipcrs = deaadd(X, Y, :MIP, rts = :CRS)
+    @test deaaddmipcrs.weights == :MIP
+    @test efficiency(deaaddmipcrs) ≈ [0.0000000000;
+                               0.7577160494;
+                               0.4168399168;
+                               0.0000000000;
+                               2.2219512195;
+                               1.1478260870;
+                               0.0000000000;
+                               0.4867909868;
+                               0.4041184041;
+                               1.0726153846;
+                               0.2352941176]
+    @test deaaddmipcrs.slackX ≈ [0 0;
+                                 3.037037037 6.814814815;
+                                 0 10.837837838;
+                                 0 0;
+                                 0 0;
+                                 8.000000000  0;
+                                 0 0;
+                                 7.384615385 4.692307692;
+                                 8.296296296 2.518518519;
+                                 0.000000000  8.200000000;
+                                 0 4.000000000]
+
+    @test deaaddmipcrs.slackY ≈ [0;
+                                  0;
+                                  0;
+                                  0;
+                                  17.77560976 ;
+                                  7.20000000;
+                                  0;
+                                  0;
+                                  0;
+                                  19.36000000;
+                                  0]
+
+    # MIP VRS
+    deaaddmipvrs = deaadd(X, Y, :MIP, rts = :VRS)
+    @test deaaddmipvrs.weights == :MIP
+    @test efficiency(deaaddmipvrs) ≈ [0.0000000000;
+                               0.5075187970;
+                               0.0000000000;
+                               0.0000000000;
+                               2.2039473684;
+                               0.0000000000;
+                               0.0000000000;
+                               0.0000000000;
+                               0.0000000000;
+                               1.0432234432;
+                               0.2352941176]
+    @test deaaddmipvrs.slackX ≈ [0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 0 0;
+                                 17 15;
+                                 0 4]
+    @test deaaddmipvrs.slackY ≈ [0;
+                                 7.105263158;
+                                 0;
+                                 0;
+                                 17.631578947;
+                                 0;
+                                 0;
+                                 0;
+                                 0;
+                                 1.000000000;
+                                 0]
+
 end
