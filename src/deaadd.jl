@@ -166,7 +166,8 @@ Computes related data envelopment analysis weighted additive models for inputs `
 
 Model specification:
 - :Ones: standard additive DEA model.
-- :MIP: Measure of Inefficiency Proportions. (Cooper et al., 1999)
+- :MIP: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
+- :RAM: Range Adjusted Measure. (Cooper et al., 1999)
 
 ### Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
@@ -211,6 +212,24 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         wX = 1 ./ X
         wY = 1 ./ Y
         result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    elseif model == :RAM
+        # Range Adjusted Measure
+        m = size(X, 2)
+        s = size(Y, 2)
+
+        wX = zeros(size(X))
+        wY = zeros(size(Y))
+
+        for i=1:m
+            wX[:,i] .= 1 ./ ((m + s) * (maximum(X[:,i])  - minimum(X[:,i])))
+        end
+        for i=1:s
+            wY[:,i] .= 1 ./ ((m + s) * (maximum(Y[:,i])  - minimum(Y[:,i])))
+        end
+
+        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    else
+        error("Invalid model ", model)
     end
 
     return AdditiveDEAModel(result.n,
