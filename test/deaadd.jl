@@ -151,7 +151,7 @@
                                  1.000000000;
                                  0]
 
-    #RAM CRS
+    # RAM CRS
     deaaddramcrs = deaadd(X, Y, :RAM, rts = :CRS)
     @test deaaddramcrs.weights == :RAM
     @test efficiency(deaaddramcrs) ≈ [0.0000000000;
@@ -190,7 +190,7 @@
                                    0;
                                    0]
 
-    #RAM VRS
+    # RAM VRS
     deaaddramvrs = deaadd(X, Y, :RAM, rts = :VRS)
     @test deaaddramvrs.weights == :RAM
     @test efficiency(deaaddramvrs) ≈ [0.0000000000;
@@ -226,6 +226,44 @@
                                 0;
                                 0;
                                 1.000000000;
+                                0]
+
+    # BAM VRS
+    deaaddbamvrs = deaadd(X, Y, :BAM, rts = :VRS)
+    @test deaaddbamvrs.weights == :BAM
+    @test efficiency(deaaddbamvrs) ≈ [0.0000000000;
+                              0.1998936736;
+                              0.0000000000;
+                              0.0000000000;
+                              0.4329710145;
+                              0.0000000000;
+                              0.0000000000;
+                              0.0000000000;
+                              0.0000000000;
+                              0.5713608345;
+                              0.1212121212]
+
+    @test deaaddbamvrs.slackX ≈ [0 0;
+                                6.596491228 0;
+                                0 0;
+                                0 0;
+                                13.000000000 1;
+                                0 0;
+                                0 0;
+                                0 0;
+                                0 0;
+                                5 11;
+                                0 4]
+    @test deaaddbamvrs.slackY ≈ [0;
+                                0;
+                                0;
+                                0;
+                                4;
+                                0;
+                                0;
+                                0;
+                                0;
+                                5;
                                 0]
 
 end

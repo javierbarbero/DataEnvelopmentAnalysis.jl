@@ -143,6 +143,7 @@ function deaadd(X::Vector, Y::Matrix; rts::Symbol = :VRS, wX::Vector = ones(size
     return deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
+
 function deaadd(X::Matrix, Y::Vector; rts::Symbol = :VRS, wX::Matrix = ones(size(X)), wY::Vector = ones(size(Y)), Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
     Y = Y[:,:]
     wY = wY[:,:]
@@ -168,6 +169,7 @@ Model specification:
 - :Ones: standard additive DEA model.
 - :MIP: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
 - :RAM: Range Adjusted Measure. (Cooper et al., 1999)
+- :BAM: Bounded Adjusted Measure. (Cooper et al, 2011)
 
 ### Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
@@ -226,6 +228,29 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         for i=1:s
             wY[:,i] .= 1 ./ ((m + s) * (maximum(Y[:,i])  - minimum(Y[:,i])))
         end
+
+        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    elseif model == :BAM
+        # Bounded Adjusted Measure
+        if rts == :CRS
+            error("BAM with CRS not yet implemented.")
+        end
+
+        m = size(X, 2)
+        s = size(Y, 2)
+
+        wX = zeros(size(X))
+        wY = zeros(size(Y))
+
+        for i=1:m
+            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minimum(X[:,i])))
+        end
+        for i=1:s
+            wY[:,i] = 1 ./ ((m + s) .* (maximum(Y[:,i]) .- Y[:,i]))
+        end
+
+        wX[isinf.(wX)] .= 0
+        wY[isinf.(wY)] .= 0
 
         result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     else
