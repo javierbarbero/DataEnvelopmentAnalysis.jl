@@ -125,4 +125,33 @@
      0.000000000   0  0 0.0000000000  0  0 0.00000000000  0  1   0   0;
      1.000000000   0  0 0.0000000000  0  0 0.00000000000  0  0   0   0]
 
+     ## Test if one-by-one DEA using evaluation and reference sets match initial results
+     deaio_ref_eff = zeros(size(X, 1))
+     deaoo_ref_eff = zeros(size(X, 1))
+
+     deaiovrs_ref_eff = zeros(size(X, 1))
+     deaoovrs_ref_eff = zeros(size(X, 1))
+
+     Xref = X[:,:]
+     Yref = Y[:,:]
+
+     for i = 1:size(X, 1)
+         Xeval = X[i:i,:]
+         Xeval = Xeval[:,:]
+         Yeval = Y[i:i,:]
+         Yeval = Yeval[:,:]
+
+         deaio_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+         deaoo_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+         
+         deaiovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+         deaoovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+     end
+
+     @test deaio_ref_eff ≈ efficiency(deaio)
+     @test deaoo_ref_eff ≈ efficiency(deaoo)
+
+     @test deaiovrs_ref_eff ≈ efficiency(deaiovrs)
+     @test deaoovrs_ref_eff ≈ efficiency(deaoovrs)
+
 end

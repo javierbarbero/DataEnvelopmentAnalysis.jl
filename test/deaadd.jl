@@ -266,4 +266,48 @@
                                 5;
                                 0]
 
+    ## Test if one-by-one DEA using evaluation and reference sets match initial results
+    deaaddonescrs_ref_eff = zeros(size(X, 1))
+    deaaddonesvrs_ref_eff = zeros(size(X, 1))
+
+    deaaddmipcrs_ref_eff = zeros(size(X, 1))
+    deaaddmipvrs_ref_eff = zeros(size(X, 1))
+
+    deaaddramcrs_ref_eff = zeros(size(X, 1))
+    deaaddramvrs_ref_eff = zeros(size(X, 1))
+
+    deaaddbamvrs_ref_eff = zeros(size(X, 1))
+
+    Xref = X[:,:]
+    Yref = Y[:,:]
+
+    for i = 1:size(X, 1)
+        Xeval = X[i:i,:]
+        Xeval = Xeval[:,:]
+        Yeval = Y[i:i,:]
+        Yeval = Yeval[:,:]
+
+        deaaddonescrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaaddonesvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
+        deaaddmipcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaaddmipvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
+        deaaddramcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaaddramvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
+        deaaddbamvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+    end
+
+    @test deaaddonescrs_ref_eff ≈ efficiency(deaaddcrs1)
+    @test deaaddonesvrs_ref_eff ≈ efficiency(deaaddvrs1)
+
+    @test deaaddmipcrs_ref_eff ≈ efficiency(deaaddmipcrs)
+    @test deaaddmipvrs_ref_eff ≈ efficiency(deaaddmipvrs)
+
+    @test deaaddramcrs_ref_eff ≈ efficiency(deaaddramcrs)
+    @test deaaddramvrs_ref_eff ≈ efficiency(deaaddramvrs)
+
+    @test deaaddbamvrs_ref_eff ≈ efficiency(deaaddbamvrs)
+
 end

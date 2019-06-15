@@ -223,10 +223,10 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         wY = zeros(size(Y))
 
         for i=1:m
-            wX[:,i] .= 1 ./ ((m + s) * (maximum(X[:,i])  - minimum(X[:,i])))
+            wX[:,i] .= 1 ./ ((m + s) * (maximum(Xref[:,i])  - minimum(Xref[:,i])))
         end
         for i=1:s
-            wY[:,i] .= 1 ./ ((m + s) * (maximum(Y[:,i])  - minimum(Y[:,i])))
+            wY[:,i] .= 1 ./ ((m + s) * (maximum(Yref[:,i])  - minimum(Yref[:,i])))
         end
 
         result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
@@ -243,10 +243,10 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         wY = zeros(size(Y))
 
         for i=1:m
-            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minimum(X[:,i])))
+            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minimum(Xref[:,i])))
         end
         for i=1:s
-            wY[:,i] = 1 ./ ((m + s) .* (maximum(Y[:,i]) .- Y[:,i]))
+            wY[:,i] = 1 ./ ((m + s) .* (maximum(Yref[:,i]) .- Y[:,i]))
         end
 
         wX[isinf.(wX)] .= 0
