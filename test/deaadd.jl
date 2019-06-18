@@ -151,6 +151,84 @@
                                  1.000000000;
                                  0]
 
+    # LovPas CRS
+    deaaddlovpascrs = deaadd(X, Y, :LovPas, rts = :CRS)
+    @test deaaddlovpascrs.weights == :LovPas
+    @test efficiency(deaaddlovpascrs) ≈ [0.0000000000;
+                                 1.3569256615;
+                                 1.7407259078;
+                                 0.0000000000;
+                                 2.6877810368;
+                                 1.6953153107;
+                                 0.0000000000;
+                                 1.6540884810;
+                                 1.1212042237;
+                                 4.0172855145;
+                                 0.6424624298]
+
+    @test deaaddlovpascrs.slackX ≈ [0.000000000  0.000000000;
+                                 3.037037037  6.814814815;
+                                 0.000000000 10.837837838;
+                                 0.000000000  0.000000000;
+                                 10.592592593 11.037037037;
+                                 14.666666667  2.666666667;
+                                 0.000000000  0.000000000;
+                                 0.000000000 10.298429319;
+                                 8.296296296  2.518518519;
+                                 17.925925926 15.370370370;
+                                 0.000000000  4.000000000]
+
+    @test deaaddlovpascrs.slackY ≈ [0;
+                                  0;
+                                  0;
+                                  0;
+                                  0 ;
+                                  0;
+                                  0;
+                                  0;
+                                  0;
+                                  0;
+                                  0]
+
+    # LovPas VRS
+    deaaddlovpasvrs = deaadd(X, Y, :LovPas, rts = :VRS)
+    @test deaaddlovpasvrs.weights == :LovPas
+    @test efficiency(deaaddlovpasvrs) ≈ [0.0000000000;
+                                 0.8049248943;
+                                 0.0000000000;
+                                 0.0000000000;
+                                 2.0149704908;
+                                 0.0000000000;
+                                 0.0000000000;
+                                 0.0000000000;
+                                 0.0000000000;
+                                 3.9898943952;
+                                 0.6424624298]
+
+    @test deaaddlovpasvrs.slackX ≈ [0  0.00;
+                                 0  0.65;
+                                 0  0.00;
+                                 0  0.00;
+                                 0  2.95;
+                                 0  0.00;
+                                 0  0.00;
+                                 0  0.00;
+                                 0  0.00;
+                                 17 15.00;
+                                 0  4.00]
+
+    @test deaaddlovpasvrs.slackY ≈ [0.00;
+                                6.25;
+                                0.00;
+                                0.00;
+                                13.75;
+                                0.00;
+                                0.00;
+                                0.00;
+                                0.00;
+                                1.00;
+                                0.00]
+
     # RAM CRS
     deaaddramcrs = deaadd(X, Y, :RAM, rts = :CRS)
     @test deaaddramcrs.weights == :RAM
@@ -273,6 +351,9 @@
     deaaddmipcrs_ref_eff = zeros(size(X, 1))
     deaaddmipvrs_ref_eff = zeros(size(X, 1))
 
+    deaaddlovpascrs_ref_eff = zeros(size(X, 1))
+    deaaddlovpasvrs_ref_eff = zeros(size(X, 1))
+
     deaaddramcrs_ref_eff = zeros(size(X, 1))
     deaaddramvrs_ref_eff = zeros(size(X, 1))
 
@@ -293,6 +374,9 @@
         deaaddmipcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddmipvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
+        deaaddlovpascrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :LovPas, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaaddlovpasvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :LovPas, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
         deaaddramcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddramvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
@@ -304,6 +388,9 @@
 
     @test deaaddmipcrs_ref_eff ≈ efficiency(deaaddmipcrs)
     @test deaaddmipvrs_ref_eff ≈ efficiency(deaaddmipvrs)
+
+    @test deaaddlovpascrs_ref_eff ≈ efficiency(deaaddlovpascrs)
+    @test deaaddlovpasvrs_ref_eff ≈ efficiency(deaaddlovpasvrs)
 
     @test deaaddramcrs_ref_eff ≈ efficiency(deaaddramcrs)
     @test deaaddramvrs_ref_eff ≈ efficiency(deaaddramvrs)

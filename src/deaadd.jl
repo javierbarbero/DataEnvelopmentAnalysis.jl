@@ -168,6 +168,7 @@ Computes related data envelopment analysis weighted additive models for inputs `
 Model specification:
 - :Ones: standard additive DEA model.
 - :MIP: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
+- :LovPas: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
 - :RAM: Range Adjusted Measure. (Cooper et al., 1999)
 - :BAM: Bounded Adjusted Measure. (Cooper et al, 2011)
 
@@ -213,6 +214,22 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         # Measure of Inefficiency Proportions
         wX = 1 ./ X
         wY = 1 ./ Y
+        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    elseif model == :LovPas
+        # Normalized weighted additive DEA model
+        wX = zeros(size(X))
+        wY = zeros(size(Y))
+
+        m = size(X, 2)
+        s = size(Y, 2)
+
+        for i=1:m
+            wX[:,i] .= 1 ./ std(Xref[:,i])
+        end
+        for i=1:s
+            wY[:,i] .= 1 ./ std(Yref[:,i])
+        end
+
         result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     elseif model == :RAM
         # Range Adjusted Measure

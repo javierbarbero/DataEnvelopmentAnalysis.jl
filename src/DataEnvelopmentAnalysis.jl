@@ -12,6 +12,7 @@ module DataEnvelopmentAnalysis
     using LinearAlgebra
 
     using Printf: @sprintf
+    using Statistics: std
     using StatsBase: CoefTable
 
     import StatsBase: nobs
