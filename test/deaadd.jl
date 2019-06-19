@@ -313,6 +313,44 @@
                                 1.000000000;
                                 0]
 
+    # BAM CRS
+    deaaddbamcrs = deaadd(X, Y, :BAM, rts = :CRS)
+    @test deaaddbamcrs.weights == :BAM
+    @test efficiency(deaaddbamcrs) ≈ [0.0000000000;
+                                0.4578892372;
+                                0.3051750381;
+                                0.0000000000;
+                                0.6732181854;
+                                0.3239568683;
+                                0.0000000000;
+                                0.5255235602;
+                                0.1913580247;
+                                0.6902867780;
+                                0.1212121212]
+
+    @test deaaddbamcrs.slackX ≈ [0.000000000  0.000000000;
+                                4.110344828  6.000000000;
+                                0.000000000  0.000000000;
+                                0.000000000  0.000000000;
+                                13.000000000  8.000000000;
+                                17.493670886  0.000000000;
+                                0.000000000  0.000000000;
+                                0.000000000  9.225130890;
+                                8.296296296  2.518518519;
+                                13.296296296 13.518518519;
+                                0.000000000  4.000000000]
+    @test deaaddbamcrs.slackY ≈ [0;
+                                0;
+                                5.4931506849;
+                                0;
+                                0.4520547945 ;
+                                0;
+                                0;
+                                1;
+                                0;
+                                5;
+                                0]
+
     # BAM VRS
     deaaddbamvrs = deaadd(X, Y, :BAM, rts = :VRS)
     @test deaaddbamvrs.weights == :BAM
@@ -364,6 +402,7 @@
     deaaddramcrs_ref_eff = zeros(size(X, 1))
     deaaddramvrs_ref_eff = zeros(size(X, 1))
 
+    deaaddbamcrs_ref_eff = zeros(size(X, 1))
     deaaddbamvrs_ref_eff = zeros(size(X, 1))
 
     Xref = X[:,:]
@@ -387,6 +426,7 @@
         deaaddramcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddramvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
+        deaaddbamcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddbamvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
     end
 
@@ -402,6 +442,7 @@
     @test deaaddramcrs_ref_eff ≈ efficiency(deaaddramcrs)
     @test deaaddramvrs_ref_eff ≈ efficiency(deaaddramvrs)
 
+    @test deaaddbamcrs_ref_eff ≈ efficiency(deaaddbamcrs)
     @test deaaddbamvrs_ref_eff ≈ efficiency(deaaddbamvrs)
 
 end

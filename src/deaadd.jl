@@ -267,21 +267,22 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
 
     elseif model == :BAM
         # Bounded Adjusted Measure
-        if rts == :CRS
-            error("BAM with CRS not yet implemented.")
-        end
-
         m = size(X, 2)
         s = size(Y, 2)
+
+        minXref = zeros(m)
+        maxYref = zeros(s)
 
         wX = zeros(size(X))
         wY = zeros(size(Y))
 
         for i=1:m
-            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minimum(Xref[:,i])))
+            minXref[i] = minimum(Xref[:,i])
+            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minXref[i] ))
         end
         for i=1:s
-            wY[:,i] = 1 ./ ((m + s) .* (maximum(Yref[:,i]) .- Y[:,i]))
+            maxYref[i] = maximum(Yref[:,i])
+            wY[:,i] = 1 ./ ((m + s) .* (maxYref[i] .- Y[:,i]))
         end
 
         wX[isinf.(wX)] .= 0
@@ -320,9 +321,13 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
 
         # Add return to scale constraints
-        if (rts == :CRS)
-            # No contraint to add for constant returns to scale
-        elseif (rts == :VRS)
+        if rts == :CRS
+            # Add constraints for BAM CRS model
+            if model == :BAM
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) >= minXref[j])
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) <= maxYref[j])
+            end
+        elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
             error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
