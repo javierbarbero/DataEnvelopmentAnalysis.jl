@@ -71,17 +71,17 @@
     deaadddefaultcrs = deaadd(X, Y, rts = :CRS)
     @test efficiency(deaaddcrs1) ≈ efficiency(deaadddefaultcrs)
 
-    deaadddefault = deaadd(X, Y)
-    @test efficiency(deaaddvrs1) ≈ efficiency(deaadddefault)
+    deaadddefaultvrs = deaadd(X, Y)
+    @test efficiency(deaaddvrs1) ≈ efficiency(deaadddefaultvrs)
 
     # Test model :Ones equals model with all weights equal to 1
-    deaaddonescrs = deaadd(X, Y, :Ones)
+    deaaddonescrs = deaadd(X, Y, :Ones, rts = :CRS)
     @test deaaddonescrs.weights == :Ones
-    @test efficiency(deaaddonescrs) ≈ efficiency(deaadddefault)
+    @test efficiency(deaaddonescrs) ≈ efficiency(deaadddefaultcrs)
 
-    deaaddones = deaadd(X, Y, :Ones)
-    @test deaaddones.weights == :Ones
-    @test efficiency(deaaddones) ≈ efficiency(deaadddefault)
+    deaaddonesvrs = deaadd(X, Y, :Ones)
+    @test deaaddonesvrs.weights == :Ones
+    @test efficiency(deaaddonesvrs) ≈ efficiency(deaadddefaultvrs)
 
     # MIP CRS
     deaaddmipcrs = deaadd(X, Y, :MIP, rts = :CRS)
@@ -389,7 +389,23 @@
                                 5;
                                 0]
 
+    # Test model with Custom weights
+    deaddcustomcrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
+    @test deaddcustomcrs.weights == :Custom
+    @test efficiency(deaddcustomcrs) ≈ efficiency(deaaddmipcrs)
+
+    deaddcustomvrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
+    @test deaddcustomvrs.weights == :Custom
+    @test efficiency(deaddcustomvrs) ≈ efficiency(deaaddmipvrs)
+
+
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
+    deaadddefaultcrs_ref_eff = zeros(size(X, 1))
+    deaadddefaultvrs_ref_eff = zeros(size(X, 1))
+
+    deaaddcustomcrs_ref_eff = zeros(size(X, 1))
+    deaaddcustomvrs_ref_eff = zeros(size(X, 1))
+
     deaaddonescrs_ref_eff = zeros(size(X, 1))
     deaaddonesvrs_ref_eff = zeros(size(X, 1))
 
@@ -414,6 +430,12 @@
         Yeval = Y[i:i,:]
         Yeval = Yeval[:,:]
 
+        deaadddefaultcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaadddefaultvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
+        deaaddcustomcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :CRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+        deaaddcustomvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :VRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+
         deaaddonescrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddonesvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
@@ -429,6 +451,12 @@
         deaaddbamcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddbamvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
     end
+
+    @test deaadddefaultcrs_ref_eff ≈ efficiency(deaadddefaultcrs)
+    @test deaadddefaultvrs_ref_eff ≈ efficiency(deaadddefaultvrs)
+
+    @test deaaddcustomcrs_ref_eff ≈ efficiency(deaaddmipcrs)
+    @test deaaddcustomvrs_ref_eff ≈ efficiency(deaaddmipvrs)
 
     @test deaaddonescrs_ref_eff ≈ efficiency(deaaddcrs1)
     @test deaaddonesvrs_ref_eff ≈ efficiency(deaaddvrs1)
