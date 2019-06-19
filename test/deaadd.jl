@@ -68,10 +68,17 @@
      1.000000000  0  0  0  0  0 0.00000000000  0  0   0   0]
 
     # Check weights equal to one equals default model
+    deaadddefaultcrs = deaadd(X, Y, rts = :CRS)
+    @test efficiency(deaaddcrs1) ≈ efficiency(deaadddefaultcrs)
+
     deaadddefault = deaadd(X, Y)
     @test efficiency(deaaddvrs1) ≈ efficiency(deaadddefault)
 
-    # Test model :Ones equals no model specified
+    # Test model :Ones equals model with all weights equal to 1
+    deaaddonescrs = deaadd(X, Y, :Ones)
+    @test deaaddonescrs.weights == :Ones
+    @test efficiency(deaaddonescrs) ≈ efficiency(deaadddefault)
+
     deaaddones = deaadd(X, Y, :Ones)
     @test deaaddones.weights == :Ones
     @test efficiency(deaaddones) ≈ efficiency(deaadddefault)

@@ -204,7 +204,27 @@ Weights = MIP; Returns to Scale = VRS
 ```
 """
 function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y)::AdditiveDEAModel
+    # Check parameters
+    nx, m = size(X)
+    ny, s = size(Y)
 
+    nrefx, mref = size(Xref)
+    nrefy, sref = size(Yref)
+
+    if nx != ny
+        error("number of observations is different in inputs and outputs")
+    end
+    if nrefx != nrefy
+        error("number of observations is different in inputs reference set and ouputs reference set")
+    end
+    if m != mref
+        error("number of inputs in evaluation set and reference set is different")
+    end
+    if s != sref
+        error("number of outputs in evaluation set and reference set is different")
+    end
+
+    # Compute specific weights based on the model
     if model == :Ones
         # Standard Additive DEA model
         wX = ones(size(X))
@@ -230,7 +250,6 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
             wY[:,i] .= 1 ./ std(Yref[:,i])
         end
 
-        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     elseif model == :RAM
         # Range Adjusted Measure
         m = size(X, 2)
@@ -246,7 +265,6 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
             wY[:,i] .= 1 ./ ((m + s) * (maximum(Yref[:,i])  - minimum(Yref[:,i])))
         end
 
-        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     elseif model == :BAM
         # Bounded Adjusted Measure
         if rts == :CRS
@@ -269,20 +287,59 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         wX[isinf.(wX)] .= 0
         wY[isinf.(wY)] .= 0
 
-        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     else
         error("Invalid model ", model)
     end
 
-    return AdditiveDEAModel(result.n,
-                            result.m,
-                            result.s,
-                            result.rts,
-                            result.eff,
-                            result.slackX,
-                            result.slackY,
-                            result.lambda,
-                            model)
+    # Compute efficiency for each DMU
+    n = nx
+    nref = nrefx
+
+    effi = zeros(n)
+    slackX = zeros(n, m)
+    slackY = zeros(n, s)
+    lambdaeff = spzeros(n, nref)
+
+    for i=1:n
+        # Value of inputs and outputs to evaluate
+        x0 = X[i,:]
+        y0 = Y[i,:]
+
+        # Value of weights to evaluate
+        wX0 = wX[i,:]
+        wY0 = wY[i,:]
+
+        # Create the optimization model
+        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        @variable(deamodel, sX[1:m] >= 0)
+        @variable(deamodel, sY[1:s] >= 0)
+        @variable(deamodel, lambda[1:nref] >= 0)
+
+        @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m) + sum(wY0[j] * sY[j] for j in 1:s) )
+        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
+        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
+
+        # Add return to scale constraints
+        if (rts == :CRS)
+            # No contraint to add for constant returns to scale
+        elseif (rts == :VRS)
+            @constraint(deamodel, sum(lambda) == 1)
+        else
+            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+        end
+
+        # Optimize and return results
+        JuMP.optimize!(deamodel)
+
+        effi[i]  = JuMP.objective_value(deamodel)
+        lambdaeff[i,:] = JuMP.value.(lambda)
+        slackX[i,:] = JuMP.value.(sX)
+        slackY[i,:] = JuMP.value.(sY)
+
+    end
+
+    return AdditiveDEAModel(n, m, s, rts, effi, slackX, slackY, lambdaeff, model)
+
 end
 
 function deaadd(X::Vector, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
