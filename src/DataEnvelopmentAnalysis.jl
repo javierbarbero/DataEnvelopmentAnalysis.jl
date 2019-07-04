@@ -8,6 +8,7 @@ module DataEnvelopmentAnalysis
 
     using JuMP
     using GLPK
+    using Ipopt
     using SparseArrays
     using LinearAlgebra
 
@@ -23,7 +24,7 @@ module DataEnvelopmentAnalysis
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
     TechnicalDEAModel, RadialDEAModel,
     # Technical models
-    dea, deaadd,
+    dea, deaadd, deagdf,
     efficiency,
     nobs, ninputs, noutputs, peers
 
@@ -31,5 +32,6 @@ module DataEnvelopmentAnalysis
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
+    include("deagdf.jl")
 
 end # module
