@@ -23,15 +23,21 @@ module DataEnvelopmentAnalysis
     # Types
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
     TechnicalDEAModel, RadialDEAModel,
+    AbstractEconomicDEAModel,
+    ProfitabilityDEAModel,
     # Technical models
     dea, deaadd, deagdf,
     efficiency,
-    nobs, ninputs, noutputs, peers
+    nobs, ninputs, noutputs, peers,
+    # Economic models
+    deaprofitability
 
     # Include code of functions
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
     include("deagdf.jl")
+    include("economic.jl")
+    include("deaprofitability.jl")
 
 end # module

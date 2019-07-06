@@ -108,9 +108,9 @@ function deaadd(X::Matrix, Y::Matrix; rts::Symbol = :VRS, wX::Matrix = ones(size
         @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
 
         # Add return to scale constraints
-        if (rts == :CRS)
+        if rts == :CRS
             # No contraint to add for constant returns to scale
-        elseif (rts == :VRS)
+        elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
             error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
@@ -166,11 +166,11 @@ end
 Computes related data envelopment analysis weighted additive models for inputs `X` and outputs `Y`.
 
 Model specification:
-- :Ones: standard additive DEA model.
-- :MIP: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
-- :LovPas: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
-- :RAM: Range Adjusted Measure. (Cooper et al., 1999)
-- :BAM: Bounded Adjusted Measure. (Cooper et al, 2011)
+- `:Ones`: standard additive DEA model.
+- `:MIP`: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
+- `:LovPas`: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
+- `:RAM`: Range Adjusted Measure. (Cooper et al., 1999)
+- `:BAM`: Bounded Adjusted Measure. (Cooper et al, 2011)
 
 ### Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable

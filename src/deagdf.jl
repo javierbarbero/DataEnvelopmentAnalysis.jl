@@ -41,8 +41,9 @@ alpha = 0.5; Returns to Scale = VRS
 4     0.25
 5     0.36
 ─────────────
+```
 """
-function deagdf(X::Matrix, Y::Matrix, alpha::Float64; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Matrix = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
+function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -86,9 +87,9 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; orient::Symbol = :Input, r
         @NLconstraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] / (eff^(1-alpha)) )
 
         # Add return to scale constraints
-        if (rts == :CRS)
+        if rts == :CRS
             # No contraint to add for constant returns to scale
-        elseif (rts == :VRS)
+        elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
             error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
@@ -106,19 +107,19 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; orient::Symbol = :Input, r
 
 end
 
-function deagdf(X::Vector, Y::Matrix, alpha::Float64; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
+function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
     X = X[:,:]
     Xref = X[:,:]
     return deagdf(X, Y, alpha, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
 end
 
-function deagdf(X::Matrix, Y::Vector, alpha::Float64; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::GeneralizedDFDEAModel
+function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::GeneralizedDFDEAModel
     Y = Y[:,:]
     Yref = Y[:,:]
     return deagdf(X, Y, alpha, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
 end
 
-function deagdf(X::Vector, Y::Vector, alpha::Float64; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::GeneralizedDFDEAModel
+function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::GeneralizedDFDEAModel
     X = X[:,:]
     Xref = X[:,:]
     Y = Y[:,:]

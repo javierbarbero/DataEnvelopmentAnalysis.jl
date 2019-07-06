@@ -7,5 +7,6 @@ using Test
     include("dea.jl")
     include("deaadd.jl")
     include("deagdf.jl")
+    include("deaprofitability.jl")
 
 end

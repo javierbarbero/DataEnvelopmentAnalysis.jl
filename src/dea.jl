@@ -1,5 +1,25 @@
 # This file contains functions for the Radial DEA model
 """
+    AbstractRadialDEAModel
+An abstract type representing a radial DEA model.
+"""
+abstract type AbstractRadialDEAModel <: AbstractTechnicalDEAModel end
+
+"""
+    RadialDEAModel
+An data structure representing a radial DEA model.
+"""
+struct RadialDEAModel <: AbstractRadialDEAModel
+    n::Int64
+    m::Int64
+    s::Int64
+    orient::Symbol
+    rts::Symbol
+    eff::Vector
+    lambda::SparseMatrixCSC{Float64, Int64}
+end
+
+"""
     dea(X, Y)
 Computes data envelopment analysis radial model for inputs `X` and outputs `Y`.
 
@@ -74,13 +94,13 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
 
-        if (orient == :Input)
+        if orient == :Input
             # Input orientation
             @objective(deamodel, Min, eff)
 
             @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff * x0[j])
             @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
-        elseif (orient == :Output)
+        elseif orient == :Output
             # Output orientation
             @objective(deamodel, Max, eff)
 
@@ -91,9 +111,9 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         end
 
         # Add return to scale constraints
-        if (rts == :CRS)
+        if rts == :CRS
             # No contraint to add for constant returns to scale
-        elseif (rts == :VRS)
+        elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
             error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")

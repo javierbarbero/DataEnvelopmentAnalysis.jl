@@ -6,26 +6,6 @@ An abstract type representing a technical DEA model.
 abstract type AbstractTechnicalDEAModel end
 
 """
-    AbstractRadialDEAModel
-An abstract type representing a radial DEA model.
-"""
-abstract type AbstractRadialDEAModel <: AbstractTechnicalDEAModel end
-
-"""
-    RadialDEAModel
-An data structure representing a radial DEA model.
-"""
-struct RadialDEAModel <: AbstractRadialDEAModel
-    n::Int64
-    m::Int64
-    s::Int64
-    orient::Symbol
-    rts::Symbol
-    eff::Vector
-    lambda::SparseMatrixCSC{Float64, Int64}
-end
-
-"""
     efficiency(model::AbstractTechnicalDEAModel)
 Returns efficiency scores of a technical DEA model.
 ## Examples
@@ -45,7 +25,7 @@ julia> efficiency(deaio)
  0.7576690895651103
  0.8201058201058201
  0.49056603773584917
- 1.0            
+ 1.0
 ```
 """
 efficiency(model::AbstractTechnicalDEAModel) = model.eff
