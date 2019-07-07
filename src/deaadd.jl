@@ -17,9 +17,9 @@ end
 
 """
     deaadd(X, Y)
-Computes data envelopment analysis weighted additive model for inputs `X` and outputs `Y`.
+Compute data envelopment analysis weighted additive model for inputs `X` and outputs `Y`.
 
-### Optional Arguments
+# Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
 returns to scale `:VRS`.
 - `wX=ones(size(X))`: matrix of weights of inputs.
@@ -163,16 +163,16 @@ end
 
 """
     deaadd(X, Y. model)
-Computes related data envelopment analysis weighted additive models for inputs `X` and outputs `Y`.
+Compute related data envelopment analysis weighted additive models for inputs `X` and outputs `Y`.
 
 Model specification:
 - `:Ones`: standard additive DEA model.
 - `:MIP`: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)
-- `:LovPas`: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
+- `:Normalized`: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
 - `:RAM`: Range Adjusted Measure. (Cooper et al., 1999)
 - `:BAM`: Bounded Adjusted Measure. (Cooper et al, 2011)
 
-### Optional Arguments
+# Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
 returns to scale `:VRS`.
 - `Xref=X`: reference set of inputs to which evaluate the units.
@@ -235,7 +235,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         wX = 1 ./ X
         wY = 1 ./ Y
         result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
-    elseif model == :LovPas
+    elseif model == :Normalized
         # Normalized weighted additive DEA model
         wX = zeros(size(X))
         wY = zeros(size(Y))

@@ -15,10 +15,10 @@ end
 
 """
     deagdf(X, Y, alpha)
-Computes generalized distance function data envelopment analysis model for
+Compute generalized distance function data envelopment analysis model for
 inputs `X`, outputs `Y`, and `alpha`.
 
-### Optional Arguments
+# Optional Arguments
 - `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable
 returns to scale `:VRS`.
 - `Xref=X`: reference set of inputs to which evaluate the units.

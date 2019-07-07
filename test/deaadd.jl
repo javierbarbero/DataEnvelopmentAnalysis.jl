@@ -158,10 +158,10 @@
                                  1.000000000;
                                  0]
 
-    # LovPas CRS
-    deaaddlovpascrs = deaadd(X, Y, :LovPas, rts = :CRS)
-    @test deaaddlovpascrs.weights == :LovPas
-    @test efficiency(deaaddlovpascrs) ≈ [0.0000000000;
+    # Normalized CRS
+    deaaddnormalizedcrs = deaadd(X, Y, :Normalized, rts = :CRS)
+    @test deaaddnormalizedcrs.weights == :Normalized
+    @test efficiency(deaaddnormalizedcrs) ≈ [0.0000000000;
                                  1.3569256615;
                                  1.7407259078;
                                  0.0000000000;
@@ -173,7 +173,7 @@
                                  4.0172855145;
                                  0.6424624298]
 
-    @test deaaddlovpascrs.slackX ≈ [0.000000000  0.000000000;
+    @test deaaddnormalizedcrs.slackX ≈ [0.000000000  0.000000000;
                                  3.037037037  6.814814815;
                                  0.000000000 10.837837838;
                                  0.000000000  0.000000000;
@@ -185,7 +185,7 @@
                                  17.925925926 15.370370370;
                                  0.000000000  4.000000000]
 
-    @test deaaddlovpascrs.slackY ≈ [0;
+    @test deaaddnormalizedcrs.slackY ≈ [0;
                                   0;
                                   0;
                                   0;
@@ -197,10 +197,10 @@
                                   0;
                                   0]
 
-    # LovPas VRS
-    deaaddlovpasvrs = deaadd(X, Y, :LovPas, rts = :VRS)
-    @test deaaddlovpasvrs.weights == :LovPas
-    @test efficiency(deaaddlovpasvrs) ≈ [0.0000000000;
+    # Normalized VRS
+    deaaddnormalizedvrs = deaadd(X, Y, :Normalized, rts = :VRS)
+    @test deaaddnormalizedvrs.weights == :Normalized
+    @test efficiency(deaaddnormalizedvrs) ≈ [0.0000000000;
                                  0.8049248943;
                                  0.0000000000;
                                  0.0000000000;
@@ -212,7 +212,7 @@
                                  3.9898943952;
                                  0.6424624298]
 
-    @test deaaddlovpasvrs.slackX ≈ [0  0.00;
+    @test deaaddnormalizedvrs.slackX ≈ [0  0.00;
                                  0  0.65;
                                  0  0.00;
                                  0  0.00;
@@ -224,7 +224,7 @@
                                  17 15.00;
                                  0  4.00]
 
-    @test deaaddlovpasvrs.slackY ≈ [0.00;
+    @test deaaddnormalizedvrs.slackY ≈ [0.00;
                                 6.25;
                                 0.00;
                                 0.00;
@@ -412,8 +412,8 @@
     deaaddmipcrs_ref_eff = zeros(size(X, 1))
     deaaddmipvrs_ref_eff = zeros(size(X, 1))
 
-    deaaddlovpascrs_ref_eff = zeros(size(X, 1))
-    deaaddlovpasvrs_ref_eff = zeros(size(X, 1))
+    deaaddnormalizedcrs_ref_eff = zeros(size(X, 1))
+    deaaddnormalizedvrs_ref_eff = zeros(size(X, 1))
 
     deaaddramcrs_ref_eff = zeros(size(X, 1))
     deaaddramvrs_ref_eff = zeros(size(X, 1))
@@ -442,8 +442,8 @@
         deaaddmipcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddmipvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-        deaaddlovpascrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :LovPas, rts = :CRS, Xref = Xref, Yref = Yref))[1]
-        deaaddlovpasvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :LovPas, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+        deaaddnormalizedcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Normalized, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaaddnormalizedvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Normalized, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
         deaaddramcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddramvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
@@ -464,8 +464,8 @@
     @test deaaddmipcrs_ref_eff ≈ efficiency(deaaddmipcrs)
     @test deaaddmipvrs_ref_eff ≈ efficiency(deaaddmipvrs)
 
-    @test deaaddlovpascrs_ref_eff ≈ efficiency(deaaddlovpascrs)
-    @test deaaddlovpasvrs_ref_eff ≈ efficiency(deaaddlovpasvrs)
+    @test deaaddnormalizedcrs_ref_eff ≈ efficiency(deaaddnormalizedcrs)
+    @test deaaddnormalizedvrs_ref_eff ≈ efficiency(deaaddnormalizedvrs)
 
     @test deaaddramcrs_ref_eff ≈ efficiency(deaaddramcrs)
     @test deaaddramvrs_ref_eff ≈ efficiency(deaaddramvrs)

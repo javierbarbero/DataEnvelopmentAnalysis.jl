@@ -21,9 +21,9 @@ end
 
 """
     dea(X, Y)
-Computes data envelopment analysis radial model for inputs `X` and outputs `Y`.
+Compute data envelopment analysis radial model for inputs `X` and outputs `Y`.
 
-### Optional Arguments
+# Optional Arguments
 - `orient=:Input`: chosse between input oriented radial model `:Input` or
 output oriented radial model `:Output`.
 - `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable

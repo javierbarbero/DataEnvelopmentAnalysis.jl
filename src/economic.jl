@@ -7,9 +7,9 @@ abstract type AbstractEconomicDEAModel <: AbstractTechnicalDEAModel end
 
 """
     efficiency(model::AbstractEconomicDEAModel)
-Returns efficiency scores of an economic DEA model.
+Return efficiency scores of an economic DEA model.
 
-### Optional Arguments
+# Optional Arguments
 - `type=Economic`: type of efficiency scores to return.
 
 Type specification:
@@ -19,7 +19,7 @@ Type specification:
 - `:Scale`: returns scale efficiency.
 - `:Allocative`: returns allocative efficiency.
 
-## Examples
+# Examples
 ```jldoctest
 julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
