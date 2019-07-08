@@ -1,4 +1,4 @@
-# Tests for Generalized DF DEA Models
+# Tests for Cost DEA Models
 @testset "CostDEAModel" begin
 
     ## Test Cost DEA Model with Cooper et al. (2007)

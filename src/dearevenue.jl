@@ -1,9 +1,9 @@
-# This file contains functions for the Cost Efficiency DEA model
+# This file contains functions for the Revenue Efficiency DEA model
 """
-    CostDEAModel
-An data structure representing a cost DEA model.
+    RevenueDEAModel
+An data structure representing a revenue DEA model.
 """
-struct CostDEAModel <: AbstractEconomicDEAModel
+struct RevenueDEAModel <: AbstractEconomicDEAModel
     n::Int64
     m::Int64
     s::Int64
@@ -16,9 +16,9 @@ end
 
 
 """
-    deacost(X, Y, W)
-Compute cost efficinecy data envelopment analysis model for
-inputs `X`, outputs `Y` and price of inputs `W`.
+    dearevenue(X, Y, P)
+Compute revenue efficinecy data envelopment analysis model for
+inputs `X`, outputs `Y` and price of outputs `P`.
 
 # Optional Arguments
 - `Xref=X`: reference set of inputs to which evaluate the units.
@@ -47,12 +47,12 @@ Orientation = Input; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y, Wref::Matrix = W)::CostDEAModel
+function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y, Pref::Matrix = P)::RevenueDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
 
-    nw, mw = size(W)
+    np, sp = size(P)
 
     nrefx, mref = size(Xref)
     nrefy, sref = size(Yref)
@@ -60,11 +60,11 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
     if nx != ny
         error("number of observations is different in inputs and outputs")
     end
-    if nw != nx
-        error("number of observations is different in input prices and inputs")
+    if np != ny
+        error("number of observations is different in output prices and outputs")
     end
-    if mw != m
-        error("number  of input prices and intputs is different")
+    if sp != s
+        error("number  of output prices and outputs is different")
     end
     if nrefx != nrefy
         error("number of observations is different in inputs reference set and ouputs reference set")
@@ -80,24 +80,24 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
     n = nx
     nref = nrefx
 
-    Xefficient = zeros(n,m)
-    cefficiency = zeros(n)
-    clambdaeff = spzeros(n, nref)
+    Yefficient = zeros(n,m)
+    refficiency = zeros(n)
+    rlambdaeff = spzeros(n, nref)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
-        y0 = Y[i,:]
-        w0 = W[i,:]
+        x0 = X[i,:]
+        p0 = P[i,:]
 
         # Create the optimization model
         deamodel = Model(with_optimizer(GLPK.Optimizer))
-        @variable(deamodel, Xeff[1:m])
+        @variable(deamodel, Yeff[1:m])
         @variable(deamodel, lambda[1:nref] >= 0)
 
-        @objective(deamodel, Min, sum(w0[j] .* Xeff[j] for j in 1:m))
+        @objective(deamodel, Max, sum(p0[j] .* Yeff[j] for j in 1:s))
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= Xeff[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
+        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
+        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= Yeff[j])
 
         # Add return to scale constraints
         if rts == :CRS
@@ -111,44 +111,44 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
-        Xefficient[i,:]  = JuMP.value.(Xeff)
-        clambdaeff[i,:] = JuMP.value.(lambda)
+        Yefficient[i,:]  = JuMP.value.(Yeff)
+        rlambdaeff[i,:] = JuMP.value.(lambda)
 
     end
 
     # Cost, technical and allocative efficiency
-    cefficiency  = vec( sum(W .* Xefficient, dims = 2) ./ sum(W .* X, dims = 2) )
-    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, Xref = Xref, Yref = Yref))
-    allocefficiency = cefficiency ./ techefficiency
-    return CostDEAModel(n, m, s, rts, cefficiency, clambdaeff, techefficiency, allocefficiency)
+    refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
+    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, Xref = Xref, Yref = Yref))
+    allocefficiency = refficiency ./ techefficiency
+    return RevenueDEAModel(n, m, s, rts, refficiency, rlambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W)::CostDEAModel
+function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Pref::Matrix = P)::RevenueDEAModel
     X = X[:,:]
     Xref = X[:,:]
-    W = W[:,:]
-    Wref = Wref[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
 end
 
-function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W)::CostDEAModel
+function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Pref::Vector = P)::RevenueDEAModel
     Y = Y[:,:]
     Yref = Y[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    P = P[:,:]
+    Pref = Pref[:,:]
+    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
 end
 
-function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W)::CostDEAModel
+function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Pref::Vector = W)::RevenueDEAModel
     X = X[:,:]
     Xref = X[:,:]
-    W = W[:,:]
-    Wref = Wref[:,:]
     Y = Y[:,:]
     Yref = Y[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    P = P[:,:]
+    Pref = Pref[:,:]
+    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
 end
 
-function Base.show(io::IO, x::CostDEAModel)
+function Base.show(io::IO, x::RevenueDEAModel)
     compact = get(io, :compact, false)
 
     eff = efficiency(x)
@@ -159,15 +159,15 @@ function Base.show(io::IO, x::CostDEAModel)
     s = noutputs(x)
 
     if !compact
-        print(io, "Cost DEA Model \n")
+        print(io, "Revenue DEA Model \n")
         print(io, "DMUs = ", n)
         print(io, "; Inputs = ", m)
         print(io, "; Outputs = ", s)
         print(io, "\n")
-        print(io, "Orientation = Input")
+        print(io, "Orientation = Output")
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Cost", "Technical", "Allocative"], ["$i" for i in 1:n]))
+        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Revenue", "Technical", "Allocative"], ["$i" for i in 1:n]))
 
     else
 

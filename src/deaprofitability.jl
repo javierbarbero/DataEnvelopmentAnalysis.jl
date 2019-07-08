@@ -58,7 +58,7 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
     ny, s = size(Y)
 
     nw, mw = size(W)
-    np, mp = size(P)
+    np, sp = size(P)
 
     nrefx, mref = size(Xref)
     nrefy, sref = size(Yref)
@@ -75,7 +75,7 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
     if mw != m
         error("number  of input prices and intputs is different")
     end
-    if mp != m
+    if sp != s
         error("number of output prices and otuputs is different")
     end
     if nrefx != nrefy

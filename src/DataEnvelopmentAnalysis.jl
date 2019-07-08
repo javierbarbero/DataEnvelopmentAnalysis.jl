@@ -30,7 +30,7 @@ module DataEnvelopmentAnalysis
     efficiency,
     nobs, ninputs, noutputs, peers,
     # Economic models
-    deacost, deaprofitability
+    deacost, dearevenue, deaprofitability
 
     # Include code of functions
     include("technical.jl")
@@ -39,6 +39,7 @@ module DataEnvelopmentAnalysis
     include("deagdf.jl")
     include("economic.jl")
     include("deacost.jl")
+    include("dearevenue.jl")
     include("deaprofitability.jl")
 
     function __init__()

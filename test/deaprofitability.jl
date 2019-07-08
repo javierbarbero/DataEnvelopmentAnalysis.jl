@@ -1,4 +1,4 @@
-# Tests for Generalized DF DEA Models
+# Tests for Profitability DEA Models
 @testset "ProfitabilityDEAModel" begin
 
     ## Test Profitability DEA Model with Zofío and Prieto (2006) data
