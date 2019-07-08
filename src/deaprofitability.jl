@@ -30,9 +30,13 @@ inputs `X`, outputs `Y`, price of inputs `W`, and price of outptus `P`.
 # Examples
 ```jldoctest
 julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
 julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
 julia> deaprofitability(X, Y, W, P)
 Profitability DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2

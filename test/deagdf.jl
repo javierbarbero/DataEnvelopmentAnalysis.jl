@@ -1,7 +1,7 @@
 # Tests for Generalized DF DEA Models
 @testset "GeneralizedDFDEAModel" begin
 
-    ## Test Radial DEA Models with FLS Book data
+    ## Test Generalized DF DEA Model with Zofío and Prieto (2006) data
     X = [5 3; 2 4; 4 2; 4 8; 7 9]
     Y = [7 4; 10 8; 8 10; 5 4; 3 6]
 

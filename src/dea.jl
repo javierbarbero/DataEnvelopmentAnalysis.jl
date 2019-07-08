@@ -34,7 +34,9 @@ returns to scale `:VRS`.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> dea(X, Y)
 Radial DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1

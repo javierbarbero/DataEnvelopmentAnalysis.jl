@@ -24,13 +24,13 @@ module DataEnvelopmentAnalysis
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
     TechnicalDEAModel, RadialDEAModel,
     AbstractEconomicDEAModel,
-    ProfitabilityDEAModel,
+    CostDEAModel, ProfitabilityDEAModel,
     # Technical models
     dea, deaadd, deagdf,
     efficiency,
     nobs, ninputs, noutputs, peers,
     # Economic models
-    deaprofitability
+    deacost, deaprofitability
 
     # Include code of functions
     include("technical.jl")
@@ -38,6 +38,15 @@ module DataEnvelopmentAnalysis
     include("deaadd.jl")
     include("deagdf.jl")
     include("economic.jl")
+    include("deacost.jl")
     include("deaprofitability.jl")
+
+    function __init__()
+        # Solve nonlinear problem to display Ipopt initial message
+        X = [5 3; 2 4; 4 2; 4 8; 7 9];
+        Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+        deagdf(X, Y, 0.5, rts = :VRS)
+        nothing
+    end
 
 end # module

@@ -27,7 +27,9 @@ returns to scale `:VRS`.
 # Examples
 ```jldoctest
 julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
+
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+
 julia> deagdf(X, Y, 0.5, rts = :VRS)
 Generalized DF DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
@@ -110,13 +112,13 @@ end
 function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
     X = X[:,:]
     Xref = X[:,:]
-    return deagdf(X, Y, alpha, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, Xref = Xref, Yref = Yref)
 end
 
 function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::GeneralizedDFDEAModel
     Y = Y[:,:]
     Yref = Y[:,:]
-    return deagdf(X, Y, alpha, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, Xref = Xref, Yref = Yref)
 end
 
 function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::GeneralizedDFDEAModel
@@ -124,7 +126,7 @@ function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, Xref::
     Xref = X[:,:]
     Y = Y[:,:]
     Yref = Y[:,:]
-    return deagdf(X, Y, alpha, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, Xref = Xref, Yref = Yref)
 end
 
 function Base.show(io::IO, x::GeneralizedDFDEAModel)

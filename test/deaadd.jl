@@ -1,7 +1,8 @@
 # Tests for Radial DEA Models
 @testset "AdditiveDEAModel" begin
 
-    ## Test Radial DEA Models with FLS Book data
+    ## Test Additive DEA Models with FLS Book data
+    # Test against results with R
     X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17]
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 

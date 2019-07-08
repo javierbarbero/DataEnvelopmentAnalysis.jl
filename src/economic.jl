@@ -49,6 +49,14 @@ function efficiency(model::AbstractEconomicDEAModel, type::Symbol = :Economic)::
         return model.eff
     end
 
+    if type == :Technical
+        if isdefined(model, :techeff)
+            return model.techeff
+        else
+            error(typeof(model), " has no efficiency type ", string(type))
+        end
+    end
+
     if type == :CRS
         if isdefined(model, :crseff)
             return model.crseff
