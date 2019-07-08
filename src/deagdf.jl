@@ -79,14 +79,14 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, Xref::
         y0 = Y[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(Ipopt.Optimizer, print_level= 0 ))
+        deamodel = Model(with_optimizer(Ipopt.Optimizer, print_level = 0))
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:nref] >= 0)
 
         @NLobjective(deamodel, Min, eff)
 
-        @NLconstraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff^alpha * x0[j])
-        @NLconstraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] / (eff^(1-alpha)) )
+        @NLconstraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff^(1-alpha) * x0[j])
+        @NLconstraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] / (eff^alpha) )
 
         # Add return to scale constraints
         if rts == :CRS
