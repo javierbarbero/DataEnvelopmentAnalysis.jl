@@ -30,20 +30,20 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 
-julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 
-julia> deacost(X, Y, W)
-Cost DEA Model
+julia> dearevenue(X, Y, P)
+Revenue DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
-Orientation = Input; Returns to Scale = VRS
+Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────
-       Cost  Technical  Allocative
+    Revenue  Technical  Allocative
 ──────────────────────────────────
-1  0.615385      0.75     0.820513
-2  1.0           1.0      1.0
-3  1.0           1.0      1.0
-4  0.5           0.5      1.0
-5  0.347826      0.375    0.927536
+1  0.644444   0.777778    0.828571
+2  1.0        1.0         1.0
+3  1.0        1.0         1.0
+4  0.5        0.5         1.0
+5  0.456522   0.6         0.76087
 ──────────────────────────────────
 ```
 """
