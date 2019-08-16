@@ -11,8 +11,11 @@ Return efficiency scores of a technical DEA model.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> deaio = dea(X, Y);
+
 julia> efficiency(deaio)
 11-element Array{Float64,1}:
  1.0
@@ -36,8 +39,11 @@ Return number of observations of a technical DEA model.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> deaio = dea(X, Y);
+
 julia> nobs(deaio)
 11
 ```
@@ -50,8 +56,11 @@ Return number of inputs of a technical DEA model.
 ## Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> deaio = dea(X, Y);
+
 julia> ninputs(deaio)
 2
 ```
@@ -64,8 +73,11 @@ Return number of outputs of a technical DEA model.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> deaio = dea(X, Y);
+
 julia> noutputs(deaio)
 1
 ```
@@ -78,8 +90,11 @@ Return peers of a technical DEA model.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
 julia> deaio = dea(X, Y);
+
 julia> peers(deaio)
 11×11 SparseArrays.SparseMatrixCSC{Float64,Int64} with 17 stored entries:
   [1 ,  1]  =  1.0

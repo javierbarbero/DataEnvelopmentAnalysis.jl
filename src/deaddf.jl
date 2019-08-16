@@ -1,0 +1,181 @@
+"""
+    DirectionalDEAModel
+An data structure representing a directional distance function DEA model.
+"""
+struct DirectionalDEAModel <: AbstractTechnicalDEAModel
+    n::Int64
+    m::Int64
+    s::Int64
+    rts::Symbol
+    eff::Vector
+    lambda::SparseMatrixCSC{Float64, Int64}
+end
+
+"""
+    deaddf(X, Y, Gx, Gy)
+Compute data envelopment analysis directional distance function model for inputs
+`X` and outputs `Y`, using directions `Gx` and `Gy`.
+
+# Optional Arguments
+- `orient=:Input`: chosse between input oriented radial model `:Input` or
+output oriented radial model `:Output`.
+- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable
+returns to scale `:VRS`.
+- `Xref=X`: reference set of inputs to which evaluate the units.
+- `Yref=Y`: reference set of outputs to which evaluate the units.
+
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> deaddf(X, Y, ones(size(X)), ones(size(Y)))
+Directional DF DEA Model
+DMUs = 11; Inputs = 2; Outputs = 1
+Returns to Scale = CRS
+────────────────
+      efficiency
+────────────────
+1   -3.43053e-16
+2    3.21996
+3    2.12169
+4    0.0
+5    6.73567
+6    1.94595
+7    0.0
+8    3.63586
+9    1.83784
+10  10.2311
+11   0.0
+────────────────
+```
+"""
+function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Matrix = Y)::DirectionalDEAModel
+    # Check parameters
+    nx, m = size(X)
+    ny, s = size(Y)
+
+    nGx, mGx = size(Gx)
+    nGy, sGy = size(Gy)
+
+    nrefx, mref = size(Xref)
+    nrefy, sref = size(Yref)
+
+    if nx != ny
+        error("number of observations is different in inputs and outputs")
+    end
+    if nrefx != nrefy
+        error("number of observations is different in inputs reference set and ouputs reference set")
+    end
+    if m != mref
+        error("number of inputs in evaluation set and reference set is different")
+    end
+    if s != sref
+        error("number of outputs in evaluation set and reference set is different")
+    end
+    if nGx != nx
+        error("number of observations is different in inputs and inputs direction")
+    end
+    if nGy != ny
+        error("number of observations is different in outputs and outputs direction")
+    end
+    if mGx != m
+        error("Number of inputs and number of inputs directions is different")
+    end
+    if sGy != s
+        error("Number of outputs and number of outputs directios is different")
+    end
+
+    # Compute efficiency for each DMU
+    n = nx
+    nref = nrefx
+
+    effi = zeros(n)
+    lambdaeff = spzeros(n, nref)
+
+    for i=1:n
+        # Value of inputs and outputs to evaluate
+        x0 = X[i,:]
+        y0 = Y[i,:]
+
+        # Directions to use
+        Gx0 = Gx[i,:]
+        Gy0 = Gy[i,:]
+
+        # Create the optimization model
+        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        @variable(deamodel, eff)
+        @variable(deamodel, lambda[1:nref] >= 0)
+
+        @objective(deamodel, Max, eff)
+
+        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j] - eff * Gx0[j])
+        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] + eff * Gy0[j])
+
+        # Add return to scale constraints
+        if rts == :CRS
+            # No contraint to add for constant returns to scale
+        elseif rts == :VRS
+            @constraint(deamodel, sum(lambda) == 1)
+        else
+            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+        end
+
+        # Optimize and return results
+        JuMP.optimize!(deamodel)
+
+        effi[i]  = JuMP.objective_value(deamodel)
+        lambdaeff[i,:] = JuMP.value.(lambda)
+
+    end
+
+    return DirectionalDEAModel(n, m, s, rts, effi, lambdaeff)
+
+end
+
+function deaddf(X::Vector, Y::Matrix, Gx::Vector, Gy::Matrix; rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::DirectionalDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    Gx = Gx[:,:]
+    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function deaddf(X::Matrix, Y::Vector, Gx::Matrix, Gy::Vector; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::DirectionalDEAModel
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    Gy = Gy[:,:]
+    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function deaddf(X::Vector, Y::Vector, Gx::Vector, Gy::Vector; rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::DirectionalDEAModel
+    X = X[:,:]
+    Xref = X[:,:]
+    Gx = Gx[:,:]
+    Y = Y[:,:]
+    Yref = Y[:,:]
+    Gy = Gy[:,:]
+    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+end
+
+function Base.show(io::IO, x::DirectionalDEAModel)
+    compact = get(io, :compact, false)
+
+    eff = efficiency(x)
+    n = nobs(x)
+    m = ninputs(x)
+    s = noutputs(x)
+
+    if !compact
+        print(io, "Directional DF DEA Model \n")
+        print(io, "DMUs = ", n)
+        print(io, "; Inputs = ", m)
+        print(io, "; Outputs = ", s)
+        print(io, "\n")
+        print(io, "Returns to Scale = ", string(x.rts))
+        print(io, "\n")
+        show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
+    else
+
+    end
+end

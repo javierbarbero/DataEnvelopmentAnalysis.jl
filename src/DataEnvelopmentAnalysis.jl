@@ -22,11 +22,12 @@ module DataEnvelopmentAnalysis
     export
     # Types
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
-    TechnicalDEAModel, RadialDEAModel,
+    TechnicalDEAModel,
+    RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel,
     AbstractEconomicDEAModel,
-    CostDEAModel, ProfitabilityDEAModel,
+    CostDEAModel, RevenueDEAModel, ProfitabilityDEAModel,
     # Technical models
-    dea, deaadd, deagdf,
+    dea, deaadd, deaddf, deagdf,
     efficiency,
     nobs, ninputs, noutputs, peers,
     # Economic models
@@ -36,6 +37,7 @@ module DataEnvelopmentAnalysis
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
+    include("deaddf.jl")
     include("deagdf.jl")
     include("economic.jl")
     include("deacost.jl")
