@@ -26,12 +26,17 @@ module DataEnvelopmentAnalysis
     RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel,
     AbstractEconomicDEAModel,
     CostDEAModel, RevenueDEAModel, ProfitabilityDEAModel,
+    AbstractProductivityDEAModel,
+    MalmquistDEAModel,
     # Technical models
     dea, deaadd, deaddf, deagdf,
     efficiency,
     nobs, ninputs, noutputs, peers,
     # Economic models
-    deacost, dearevenue, deaprofitability
+    deacost, dearevenue, deaprofitability,
+    # Productivity models
+    malmquist,
+    prodchange
 
     # Include code of functions
     include("technical.jl")
@@ -39,10 +44,14 @@ module DataEnvelopmentAnalysis
     include("deaadd.jl")
     include("deaddf.jl")
     include("deagdf.jl")
+
     include("economic.jl")
     include("deacost.jl")
     include("dearevenue.jl")
     include("deaprofitability.jl")
+
+    include("productivity.jl")
+    include("malmquist.jl")
 
     function __init__()
         # Solve nonlinear problem to display Ipopt initial message

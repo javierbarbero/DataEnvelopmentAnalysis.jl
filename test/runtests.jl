@@ -11,5 +11,6 @@ using Test
     include("deacost.jl")
     include("dearevenue.jl")
     include("deaprofitability.jl")
+    include("malmquist.jl")
 
 end
