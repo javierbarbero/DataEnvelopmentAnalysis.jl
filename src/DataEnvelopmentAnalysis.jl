@@ -25,7 +25,7 @@ module DataEnvelopmentAnalysis
     TechnicalDEAModel,
     RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel,
     AbstractEconomicDEAModel,
-    CostDEAModel, RevenueDEAModel, ProfitabilityDEAModel,
+    CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
     # Technical models
@@ -33,7 +33,7 @@ module DataEnvelopmentAnalysis
     efficiency, slacks,
     nobs, ninputs, noutputs, peers,
     # Economic models
-    deacost, dearevenue, deaprofitability,
+    deacost, dearevenue, deaprofit, deaprofitability,
     # Productivity models
     malmquist,
     prodchange
@@ -48,6 +48,7 @@ module DataEnvelopmentAnalysis
     include("economic.jl")
     include("deacost.jl")
     include("dearevenue.jl")
+    include("deaprofit.jl")
     include("deaprofitability.jl")
 
     include("productivity.jl")

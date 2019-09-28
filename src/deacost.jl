@@ -151,12 +151,12 @@ end
 function Base.show(io::IO, x::CostDEAModel)
     compact = get(io, :compact, false)
 
-    eff = efficiency(x)
-    techeff = efficiency(x, :Technical)
-    alloceff = efficiency(x, :Allocative)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    eff = efficiency(x)
+    techeff = efficiency(x, :Technical)
+    alloceff = efficiency(x, :Allocative)
 
     if !compact
         print(io, "Cost DEA Model \n")

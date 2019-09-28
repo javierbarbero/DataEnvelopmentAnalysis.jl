@@ -121,7 +121,7 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
 
     end
 
-    # Technical efficiency
+    # Technical, scale and allocative efficiency
     crsefficiency = efficiency(deagdf(X, Y, alpha, rts = :CRS, Xref = Xref, Yref = Yref, slack = false))
     vrsefficiency = efficiency(deagdf(X, Y, alpha, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))
     scalefficiency = crsefficiency ./ vrsefficiency
@@ -162,14 +162,14 @@ end
 function Base.show(io::IO, x::ProfitabilityDEAModel)
     compact = get(io, :compact, false)
 
+    n = nobs(x)
+    m = ninputs(x)
+    s = noutputs(x)
     eff = efficiency(x)
     crseff = efficiency(x, :CRS)
     vrseff = efficiency(x, :VRS)
     scaleeff = efficiency(x, :Scale)
     alloceff = efficiency(x, :Allocative)
-    n = nobs(x)
-    m = ninputs(x)
-    s = noutputs(x)
 
     if !compact
         print(io, "Profitability DEA Model \n")
