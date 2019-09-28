@@ -118,7 +118,7 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
 
     # Cost, technical and allocative efficiency
     cefficiency  = vec( sum(W .* Xefficient, dims = 2) ./ sum(W .* X, dims = 2) )
-    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, Xref = Xref, Yref = Yref))
+    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, Xref = Xref, Yref = Yref, slack = false))
     allocefficiency = cefficiency ./ techefficiency
     return CostDEAModel(n, m, s, rts, cefficiency, clambdaeff, techefficiency, allocefficiency)
 

@@ -23,6 +23,18 @@
                                0.09883720930;
                                0.34177215190;
                                0.00000000000]
+    @test slacks(deaddfobs, :X) ≈ [0.000000000   0;
+                               0.000000000   0;
+                               0.000000000   0;
+                               0.000000000   0;
+                               0.000000000   0;
+                               5.714285714   0;
+                               0.000000000   0;
+                               0.000000000   0;
+                               1.802325581   0;
+                               0.000000000   0;
+                               0.000000000   4]
+    @test slacks(deaddfobs, :Y) ≈ zeros(11)
 
     # Observed VRS
     deaddfobsvrs = deaddf(X, Y, X, Y, rts = :VRS)
@@ -41,6 +53,28 @@
                               0.0000000000;
                               0.1821192053;
                               0.00000000000]
+    @test slacks(deaddfobsvrs, :X) ≈ [0.000000000   0;
+                              0.000000000   0;
+                              0.000000000   0;
+                              0.000000000   0;
+                              0.000000000   0;
+                              0   0;
+                              0.000000000   0;
+                              0.000000000   0;
+                              0   0;
+                              0.000000000   4.32781457;
+                              0.000000000   4]
+    @test slacks(deaddfobsvrs, :Y) ≈ [0.000000000;
+                             0.000000000;
+                             0.000000000;
+                             0.000000000;
+                             0.3915343915;
+                             0.000000000;
+                             0.000000000;
+                             0.000000000;
+                             0.000000000;
+                             0.000000000;
+                             0.000000000]
 
     # Ones CRS
     deaddfones = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :CRS)
@@ -59,6 +93,18 @@
                              1.837837838;
                              10.231053604;
                              0.00000000000]
+    @test slacks(deaddfones, :X) ≈ [0.000000000   0;
+                             0.000000000   0;
+                             0.000000000   0;
+                             0.000000000   0;
+                             0.000000000   0;
+                             10.918918919   0;
+                             0.000000000   0;
+                             0.000000000   0;
+                             4.756756757    0;
+                             0.000000000   0;
+                             0.000000000   4]
+    @test slacks(deaddfones, :Y) ≈ zeros(11)
 
     # Ones VRS
     deaddfonesvrs = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS)
@@ -77,6 +123,18 @@
                             0.000000000;
                             5.000000000;
                             0.000000000]
+    @test slacks(deaddfonesvrs, :X) ≈ [0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            0.000000000   6;
+                            0.000000000   4]
+   @test slacks(deaddfonesvrs, :Y) ≈ zeros(11) atol = 1e-14
 
     # Only X CRS
     deaddfonlyX = deaddf(X, Y, X, zeros(size(Y)), rts = :CRS)
@@ -95,6 +153,18 @@
                             0.1798941799;
                             0.5094339623;
                             0.0000000000]
+    @test slacks(deaddfonlyX, :X) ≈ [0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            4.444444444   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            1.640211640   0;
+                            0.000000000   0;
+                            0.000000000   4]
+    @test slacks(deaddfonlyX, :Y) ≈ zeros(11) 
 
     # Only X VRS
     deaddfonlyXvrs = deaddf(X, Y, X, zeros(size(Y)), rts = :VRS)
@@ -113,6 +183,28 @@
                             0.0000000000;
                             0.5068790731;
                             0.0000000000]
+    @test slacks(deaddfonlyXvrs, :X) ≈ [0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            0.000000000   0;
+                            0.000000000   4]
+    @test slacks(deaddfonlyXvrs, :Y) ≈ [0.000000000;
+                            0.000000000;
+                            0.000000000;
+                            0.000000000;
+                            2.698412698;
+                            0.000000000;
+                            0.000000000;
+                            0.000000000;
+                            0.000000000;
+                            0.000000000;
+                            0.000000000]
 
     # Only Y CRS
     deaddfonlyY = deaddf(X, Y, zeros(size(X)), Y, rts = :CRS)
@@ -131,6 +223,18 @@
                             0.2193548387;
                             1.0384615385;
                             0.0000000000]
+    @test slacks(deaddfonlyY, :X) ≈ [0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            8   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            2   0;
+                            0.000000000   0;
+                            0.000000000   4]
+    @test slacks(deaddfonlyY, :Y) ≈ zeros(11)
 
     # Only Y VRS
     deaddfonlyYvrs = deaddf(X, Y, zeros(size(X)), Y, rts = :VRS)
@@ -149,35 +253,62 @@
                             0.0000000000;
                             0.1923076923;
                             0.0000000000]
+    @test slacks(deaddfonlyYvrs, :X) ≈ [0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            0.000000000   0;
+                            0.000000000   0;
+                            0   0;
+                            5   11;
+                            0.000000000   4]
+    @test slacks(deaddfonlyYvrs, :Y) ≈ zeros(11) atol = 1e-14
 
-     ## Test if one-by-one DEA using evaluation and reference sets match initial results
-     deaddfobs_ref_eff = zeros(size(X, 1))
+    # Test no slacks
+    deaddfnoslack = deaddf(X, Y, X, Y, slack = false)
+    @test efficiency(deaddfnoslack) == efficiency(deaddfobs)
+    @test isempty(slacks(deaddfnoslack, :X)) == 1
+    @test isempty(slacks(deaddfnoslack, :Y)) == 1
 
-     deaddfobsvs_ref_eff = zeros(size(X, 1))
+    ## Test if one-by-one DEA using evaluation and reference sets match initial results
+    deaddfobs_ref_eff = zeros(size(X, 1))
 
-     Gx = X[:,:]
-     Gy = Y[:,:]
+    deaddfobsvs_ref_eff = zeros(size(X, 1))
 
-     Xref = X[:,:]
-     Yref = Y[:,:]
+    deaddfvrs_ref_slackX = zeros(size(X))
+    deaddfvrs_ref_slackY = zeros(size(Y))
 
-     for i = 1:size(X, 1)
-         Xeval = X[i:i,:]
-         Xeval = Xeval[:,:]
-         Yeval = Y[i:i,:]
-         Yeval = Yeval[:,:]
-         Gxeval = Gx[i:i,:]
-         Gxeval = Gxeval[:,:]
-         Gyeval = Gy[i:i,:]
-         Gyeval = Gyeval[:,:]
+    Gx = X[:,:]
+    Gy = Y[:,:]
 
-         deaddfobs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+    Xref = X[:,:]
+    Yref = Y[:,:]
 
-         deaddfobsvs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
-     end
+    for i = 1:size(X, 1)
+        Xeval = X[i:i,:]
+        Xeval = Xeval[:,:]
+        Yeval = Y[i:i,:]
+        Yeval = Yeval[:,:]
+        Gxeval = Gx[i:i,:]
+        Gxeval = Gxeval[:,:]
+        Gyeval = Gy[i:i,:]
+        Gyeval = Gyeval[:,:]
 
-     @test deaddfobs_ref_eff ≈ efficiency(deaddfobs)
+        deaddfobs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
 
-     @test deaddfobsvs_ref_eff ≈ efficiency(deaddfobsvrs)
+        deaddfobsvs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+
+        deaddfvrs_ref_slackX[i,:] = slacks(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :X)
+        deaddfvrs_ref_slackY[i,:] = slacks(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :Y)
+    end
+
+    @test deaddfobs_ref_eff ≈ efficiency(deaddfobs)
+
+    @test deaddfobsvs_ref_eff ≈ efficiency(deaddfobsvrs)
+
+    @test deaddfvrs_ref_slackX ≈ slacks(deaddfobsvrs, :X) atol=1e-14
+    @test deaddfvrs_ref_slackY ≈ slacks(deaddfobsvrs, :Y) atol=1e-15
 
 end

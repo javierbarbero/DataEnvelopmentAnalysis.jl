@@ -16,6 +16,8 @@ struct RadialDEAModel <: AbstractRadialDEAModel
     orient::Symbol
     rts::Symbol
     eff::Vector
+    slackX::Matrix
+    slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
 end
 
@@ -24,10 +26,9 @@ end
 Compute data envelopment analysis radial model for inputs `X` and outputs `Y`.
 
 # Optional Arguments
-- `orient=:Input`: chosse between input oriented radial model `:Input` or
-output oriented radial model `:Output`.
-- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable
-returns to scale `:VRS`.
+- `orient=:Input`: chosse between input oriented radial model `:Input` or output oriented radial model `:Output`.
+- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `slack=true`: compute input and output slacks.
 - `Xref=X`: reference set of inputs to which evaluate the units.
 - `Yref=Y`: reference set of outputs to which evaluate the units.
 
@@ -41,24 +42,24 @@ julia> dea(X, Y)
 Radial DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Input; Returns to Scale = CRS
-──────────────
-    efficiency
-──────────────
-1     1.0
-2     0.62229
-3     0.819856
-4     1.0
-5     0.310371
-6     0.555556
-7     1.0
-8     0.757669
-9     0.820106
-10    0.490566
-11    1.0
-──────────────
+──────────────────────────────────────────────────
+    efficiency       slackX1      slackX2  slackY1
+──────────────────────────────────────────────────
+1     1.0        0.0          0.0              0.0
+2     0.62229   -4.41868e-15  0.0              0.0
+3     0.819856   0.0          8.17926e-15      0.0
+4     1.0       -8.03397e-16  0.0              0.0
+5     0.310371   1.80764e-15  0.0              0.0
+6     0.555556   4.44444      0.0              0.0
+7     1.0        0.0          0.0              0.0
+8     0.757669   1.60679e-15  0.0              0.0
+9     0.820106   1.64021      0.0              0.0
+10    0.490566   9.68683e-15  0.0              0.0
+11    1.0        0.0          4.0              0.0
+──────────────────────────────────────────────────
 ```
 """
-function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Matrix = X, Yref::Matrix = Y)::RadialDEAModel
+function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y)::RadialDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -83,7 +84,7 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
     n = nx
     nref = nrefx
 
-    efficiency = zeros(n)
+    effi = zeros(n)
     lambdaeff = spzeros(n, nref)
 
     for i=1:n
@@ -124,42 +125,66 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
-        efficiency[i]  = JuMP.objective_value(deamodel)
+        effi[i]  = JuMP.objective_value(deamodel)
         lambdaeff[i,:] = JuMP.value.(lambda)
 
     end
 
-    return RadialDEAModel(n, m, s, orient, rts, efficiency, lambdaeff)
+    # Compute slacks
+    if slack == true
+
+        # Get first-stage efficient X and Y
+        if orient == :Input
+            Xeff = X .* effi
+            Yeff = Y
+        elseif orient == :Output
+            Xeff = X
+            Yeff = Y .* effi
+        end
+
+        # Use additive model with radial efficient X and Y to get slacks
+        radialSlacks = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        slackX = slacks(radialSlacks, :X)
+        slackY = slacks(radialSlacks, :Y)
+    else
+        slackX = Array{Float64}(undef, 0, 0)
+        slackY = Array{Float64}(undef, 0, 0)
+    end
+
+    return RadialDEAModel(n, m, s, orient, rts, effi, slackX, slackY, lambdaeff)
 
 end
 
-function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::RadialDEAModel
+function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::RadialDEAModel
     X = X[:,:]
     Xref = X[:,:]
-    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
-function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::RadialDEAModel
+function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::RadialDEAModel
     Y = Y[:,:]
     Yref = Y[:,:]
-    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
-function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::RadialDEAModel
+function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::RadialDEAModel
     X = X[:,:]
     Xref = X[:,:]
     Y = Y[:,:]
     Yref = Y[:,:]
-    return dea(X, Y, orient = orient, rts = rts, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function Base.show(io::IO, x::RadialDEAModel)
     compact = get(io, :compact, false)
 
-    eff = efficiency(x)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    eff = efficiency(x)
+    slackX = slacks(x, :X)
+    slackY = slacks(x, :Y)
+    hasslacks = ! isempty(slackX)
 
     if !compact
         print(io, "Radial DEA Model \n")
@@ -170,8 +195,11 @@ function Base.show(io::IO, x::RadialDEAModel)
         print(io, "Orientation = ", string(x.orient))
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
-    else
-
+        if hasslacks == true
+            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
+        else
+            show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
+        end
     end
+
 end

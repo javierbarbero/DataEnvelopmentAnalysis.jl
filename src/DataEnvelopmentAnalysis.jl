@@ -30,7 +30,7 @@ module DataEnvelopmentAnalysis
     MalmquistDEAModel,
     # Technical models
     dea, deaadd, deaddf, deagdf,
-    efficiency,
+    efficiency, slacks,
     nobs, ninputs, noutputs, peers,
     # Economic models
     deacost, dearevenue, deaprofitability,

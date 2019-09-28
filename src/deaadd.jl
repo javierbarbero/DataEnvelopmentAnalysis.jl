@@ -20,8 +20,7 @@ end
 Compute data envelopment analysis weighted additive model for inputs `X` and outputs `Y`.
 
 # Optional Arguments
-- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
-returns to scale `:VRS`.
+- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
 - `wX=ones(size(X))`: matrix of weights of inputs.
 - `wY=ones(size(Y))`: matrix of weights of outputs.
 - `Xref=X`: reference set of inputs to which evaluate the units.
@@ -373,11 +372,13 @@ end
 
 function Base.show(io::IO, x::AdditiveDEAModel)
     compact = get(io, :compact, false)
-
-    eff = efficiency(x)
+    
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    eff = efficiency(x)
+    slackX = slacks(x, :X)
+    slackY = slacks(x, :Y)
 
     if !compact
         print(io, "Weighted Additive DEA Model \n")
@@ -388,8 +389,7 @@ function Base.show(io::IO, x::AdditiveDEAModel)
         print(io, "Weights = ", string(x.weights))
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(hcat(eff, x.slackX, x.slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
-    else
-
+        show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
     end
+    
 end

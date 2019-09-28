@@ -4,10 +4,10 @@
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[BenchmarkTools]]
-deps = ["JSON", "Printf", "Statistics", "Test"]
-git-tree-sha1 = "5d1dd8577643ba9014574cd40d9c028cd5e4b85a"
+deps = ["JSON", "Printf", "Statistics"]
+git-tree-sha1 = "90b73db83791c5f83155016dd1cc1f684d4e1361"
 uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "0.4.2"
+version = "0.4.3"
 
 [[BinDeps]]
 deps = ["Compat", "Libdl", "SHA", "URIParser"]
@@ -82,9 +82,9 @@ version = "0.10.3"
 
 [[GLPK]]
 deps = ["BinaryProvider", "Libdl", "MathOptInterface", "SparseArrays"]
-git-tree-sha1 = "07096d326788fad9902e55ae3e92220abffda2cf"
+git-tree-sha1 = "514692c8ffb0cb4f37afcb0f175573f31551c408"
 uuid = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
-version = "0.11.2"
+version = "0.11.4"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -127,9 +127,9 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[MathOptInterface]]
 deps = ["BenchmarkTools", "LinearAlgebra", "OrderedCollections", "SparseArrays", "Test", "Unicode"]
-git-tree-sha1 = "5e6e36e2f01efbc62b3f8bf68c8cf82035e2c6a6"
+git-tree-sha1 = "2880e4eca97edb87ea53e986880de6bc2fbcefb1"
 uuid = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
-version = "0.9.1"
+version = "0.9.3"
 
 [[MathProgBase]]
 deps = ["Compat"]
@@ -138,10 +138,9 @@ uuid = "fdba3010-5040-5b88-9595-932c9decdf73"
 version = "0.7.7"
 
 [[Missings]]
-deps = ["SparseArrays", "Test"]
-git-tree-sha1 = "f0719736664b4358aa9ec173077d4285775f8007"
+git-tree-sha1 = "29858ce6c8ae629cf2d733bffa329619a1c843d0"
 uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
-version = "0.4.1"
+version = "0.4.2"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"

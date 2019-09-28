@@ -118,7 +118,7 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::M
 
     # Cost, technical and allocative efficiency
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
-    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, Xref = Xref, Yref = Yref))
+    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, Xref = Xref, Yref = Yref, slack = false))
     allocefficiency = refficiency ./ techefficiency
     return RevenueDEAModel(n, m, s, rts, refficiency, rlambdaeff, techefficiency, allocefficiency)
 

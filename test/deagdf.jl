@@ -26,6 +26,12 @@
                                0.250;
                                0.360] atol = 1e-3
 
+    # Test no slacks
+    deanoslack = deagdf(X, Y, 0.5, rts = :VRS, slack = false)
+    @test efficiency(deanoslack) == efficiency(deagdf05vrs)
+    @test isempty(slacks(deanoslack, :X)) == 1
+    @test isempty(slacks(deanoslack, :Y)) == 1
+
      ## Test if one-by-one DEA using evaluation and reference sets match initial results
      deagdf05crs_ref_eff = zeros(size(X, 1))
 

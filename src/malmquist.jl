@@ -91,17 +91,17 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3}; orient::Symbol = :I
     for t = 1:T - 1
 
         # Compute efficiency in t
-        efft = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts))
+        efft = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false))
 
         # Compute efficiency in t + 1
-        efft1 = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts))
+        efft1 = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts, slack = false))
 
         # Compute efficiency in t +1, with reference t
-        efft1_reft = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts,
+        efft1_reft = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts, slack = false,
                                     Xref = X[:, :, t], Yref = Y[:, :, t]))
 
         # Compute efficiency in t, with reference t + 1
-        efft_reft1 = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts,
+        efft_reft1 = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false,
                                     Xref = X[:, :, t + 1], Yref = Y[:, :, t + 1]))
 
         # Inver if output oriented

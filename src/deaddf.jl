@@ -8,6 +8,8 @@ struct DirectionalDEAModel <: AbstractTechnicalDEAModel
     s::Int64
     rts::Symbol
     eff::Vector
+    slackX::Matrix
+    slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
 end
 
@@ -17,10 +19,8 @@ Compute data envelopment analysis directional distance function model for inputs
 `X` and outputs `Y`, using directions `Gx` and `Gy`.
 
 # Optional Arguments
-- `orient=:Input`: chosse between input oriented radial model `:Input` or
-output oriented radial model `:Output`.
-- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable
-returns to scale `:VRS`.
+- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `slack=true`: compute input and output slacks.
 - `Xref=X`: reference set of inputs to which evaluate the units.
 - `Yref=Y`: reference set of outputs to which evaluate the units.
 
@@ -51,7 +51,7 @@ Returns to Scale = CRS
 ────────────────
 ```
 """
-function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Matrix = Y)::DirectionalDEAModel
+function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y)::DirectionalDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -130,41 +130,60 @@ function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS
 
     end
 
-    return DirectionalDEAModel(n, m, s, rts, effi, lambdaeff)
+    # Compute slacks
+    if slack == true
+
+        # Get first-stage efficient X and Y
+        Xeff = X .- effi .* Gx
+        Yeff = Y .+ effi .* Gy
+
+        # Use additive model with radial efficient X and Y to get slacks
+        radialSlacks = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        slackX = slacks(radialSlacks, :X)
+        slackY = slacks(radialSlacks, :Y)
+    else
+        slackX = Array{Float64}(undef, 0, 0)
+        slackY = Array{Float64}(undef, 0, 0)
+    end
+
+    return DirectionalDEAModel(n, m, s, rts, effi, slackX, slackY, lambdaeff)
 
 end
 
-function deaddf(X::Vector, Y::Matrix, Gx::Vector, Gy::Matrix; rts::Symbol = :CRS, Xref::Vector = X, Yref::Matrix = Y)::DirectionalDEAModel
+function deaddf(X::Vector, Y::Matrix, Gx::Vector, Gy::Matrix; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::DirectionalDEAModel
     X = X[:,:]
     Xref = X[:,:]
     Gx = Gx[:,:]
-    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+    return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
-function deaddf(X::Matrix, Y::Vector, Gx::Matrix, Gy::Vector; rts::Symbol = :CRS, Xref::Matrix = X, Yref::Vector = Y)::DirectionalDEAModel
+function deaddf(X::Matrix, Y::Vector, Gx::Matrix, Gy::Vector; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::DirectionalDEAModel
     Y = Y[:,:]
     Yref = Y[:,:]
     Gy = Gy[:,:]
-    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+    return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
-function deaddf(X::Vector, Y::Vector, Gx::Vector, Gy::Vector; rts::Symbol = :CRS, Xref::Vector = X, Yref::Vector = Y)::DirectionalDEAModel
+function deaddf(X::Vector, Y::Vector, Gx::Vector, Gy::Vector; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::DirectionalDEAModel
     X = X[:,:]
     Xref = X[:,:]
     Gx = Gx[:,:]
     Y = Y[:,:]
     Yref = Y[:,:]
     Gy = Gy[:,:]
-    return deaddf(X, Y, Gx, Gy, rts = rts, Xref = Xref, Yref = Yref)
+    return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function Base.show(io::IO, x::DirectionalDEAModel)
     compact = get(io, :compact, false)
 
-    eff = efficiency(x)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    eff = efficiency(x)
+    slackX = slacks(x, :X)
+    slackY = slacks(x, :Y)
+    hasslacks = ! isempty(slackX)
 
     if !compact
         print(io, "Directional DF DEA Model \n")
@@ -174,8 +193,11 @@ function Base.show(io::IO, x::DirectionalDEAModel)
         print(io, "\n")
         print(io, "Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
-    else
-
+        if hasslacks == true
+            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
+        else
+            show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
+        end
     end
+
 end

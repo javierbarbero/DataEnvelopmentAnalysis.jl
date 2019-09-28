@@ -35,6 +35,18 @@
      0.000000000  0  0 0.0000000000  0  0 1.14814814815  0  0   0   0;
      0.000000000  0  0 0.4905660377  0  0 0.49056603774  0  0   0   0;
      0.000000000  0  0 0.0000000000  0  0 0.00000000000  0  0   0   1.000000000]
+     @test slacks(deaio, :X) ≈ [0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                4.444444444   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                1.640211640   0;
+                                0.000000000   0;
+                                0.000000000   4]
+    @test slacks(deaio, :Y) ≈ zeros(11)
 
     # Otuput oriented CRS
     deaoo = dea(X, Y, orient = :Output, rts = :CRS)
@@ -65,6 +77,18 @@
      0.000000000  0  0 0.0000000000  0  0 1.4000000000   0  0   0   0;
      0.000000000  0  0 1.0000000000  0  0 1.0000000000   0  0   0   0;
      1.000000000  0  0 0.0000000000  0  0 0.00000000000  0  0   0   0]
+     @test slacks(deaoo, :X) ≈ [0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                8   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                2   0;
+                                0.000000000   0;
+                                0.000000000   4]
+    @test slacks(deaoo, :Y) ≈ zeros(11)
 
     # Input oriented VRS
     deaiovrs = dea(X, Y, orient = :Input, rts = :VRS)
@@ -95,6 +119,28 @@
      0.000000000    0  0 0.0000000000  0  0.00000000000 0.00000000000  0  1   0   0;
      0.03711078928  0  0 0.4433381608  0  0.00000000000 0.5195510500   0  0   0   0;
      0.000000000    0  0 0.0000000000  0  0.00000000000 0.00000000000  0  0   0   1.000000000]
+     @test slacks(deaiovrs, :X) ≈ [0.000000000   0;
+                                   0.000000000   0;
+                                   0.000000000   0;
+                                   0.000000000   0;
+                                   0.000000000   0;
+                                   0   0;
+                                   0.000000000   0;
+                                   0.000000000   0;
+                                   0   0;
+                                   0.000000000   0;
+                                   0.000000000   4]
+    @test slacks(deaiovrs, :Y) ≈ [0.000000000;
+                                  0.000000000;
+                                  0.000000000;
+                                  0.000000000;
+                                  2.698412698;
+                                  0.000000000;
+                                  0.000000000;
+                                  0.000000000;
+                                  0.000000000;
+                                  0.000000000;
+                                  0.000000000]
 
     # Output oriented VRS
     deaoovrs = dea(X, Y, orient = :Output, rts = :VRS)
@@ -125,34 +171,61 @@
      0.000000000   0  0 0.0000000000  0  0 0.00000000000  0  1   0   0;
      0.000000000   0  0 0.0000000000  0  0 0.00000000000  0  1   0   0;
      1.000000000   0  0 0.0000000000  0  0 0.00000000000  0  0   0   0]
+    @test slacks(deaoovrs, :X) ≈ [0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                5   11;
+                                0.000000000   4]
+    @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-15
+    
+    # Test no slacks
+    deaionoslack = dea(X, Y, slack = false)
+    @test efficiency(deaionoslack) == efficiency(deaio)
+    @test isempty(slacks(deaionoslack, :X)) == 1
+    @test isempty(slacks(deaionoslack, :Y)) == 1
 
-     ## Test if one-by-one DEA using evaluation and reference sets match initial results
-     deaio_ref_eff = zeros(size(X, 1))
-     deaoo_ref_eff = zeros(size(X, 1))
+    ## Test if one-by-one DEA using evaluation and reference sets match initial results
+    deaio_ref_eff = zeros(size(X, 1))
+    deaoo_ref_eff = zeros(size(X, 1))
 
-     deaiovrs_ref_eff = zeros(size(X, 1))
-     deaoovrs_ref_eff = zeros(size(X, 1))
+    deaiovrs_ref_eff = zeros(size(X, 1))
+    deaoovrs_ref_eff = zeros(size(X, 1))
 
-     Xref = X[:,:]
-     Yref = Y[:,:]
+    deaiovrs_ref_slackX = zeros(size(X))
+    deaiovrs_ref_slackY = zeros(size(Y))
 
-     for i = 1:size(X, 1)
-         Xeval = X[i:i,:]
-         Xeval = Xeval[:,:]
-         Yeval = Y[i:i,:]
-         Yeval = Yeval[:,:]
+    Xref = X[:,:]
+    Yref = Y[:,:]
 
-         deaio_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :CRS, Xref = Xref, Yref = Yref))[1]
-         deaoo_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+    for i = 1:size(X, 1)
+        Xeval = X[i:i,:]
+        Xeval = Xeval[:,:]
+        Yeval = Y[i:i,:]
+        Yeval = Yeval[:,:]
 
-         deaiovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :VRS, Xref = Xref, Yref = Yref))[1]
-         deaoovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :VRS, Xref = Xref, Yref = Yref))[1]
-     end
+        deaio_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaoo_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :CRS, Xref = Xref, Yref = Yref))[1]
 
-     @test deaio_ref_eff ≈ efficiency(deaio)
-     @test deaoo_ref_eff ≈ efficiency(deaoo)
+        deaiovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Input, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+        deaoovrs_ref_eff[i] = efficiency(dea(Xeval, Yeval, orient = :Output, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-     @test deaiovrs_ref_eff ≈ efficiency(deaiovrs)
-     @test deaoovrs_ref_eff ≈ efficiency(deaoovrs)
+        deaiovrs_ref_slackX[i,:] = slacks(dea(Xeval, Yeval, orient = :Input, rts = :VRS, Xref = Xref, Yref = Yref), :X)
+        deaiovrs_ref_slackY[i,:] = slacks(dea(Xeval, Yeval, orient = :Input, rts = :VRS, Xref = Xref, Yref = Yref), :Y)
+    end
+
+    @test deaio_ref_eff ≈ efficiency(deaio)
+    @test deaoo_ref_eff ≈ efficiency(deaoo)
+
+    @test deaiovrs_ref_eff ≈ efficiency(deaiovrs)
+    @test deaoovrs_ref_eff ≈ efficiency(deaoovrs)
+
+    @test deaiovrs_ref_slackX ≈ slacks(deaiovrs, :X) atol=1e-14
+    @test deaiovrs_ref_slackY ≈ slacks(deaiovrs, :Y) atol=1e-15
 
 end
