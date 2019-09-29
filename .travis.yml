@@ -1,4 +1,6 @@
 language: julia
+codecov: true
+coveralls: true
 
 os:
     - linux
@@ -7,6 +9,3 @@ julia:
     - 1.0
     - 1.1
     - 1.2
-
-after_success:
-    - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
