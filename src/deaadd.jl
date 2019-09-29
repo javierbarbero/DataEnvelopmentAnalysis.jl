@@ -140,7 +140,7 @@ end
 function deaadd(X::Vector, Y::Matrix; rts::Symbol = :VRS, wX::Vector = ones(size(X)), wY::Matrix = ones(size(Y)), Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
     X = X[:,:]
     wX = wX[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     return deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
@@ -148,17 +148,17 @@ end
 function deaadd(X::Matrix, Y::Vector; rts::Symbol = :VRS, wX::Matrix = ones(size(X)), wY::Vector = ones(size(Y)), Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
     Y = Y[:,:]
     wY = wY[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
 function deaadd(X::Vector, Y::Vector; rts::Symbol = :VRS, wX::Vector = ones(size(X)), wY::Vector = ones(size(Y)), Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
     X = X[:,:]
     wX = wX[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
     wY = wY[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 

@@ -52,40 +52,30 @@ function efficiency(model::AbstractEconomicDEAModel, type::Symbol = :Economic)::
     if type == :Technical
         if isdefined(model, :techeff)
             return model.techeff
-        else
-            error(typeof(model), " has no efficiency type ", string(type))
         end
     end
 
     if type == :CRS
         if isdefined(model, :crseff)
             return model.crseff
-        else
-            error(typeof(model), " has no efficiency type ", string(type))
         end
     end
 
     if type == :VRS
         if isdefined(model, :vrseff)
             return model.vrseff
-        else
-            error(typeof(model), " has no efficiency type ", string(type))
         end
     end
 
     if type == :Scale
         if isdefined(model, :scaleff)
             return model.scaleff
-        else
-            error(typeof(model), " has no efficiency type ", string(type))
         end
     end
 
     if type == :Allocative
         if isdefined(model, :alloceff)
             return model.alloceff
-        else
-            error(typeof(model), " has no efficiency type ", string(type))
         end
     end
 

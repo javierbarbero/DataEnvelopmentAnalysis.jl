@@ -58,4 +58,12 @@
     show(IOBuffer(), deaio)
     show(IOBuffer(), deanoslack)
 
+    # Test errors
+    @test_throws ErrorException deagdf([1; 2 ; 3], [4 ; 5], 0.5) #  Different number of observations
+    @test_throws ErrorException deagdf([1; 2], [4 ; 5], 0.5, Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], 0.5, Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], 0.5, Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException deagdf([1; 2; 3], [4; 5; 6], 0.5, rts = :Error) # Invalid returns to scale
+
+
 end

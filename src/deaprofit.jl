@@ -85,6 +85,18 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
     end
+    if size(Gx) != size(X)
+        error("size of inputs should be equal to size of inputs direction")
+    end
+    if size(Gy) != size(Y)
+        error("size of outputs should be equal to size of outputs direction")
+    end
+    if size(Wref) != size(Xref)
+        error("size of reference prices for inputs should be equal to size of reference inputs")
+    end
+    if size(Pref) != size(Yref)
+        error("size of reference prices for outputs should be equal to size of reference outputs")
+    end
 
     # Compute efficiency for each DMU
     n = nx

@@ -315,4 +315,13 @@
     show(IOBuffer(), deaddfobs)
     show(IOBuffer(), deaddfnoslack)
 
+    # Test errors
+    @test_throws ErrorException deaddf([1; 2 ; 3], [4 ; 5], [1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws ErrorException deaddf([1; 2], [4 ; 5], [1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException deaddf([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException deaddf([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6]) # Different size of inputs direction
+    @test_throws ErrorException deaddf([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+
 end

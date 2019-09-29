@@ -23,6 +23,7 @@ inputs `X`, outputs `Y` and price of outputs `P`.
 # Optional Arguments
 - `Xref=X`: reference set of inputs to which evaluate the units.
 - `Yref=Y`: reference set of outputs to which evaluate the units.
+- `Pref=P`: reference set of output prices to which evaluate the units.
 
 # Examples
 ```jldoctest
@@ -74,6 +75,9 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::M
     end
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
+    end
+    if size(Pref) != size(Yref)
+        error("size of reference prices for outputs should be equal to size of reference outputs")
     end
 
     # Compute efficiency for each DMU
@@ -138,7 +142,7 @@ function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::M
     return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
 end
 
-function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Pref::Vector = W)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Pref::Vector = P)::RevenueDEAModel
     X = X[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]

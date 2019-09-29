@@ -74,17 +74,11 @@ function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
     end
-    if nGx != nx
-        error("number of observations is different in inputs and inputs direction")
+    if size(Gx) != size(X)
+        error("size of inputs should be equal to size of inputs direction")
     end
-    if nGy != ny
-        error("number of observations is different in outputs and outputs direction")
-    end
-    if mGx != m
-        error("Number of inputs and number of inputs directions is different")
-    end
-    if sGy != s
-        error("Number of outputs and number of outputs directios is different")
+    if size(Gy) != size(Y)
+        error("size of outputs should be equal to size of outputs direction")
     end
 
     # Compute efficiency for each DMU

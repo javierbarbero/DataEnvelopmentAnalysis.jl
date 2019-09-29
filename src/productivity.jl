@@ -108,16 +108,12 @@ function prodchange(model::AbstractProductivityDEAModel, type::Symbol = :Prod)::
     if type == :EC
         if isdefined(model, :EC)
             return model.EC
-        else
-            error(typeof(model), " has no Efficiency Change")
         end
     end
 
     if type == :TC
         if isdefined(model, :TC)
             return model.TC
-        else
-            error(typeof(model), " has no Technological Change")
         end
     end
 

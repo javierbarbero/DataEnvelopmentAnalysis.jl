@@ -477,4 +477,20 @@
     # Print
     show(IOBuffer(), deaaddcrs1)
 
+    # Test errors
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5], :Ones) #  Different number of observations
+    @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4], :Ones) # Different number of observations in reference sets
+    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2], :Ones) # Different number of inputs
+    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5], :Ones) # Different number of inputs
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Error) # Invalid model
+
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], wX = [1; 2; 3; 4]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], wY = [4; 5; 6; 7]) # Different size of weights
+  
 end

@@ -23,6 +23,7 @@ inputs `X`, outputs `Y` and price of inputs `W`.
 # Optional Arguments
 - `Xref=X`: reference set of inputs to which evaluate the units.
 - `Yref=Y`: reference set of outputs to which evaluate the units.
+- `Pref=P`: reference set of input prices to which evaluate the units.
 
 # Examples
 ```jldoctest
@@ -74,6 +75,9 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
     end
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
+    end
+    if size(Wref) != size(Xref)
+        error("size of reference prices for inputs should be equal to size of reference inputs")
     end
 
     # Compute efficiency for each DMU

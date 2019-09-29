@@ -88,4 +88,14 @@
     # Print
     show(IOBuffer(), dearevenuecooper)
 
+    # Test errors
+    @test_throws ErrorException dearevenue([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
+    @test_throws ErrorException dearevenue([1; 2], [4 ; 5], [1; 1], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException dearevenue([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException dearevenue([1 1; 2 2], [4 4; 5 5], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
+    @test_throws ErrorException dearevenue([1; 2; 3], [4 4; 5 5; 6 6], [4 4 4; 5 5 5; 6 6 6]) # Different number of output prices and outputs
+    @test_throws ErrorException dearevenue([1; 2], [4 ; 5], [1; 1], Yref = [1; 2], Pref = [1; 2; 3]) # Different size in prices reference set
+
 end

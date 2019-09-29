@@ -77,4 +77,16 @@
     # Print
     show(IOBuffer(), deaprofbl)
 
+    # Test errors
+    @test_throws ErrorException deaprofitability([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5]) #  Different number of observations
+    @test_throws ErrorException deaprofitability([1; 2], [4 ; 5], [1; 1], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException deaprofitability([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException deaprofitability([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException deaprofitability([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6]) # Different number of observation in input prices
+    @test_throws ErrorException deaprofitability([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6; 7]) # Different number of observation in output prices
+    @test_throws ErrorException deaprofitability([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different number of input prices and inputs
+    @test_throws ErrorException deaprofitability([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different number of oputput prices and outputs
+    @test_throws ErrorException deaprofitability([1; 2], [4 ; 5], [1; 1], [4 ; 5], Xref = [1; 2], Wref = [1; 2; 3]) # Different size in price reference sets
+    @test_throws ErrorException deaprofitability([1; 2], [4 ; 5], [1; 1], [4 ; 5], Yref = [1; 2], Pref = [1; 2; 3]) # Different size in prices reference set
+
 end
