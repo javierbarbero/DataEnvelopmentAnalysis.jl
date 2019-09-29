@@ -22,6 +22,7 @@ Compute data envelopment analysis malmquist productivity index for inputs
 
 # Optional Arguments
 - `orient=:Input`: chosse between input oriented radial model `:Input` or output oriented radial model `:Output`.
+- `refperiod=:Geomean`: chosse reference period for technological change: `:Base`, `:Comparison` or `:Geomean`.
 - `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
 
 # Examples

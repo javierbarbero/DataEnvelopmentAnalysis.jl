@@ -27,10 +27,10 @@
                                0.360] atol = 1e-3
 
     # Test no slacks
-    deanoslack = deagdf(X, Y, 0.5, rts = :VRS, slack = false)
-    @test efficiency(deanoslack) == efficiency(deagdf05vrs)
-    @test isempty(slacks(deanoslack, :X)) == 1
-    @test isempty(slacks(deanoslack, :Y)) == 1
+    deagdfnoslack = deagdf(X, Y, 0.5, rts = :VRS, slack = false)
+    @test efficiency(deagdfnoslack) == efficiency(deagdf05vrs)
+    @test isempty(slacks(deagdfnoslack, :X)) == 1
+    @test isempty(slacks(deagdfnoslack, :Y)) == 1
 
      ## Test if one-by-one DEA using evaluation and reference sets match initial results
      deagdf05crs_ref_eff = zeros(size(X, 1))
@@ -55,8 +55,8 @@
      @test deagdf05vrs_ref_eff ≈ efficiency(deagdf05vrs)
 
     # Print
-    show(IOBuffer(), deaio)
-    show(IOBuffer(), deanoslack)
+    show(IOBuffer(), deagdf05crs)
+    show(IOBuffer(), deagdfnoslack)
 
     # Test errors
     @test_throws ErrorException deagdf([1; 2 ; 3], [4 ; 5], 0.5) #  Different number of observations

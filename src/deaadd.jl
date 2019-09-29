@@ -232,12 +232,10 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::M
         # Standard Additive DEA model
         wX = ones(size(X))
         wY = ones(size(Y))
-        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     elseif model == :MIP
         # Measure of Inefficiency Proportions
         wX = 1 ./ X
         wY = 1 ./ Y
-        result = deaadd(X, Y, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
     elseif model == :Normalized
         # Normalized weighted additive DEA model
         wX = zeros(size(X))
