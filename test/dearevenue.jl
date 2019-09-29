@@ -85,4 +85,7 @@
     @test dearevenue_ref_tech ≈ efficiency(dearevenuevrs, :Technical)
     @test dearevenue_ref_alloc ≈ efficiency(dearevenuevrs, :Allocative)
 
+    # Print
+    show(IOBuffer(), dearevenuecooper)
+
 end

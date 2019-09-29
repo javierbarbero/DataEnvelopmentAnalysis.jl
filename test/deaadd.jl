@@ -474,4 +474,7 @@
     @test deaaddbamcrs_ref_eff ≈ efficiency(deaaddbamcrs)
     @test deaaddbamvrs_ref_eff ≈ efficiency(deaaddbamvrs)
 
+    # Print
+    show(IOBuffer(), deaaddcrs1)
+
 end

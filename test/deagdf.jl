@@ -54,4 +54,8 @@
      @test deagdf05crs_ref_eff ≈ efficiency(deagdf05crs)
      @test deagdf05vrs_ref_eff ≈ efficiency(deagdf05vrs)
 
+    # Print
+    show(IOBuffer(), deaio)
+    show(IOBuffer(), deanoslack)
+
 end

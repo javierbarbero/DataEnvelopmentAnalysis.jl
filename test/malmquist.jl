@@ -16,6 +16,7 @@
     @test nobs(mprod) == 5
     @test ninputs(mprod) == 1
     @test noutputs(mprod) == 1
+    @test nperiods(mprod) == 2
     @test prodchange(mprod) ≈ [2.0000000000;
                                1.5000000000;
                                1.2500000000;
@@ -28,5 +29,8 @@
                                     0.8888888889;
                                     0.4000000000];
     @test prodchange(mprod, :TC) ≈ [1.5; 1.5; 1.5; 1.5; 1.5];
+
+    # Print
+    show(IOBuffer(), mprod)
 
 end

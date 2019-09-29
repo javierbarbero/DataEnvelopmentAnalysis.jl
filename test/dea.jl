@@ -228,4 +228,8 @@
     @test deaiovrs_ref_slackX ≈ slacks(deaiovrs, :X) atol=1e-14
     @test deaiovrs_ref_slackY ≈ slacks(deaiovrs, :Y) atol=1e-15
 
+    # Print
+    show(IOBuffer(), deaio)
+    show(IOBuffer(), deaionoslack)
+
 end

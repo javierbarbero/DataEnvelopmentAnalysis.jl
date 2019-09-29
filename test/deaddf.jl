@@ -311,4 +311,8 @@
     @test deaddfvrs_ref_slackX ≈ slacks(deaddfobsvrs, :X) atol=1e-14
     @test deaddfvrs_ref_slackY ≈ slacks(deaddfobsvrs, :Y) atol=1e-15
 
+    # Print
+    show(IOBuffer(), deaddfobs)
+    show(IOBuffer(), deaddfnoslack)
+
 end

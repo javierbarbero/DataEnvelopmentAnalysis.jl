@@ -36,7 +36,7 @@ module DataEnvelopmentAnalysis
     deacost, dearevenue, deaprofit, deaprofitability,
     # Productivity models
     malmquist,
-    prodchange
+    nperiods, prodchange
 
     # Include code of functions
     include("technical.jl")

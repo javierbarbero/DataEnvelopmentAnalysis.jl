@@ -21,10 +21,8 @@ Compute data envelopment analysis malmquist productivity index for inputs
 `X` and outputs `Y`.
 
 # Optional Arguments
-- `orient=:Input`: chosse between input oriented radial model `:Input` or
-output oriented radial model `:Output`.
-- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable
-returns to scale `:VRS`.
+- `orient=:Input`: chosse between input oriented radial model `:Input` or output oriented radial model `:Output`.
+- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
 
 # Examples
 ```jldoctest

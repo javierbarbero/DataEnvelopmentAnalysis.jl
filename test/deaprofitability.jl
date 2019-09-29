@@ -74,4 +74,7 @@
      @test deaprofbl_ref_scale ≈ efficiency(deaprofbl, :Scale)
      @test deaprofbl_ref_alloc ≈ efficiency(deaprofbl, :Allocative)
 
+    # Print
+    show(IOBuffer(), deaprofbl)
+
 end

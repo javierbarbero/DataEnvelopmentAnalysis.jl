@@ -47,4 +47,7 @@
     @test deaprofit_ref_tech ≈ efficiency(deaprofitdollar, :Technical)
     @test deaprofit_ref_alloc ≈ efficiency(deaprofitdollar, :Allocative)
 
+    # Print
+    show(IOBuffer(), deaprofitdollar)
+
 end

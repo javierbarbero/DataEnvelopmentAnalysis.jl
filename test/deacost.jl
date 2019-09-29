@@ -85,4 +85,7 @@
     @test deacost_ref_tech ≈ efficiency(deacostvrs, :Technical)
     @test deacost_ref_alloc ≈ efficiency(deacostvrs, :Allocative)
 
+    # Print
+    show(IOBuffer(), deacostcooper)
+
 end
