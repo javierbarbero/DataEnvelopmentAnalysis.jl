@@ -126,7 +126,7 @@ end
 
 function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W)::CostDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
@@ -134,17 +134,17 @@ end
 
 function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W)::CostDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
 end
 
 function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W)::CostDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
 end
 

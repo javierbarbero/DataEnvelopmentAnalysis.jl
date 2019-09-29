@@ -152,24 +152,24 @@ end
 
 function deaddf(X::Vector, Y::Matrix, Gx::Vector, Gy::Matrix; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::DirectionalDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Gx = Gx[:,:]
     return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function deaddf(X::Matrix, Y::Vector, Gx::Matrix, Gy::Vector; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::DirectionalDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     Gy = Gy[:,:]
     return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function deaddf(X::Vector, Y::Vector, Gx::Vector, Gy::Vector; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::DirectionalDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Gx = Gx[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     Gy = Gy[:,:]
     return deaddf(X, Y, Gx, Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end

@@ -126,13 +126,13 @@ end
 
 function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Pref::Matrix = P)::RevenueDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
 end
 
 function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Pref::Vector = P)::RevenueDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     P = P[:,:]
     Pref = Pref[:,:]
     return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
@@ -140,9 +140,9 @@ end
 
 function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Pref::Vector = W)::RevenueDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     P = P[:,:]
     Pref = Pref[:,:]
     return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)

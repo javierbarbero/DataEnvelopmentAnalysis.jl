@@ -138,7 +138,7 @@ end
 
 function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix; Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W, Pref::Matrix = P)::ProfitDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     Gx = Gx[:,:]
@@ -147,7 +147,7 @@ end
 
 function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector; Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W, Pref::Vector = P)::ProfitDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     P = P[:,:]
     Pref = Pref[:,:]
     Gy = Gy[:,:]
@@ -156,9 +156,9 @@ end
 
 function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector; Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W, Pref::Vector = W)::ProfitDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     P = P[:,:]

@@ -352,21 +352,21 @@ end
 
 function deaadd(X::Vector, Y::Matrix, model::Symbol; rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
 end
 
 function deaadd(X::Matrix, Y::Vector, model::Symbol; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
 end
 
 function deaadd(X::Vector, Y::Vector, model::Symbol; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deaadd(X, Y, model, rts = rts, Xref = Xref, Yref = Yref)
 end
 

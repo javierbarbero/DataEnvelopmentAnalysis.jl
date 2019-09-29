@@ -129,21 +129,21 @@ end
 
 function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::GeneralizedDFDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::GeneralizedDFDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 

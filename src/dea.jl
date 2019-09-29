@@ -157,21 +157,21 @@ end
 
 function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::RadialDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::RadialDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 
 function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::RadialDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
 end
 

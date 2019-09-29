@@ -133,7 +133,7 @@ end
 
 function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5, Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W, Pref::Matrix = P)::ProfitabilityDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     return deaprofitability(X, Y, W, P, alpha = alpha, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
@@ -141,7 +141,7 @@ end
 
 function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5, Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W, Pref::Vector = P)::ProfitabilityDEAModel
     Y = Y[:,:]
-    Yref = Y[:,:]
+    Yref = Yref[:,:]
     P = P[:,:]
     Pref = Pref[:,:]
     return deaprofitability(X, Y, W, P, alpha = alpha, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
@@ -149,7 +149,7 @@ end
 
 function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5, Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W, Pref::Vector = P)::ProfitabilityDEAModel
     X = X[:,:]
-    Xref = X[:,:]
+    Xref = Xref[:,:]
     W = W[:,:]
     Wref = Wref[:,:]
     Y = Y[:,:]
