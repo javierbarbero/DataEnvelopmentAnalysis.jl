@@ -16,12 +16,8 @@ end
 
 """
     deaprofit(X, Y, P)
-Compute profit efficinecy data envelopment analysis model for
-inputs `X`, outputs `Y`, price of inputs `W`, and price of outptus `P`.
-
-# Optional Arguments
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
+Compute profit efficiency using data envelopment analysis model for
+inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 
 # Examples
 ```jldoctest

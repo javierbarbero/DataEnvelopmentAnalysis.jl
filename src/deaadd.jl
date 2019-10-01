@@ -20,11 +20,11 @@ end
 Compute data envelopment analysis weighted additive model for inputs `X` and outputs `Y`.
 
 # Optional Arguments
-- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `rts=:CRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
 - `wX=ones(size(X))`: matrix of weights of inputs.
 - `wY=ones(size(Y))`: matrix of weights of outputs.
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
+- `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
+- `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 
 # Examples
 ```jldoctest
@@ -174,10 +174,9 @@ Model specification:
 - `:BAM`: Bounded Adjusted Measure. (Cooper et al, 2011)
 
 # Optional Arguments
-- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable
-returns to scale `:VRS`.
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
+- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
+- `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 
 # Examples
 ```jldoctest

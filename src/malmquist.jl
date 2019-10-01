@@ -17,13 +17,12 @@ end
 
 """
     malmquist(X, Y)
-Compute data envelopment analysis malmquist productivity index for inputs
-`X` and outputs `Y`.
+Compute the Malmquist productivity index using data envelopment analysis for inputs X and outputs Y.
 
 # Optional Arguments
-- `orient=:Input`: chosse between input oriented radial model `:Input` or output oriented radial model `:Output`.
-- `refperiod=:Geomean`: chosse reference period for technological change: `:Base`, `:Comparison` or `:Geomean`.
-- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `orient=:Input`: chooses between input oriented radial model `:Input` or output oriented radial model `:Output`.
+- `refperiod=:Geomean`: chooses reference period for technological change: `:Base`, `:Comparison` or `:Geomean`.
+- `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
 
 # Examples
 ```jldoctest

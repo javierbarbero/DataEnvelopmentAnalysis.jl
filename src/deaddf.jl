@@ -19,10 +19,10 @@ Compute data envelopment analysis directional distance function model for inputs
 `X` and outputs `Y`, using directions `Gx` and `Gy`.
 
 # Optional Arguments
-- `rts=:CRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
-- `slack=true`: compute input and output slacks.
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
+- `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
+- `slack=true`: computes input and output slacks.
+- `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
+- `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 
 # Examples
 ```jldoctest

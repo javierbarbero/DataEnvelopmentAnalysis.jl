@@ -17,13 +17,11 @@ end
 
 """
     deacost(X, Y, W)
-Compute cost efficinecy data envelopment analysis model for
+Compute cost efficiency using data envelopment analysis for
 inputs `X`, outputs `Y` and price of inputs `W`.
 
 # Optional Arguments
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
-- `Pref=P`: reference set of input prices to which evaluate the units.
+- `rts=:CRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
 
 # Examples
 ```jldoctest

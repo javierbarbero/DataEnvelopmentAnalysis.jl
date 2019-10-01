@@ -19,13 +19,11 @@ end
 
 """
     deaprofitability(X, Y, W, P)
-Compute profitability efficinecy data envelopment analysis model for
-inputs `X`, outputs `Y`, price of inputs `W`, and price of outptus `P`.
+Compute profitability efficiency using data envelopment analysis for
+inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 
 # Optional Arguments
 - `alpha=0.5`: alpha to use for the generalized distance function.
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
 
 # Examples
 ```jldoctest

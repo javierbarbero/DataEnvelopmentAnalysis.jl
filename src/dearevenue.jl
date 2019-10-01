@@ -17,13 +17,11 @@ end
 
 """
     dearevenue(X, Y, P)
-Compute revenue efficinecy data envelopment analysis model for
+Compute revenue efficiency using data envelopment analysis for
 inputs `X`, outputs `Y` and price of outputs `P`.
 
 # Optional Arguments
-- `Xref=X`: reference set of inputs to which evaluate the units.
-- `Yref=Y`: reference set of outputs to which evaluate the units.
-- `Pref=P`: reference set of output prices to which evaluate the units.
+- `rts=:CRS`: chooses variable returns to scale. For constraints returns to scale choose `:VRS`.
 
 # Examples
 ```jldoctest
