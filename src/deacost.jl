@@ -46,15 +46,12 @@ Orientation = Input; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y, Wref::Matrix = W)::CostDEAModel
+function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS)::CostDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
 
     nw, mw = size(W)
-
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -63,28 +60,15 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
         error("number of observations is different in input prices and inputs")
     end
     if mw != m
-        error("number  of input prices and intputs is different")
-    end
-    if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
-    end
-    if m != mref
-        error("number of inputs in evaluation set and reference set is different")
-    end
-    if s != sref
-        error("number of outputs in evaluation set and reference set is different")
-    end
-    if size(Wref) != size(Xref)
-        error("size of reference prices for inputs should be equal to size of reference inputs")
+        error("number of input prices and intputs is different")
     end
 
     # Compute efficiency for each DMU
     n = nx
-    nref = nrefx
-
+ 
     Xefficient = zeros(n,m)
     cefficiency = zeros(n)
-    clambdaeff = spzeros(n, nref)
+    clambdaeff = spzeros(n, n)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -94,12 +78,12 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
         # Create the optimization model
         deamodel = Model(with_optimizer(GLPK.Optimizer))
         @variable(deamodel, Xeff[1:m])
-        @variable(deamodel, lambda[1:nref] >= 0)
+        @variable(deamodel, lambda[1:n] >= 0)
 
         @objective(deamodel, Min, sum(w0[j] .* Xeff[j] for j in 1:m))
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= Xeff[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
+        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
+        @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= y0[j])
 
         # Add return to scale constraints
         if rts == :CRS
@@ -120,34 +104,28 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, Xref::Matr
 
     # Cost, technical and allocative efficiency
     cefficiency  = vec( sum(W .* Xefficient, dims = 2) ./ sum(W .* X, dims = 2) )
-    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, Xref = Xref, Yref = Yref, slack = false))
+    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false))
     allocefficiency = cefficiency ./ techefficiency
     return CostDEAModel(n, m, s, rts, cefficiency, clambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W)::CostDEAModel
+function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS)::CostDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    return deacost(X, Y, W, rts = rts)
 end
 
-function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W)::CostDEAModel
+function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS)::CostDEAModel
     Y = Y[:,:]
-    Yref = Yref[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    return deacost(X, Y, W, rts = rts)
 end
 
-function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W)::CostDEAModel
+function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS)::CostDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
     Y = Y[:,:]
-    Yref = Yref[:,:]
-    return deacost(X, Y, W, rts = rts, Xref = Xref, Yref = Yref, Wref = Wref)
+    return deacost(X, Y, W, rts = rts)
 end
 
 function Base.show(io::IO, x::CostDEAModel)

@@ -46,15 +46,12 @@ Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Matrix = Y, Pref::Matrix = P)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::RevenueDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
 
     np, sp = size(P)
-
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -63,28 +60,15 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::M
         error("number of observations is different in output prices and outputs")
     end
     if sp != s
-        error("number  of output prices and outputs is different")
-    end
-    if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
-    end
-    if m != mref
-        error("number of inputs in evaluation set and reference set is different")
-    end
-    if s != sref
-        error("number of outputs in evaluation set and reference set is different")
-    end
-    if size(Pref) != size(Yref)
-        error("size of reference prices for outputs should be equal to size of reference outputs")
+        error("number of output prices and outputs is different")
     end
 
     # Compute efficiency for each DMU
     n = nx
-    nref = nrefx
 
     Yefficient = zeros(n,m)
     refficiency = zeros(n)
-    rlambdaeff = spzeros(n, nref)
+    rlambdaeff = spzeros(n, n)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -94,12 +78,12 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::M
         # Create the optimization model
         deamodel = Model(with_optimizer(GLPK.Optimizer))
         @variable(deamodel, Yeff[1:m])
-        @variable(deamodel, lambda[1:nref] >= 0)
+        @variable(deamodel, lambda[1:n] >= 0)
 
         @objective(deamodel, Max, sum(p0[j] .* Yeff[j] for j in 1:s))
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= Yeff[j])
+        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= x0[j])
+        @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
 
         # Add return to scale constraints
         if rts == :CRS
@@ -120,34 +104,28 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, Xref::M
 
     # Revenue, technical and allocative efficiency
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
-    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, Xref = Xref, Yref = Yref, slack = false))
+    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false))
     allocefficiency = refficiency ./ techefficiency
     return RevenueDEAModel(n, m, s, rts, refficiency, rlambdaeff, techefficiency, allocefficiency)
 
 end
 
-function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS, Xref::Vector = X, Yref::Matrix = Y, Pref::Matrix = P)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS)::RevenueDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
-    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
+    return dearevenue(X, Y, P, rts = rts)
 end
 
-function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Matrix = X, Yref::Vector = Y, Pref::Vector = P)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS)::RevenueDEAModel
     Y = Y[:,:]
-    Yref = Yref[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
-    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
+    return dearevenue(X, Y, P, rts = rts)
 end
 
-function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, Xref::Vector = X, Yref::Vector = Y, Pref::Vector = P)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS)::RevenueDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Yref[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
-    return dearevenue(X, Y, P, rts = rts, Xref = Xref, Yref = Yref, Pref = Pref)
+    return dearevenue(X, Y, P, rts = rts)
 end
 
 function Base.show(io::IO, x::RevenueDEAModel)

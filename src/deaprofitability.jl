@@ -50,16 +50,13 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────────────────────────────────────────────────
 ```
 """
-function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Float64 = 0.5, Xref::Matrix = X, Yref::Matrix = Y, Wref::Matrix = W, Pref::Matrix = P)::ProfitabilityDEAModel
+function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Float64 = 0.5)::ProfitabilityDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
 
     nw, mw = size(W)
     np, sp = size(P)
-
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -71,33 +68,17 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
         error("number of observations is different in output prices and outputs")
     end
     if mw != m
-        error("number  of input prices and intputs is different")
+        error("number of input prices and intputs is different")
     end
     if sp != s
         error("number of output prices and otuputs is different")
     end
-    if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
-    end
-    if m != mref
-        error("number of inputs in evaluation set and reference set is different")
-    end
-    if s != sref
-        error("number of outputs in evaluation set and reference set is different")
-    end
-    if size(Wref) != size(Xref)
-        error("size of reference prices for inputs should be equal to size of reference inputs")
-    end
-    if size(Pref) != size(Yref)
-        error("size of reference prices for outputs should be equal to size of reference outputs")
-    end
 
     # Compute efficiency for each DMU
     n = nx
-    nref = nrefx
 
     pefficiency = zeros(n)
-    plambdaeff = spzeros(n, nref)
+    plambdaeff = spzeros(n, n)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -109,11 +90,11 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
         # Create the optimization model
         deamodel = Model(with_optimizer(Ipopt.Optimizer, print_level= 0 ))
         @variable(deamodel, eff, start = 1.0)
-        @variable(deamodel, lambda[1:nref] >= 0)
+        @variable(deamodel, lambda[1:n] >= 0)
 
         @NLobjective(deamodel, Min, eff)
 
-        @NLconstraint(deamodel, sum(sum(Wref[t,mi] * Xref[t,mi] for mi in 1:m) / sum(Pref[t,si] * Yref[t,si] for si in 1:s) * lambda[t] for t in 1:nref) == eff * sum(w0[j] * x0[j] for j in 1:m ) / sum(p0[j] * y0[j] for j in 1:s))
+        @NLconstraint(deamodel, sum(sum(W[t,mi] * X[t,mi] for mi in 1:m) / sum(P[t,si] * Y[t,si] for si in 1:s) * lambda[t] for t in 1:n) == eff * sum(w0[j] * x0[j] for j in 1:m ) / sum(p0[j] * y0[j] for j in 1:s))
 
         @constraint(deamodel, sum(lambda) == 1)
 
@@ -126,8 +107,8 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
     end
 
     # Technical, scale and allocative efficiency
-    crsefficiency = efficiency(deagdf(X, Y, alpha, rts = :CRS, Xref = Xref, Yref = Yref, slack = false))
-    vrsefficiency = efficiency(deagdf(X, Y, alpha, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))
+    crsefficiency = efficiency(deagdf(X, Y, alpha, rts = :CRS, slack = false))
+    vrsefficiency = efficiency(deagdf(X, Y, alpha, rts = :VRS, slack = false))
     scalefficiency = crsefficiency ./ vrsefficiency
     allocefficiency = pefficiency ./ crsefficiency
 
@@ -135,32 +116,24 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
 
 end
 
-function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5, Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W, Pref::Matrix = P)::ProfitabilityDEAModel
+function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5)::ProfitabilityDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofitability(X, Y, W, P, alpha = alpha)
 end
 
-function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5, Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W, Pref::Vector = P)::ProfitabilityDEAModel
+function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5)::ProfitabilityDEAModel
     Y = Y[:,:]
-    Yref = Yref[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofitability(X, Y, W, P, alpha = alpha)
 end
 
-function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5, Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W, Pref::Vector = P)::ProfitabilityDEAModel
+function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5)::ProfitabilityDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
     Y = Y[:,:]
-    Yref = Y[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofitability(X, Y, W, P, alpha = alpha)
 end
 
 function Base.show(io::IO, x::ProfitabilityDEAModel)

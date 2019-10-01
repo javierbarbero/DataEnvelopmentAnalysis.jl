@@ -59,43 +59,13 @@
     @test efficiency(deacost(X, Y, W)) == efficiency(deacostvrs)
     @test efficiency(deacostvrs, :Economic) == efficiency(deacostvrs)
 
-    ## Test if one-by-one DEA using evaluation and reference sets match initial results
-    deacost_ref_eff = zeros(size(X, 1))
-    deacost_ref_tech = zeros(size(X, 1))
-    deacost_ref_alloc = zeros(size(X, 1))
-    Xref = X[:,:]
-    Yref = Y[:,:]
-    Wref = W[:,:]
-
-    for i = 1:size(X, 1)
-        Xeval = X[i:i,:]
-        Xeval = Xeval[:,:]
-        Yeval = Y[i:i,:]
-        Yeval = Yeval[:,:]
-        Weval = W[i:i,:]
-        Weval = Weval[:,:]
-
-        deacost_ref_eff[i] = efficiency(deacost(Xeval, Yeval, Weval, Xref = Xref, Yref = Yref, Wref = Wref))[1]
-        deacost_ref_tech[i] = efficiency(deacost(Xeval, Yeval, Weval,  Xref = Xref, Yref = Yref, Wref = Wref), :Technical)[1]
-        deacost_ref_alloc[i] = efficiency(deacost(Xeval, Yeval, Weval, Xref = Xref, Yref = Yref, Wref = Wref), :Allocative)[1]
-
-    end
-
-    @test deacost_ref_eff ≈ efficiency(deacostvrs)
-    @test deacost_ref_tech ≈ efficiency(deacostvrs, :Technical)
-    @test deacost_ref_alloc ≈ efficiency(deacostvrs, :Allocative)
-
     # Print
     show(IOBuffer(), deacostcooper)
 
     # Test errors
     @test_throws ErrorException deacost([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
-    @test_throws ErrorException deacost([1; 2], [4 ; 5], [1; 1], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException deacost([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException deacost([1 1; 2 2], [4 4; 5 5], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
-    @test_throws ErrorException deacost([1; 2], [4 ; 5], [1; 1], Xref = [1; 2], Wref = [1; 2; 3]) # Different size in price reference sets
 
 end

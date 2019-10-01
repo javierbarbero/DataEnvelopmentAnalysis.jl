@@ -53,33 +53,28 @@ Returns to Scale = VRS
 ─────────────────────────────────────
 ```
 """
-function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::Matrix; Xref::Matrix = X, Yref::Matrix = Y, Wref::Matrix = W, Pref::Matrix = P)::ProfitDEAModel
+function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::Matrix)::ProfitDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
 
+    nw, mw = size(W)
     np, sp = size(P)
-
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
     end
+    if nw != nx
+        error("number of observations is different in input prices and inputs")
+    end
     if np != ny
         error("number of observations is different in output prices and outputs")
     end
+    if mw != m
+        error("number of input prices and intputs is different")
+    end
     if sp != s
-        error("number  of output prices and outputs is different")
-    end
-    if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
-    end
-    if m != mref
-        error("number of inputs in evaluation set and reference set is different")
-    end
-    if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        error("number of output prices and outputs is different")
     end
     if size(Gx) != size(X)
         error("size of inputs should be equal to size of inputs direction")
@@ -87,21 +82,14 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     if size(Gy) != size(Y)
         error("size of outputs should be equal to size of outputs direction")
     end
-    if size(Wref) != size(Xref)
-        error("size of reference prices for inputs should be equal to size of reference inputs")
-    end
-    if size(Pref) != size(Yref)
-        error("size of reference prices for outputs should be equal to size of reference outputs")
-    end
 
     # Compute efficiency for each DMU
     n = nx
-    nref = nrefx
 
     Xefficient = zeros(n,m)
     Yefficient = zeros(n,m)
     pefficiency = zeros(n)
-    plambdaeff = spzeros(n, nref)
+    plambdaeff = spzeros(n, n)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -112,12 +100,12 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
         deamodel = Model(with_optimizer(GLPK.Optimizer))
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, Yeff[1:m])
-        @variable(deamodel, lambda[1:nref] >= 0)
+        @variable(deamodel, lambda[1:n] >= 0)
 
         @objective(deamodel, Max, (sum(p0[j] .* Yeff[j] for j in 1:s)) - (sum(w0[j] .* Xeff[j] for j in 1:m)))
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= Xeff[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= Yeff[j])
+        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
+        @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
 
         @constraint(deamodel, sum(lambda) == 1)
 
@@ -137,43 +125,35 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     pefficiency_den = sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2)
     pefficiency = vec( pefficiency_num ./ pefficiency_den )
 
-    techefficiency = efficiency(deaddf(X, Y, Gx, Gy, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))
+    techefficiency = efficiency(deaddf(X, Y, Gx, Gy, rts = :VRS, slack = false))
     allocefficiency = pefficiency - techefficiency
 
     return ProfitDEAModel(n, m, s, pefficiency, plambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix; Xref::Vector = X, Yref::Matrix = Y, Wref::Vector = W, Pref::Matrix = P)::ProfitDEAModel
+function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix)::ProfitDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
     Gx = Gx[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofit(X, Y, W, P, Gx, Gy)
 end
 
-function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector; Xref::Matrix = X, Yref::Vector = Y, Wref::Matrix = W, Pref::Vector = P)::ProfitDEAModel
+function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector)::ProfitDEAModel
     Y = Y[:,:]
-    Yref = Yref[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
     Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofit(X, Y, W, P, Gx, Gy)
 end
 
-function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector; Xref::Vector = X, Yref::Vector = Y, Wref::Vector = W, Pref::Vector = W)::ProfitDEAModel
+function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector)::ProfitDEAModel
     X = X[:,:]
-    Xref = Xref[:,:]
     Y = Y[:,:]
-    Yref = Yref[:,:]
     W = W[:,:]
-    Wref = Wref[:,:]
     P = P[:,:]
-    Pref = Pref[:,:]
     Gx = Gx[:,:]
     Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, Xref = Xref, Yref = Yref, Wref = Wref, Pref = Pref)
+    return deaprofit(X, Y, W, P, Gx, Gy)
 end
 
 function Base.show(io::IO, x::ProfitDEAModel)
