@@ -3,10 +3,13 @@ A Julia package for efficiency and productivity measurement using Data Envelopme
 
 | Build Status      | Coverage    |
 |:-----------------:|:-----------:|
-|  [![][travis-img]][travis-url] | [![][coveralls-img]][coveralls-url] [![][codecov-img]][codecov-url] |
+|  [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] | [![][coveralls-img]][coveralls-url] [![][codecov-img]][codecov-url] |
 
 [travis-img]: https://travis-ci.org/javierbarbero/DataEnvelopmentAnalysis.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/javierbarbero/DataEnvelopmentAnalysis.jl
+
+[appveyor-img]: https://ci.appveyor.com/api/projects/status/ql1ynl90hcixdka7?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/javierbarbero/dataenvelopmentanalysis-jl
 
 [coveralls-img]: https://coveralls.io/repos/github/javierbarbero/DataEnvelopmentAnalysis.jl/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/javierbarbero/DataEnvelopmentAnalysis.jl?branch=master
