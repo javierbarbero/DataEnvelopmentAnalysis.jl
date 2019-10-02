@@ -1,9 +1,15 @@
 # DataEnvelopmentAnalysis.jl
 A Julia package for efficiency and productivity measurement using Data Envelopment Analysis (DEA)
 
-| Build Status      | Coverage    |
-|:-----------------:|:-----------:|
-|  [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] | [![][coveralls-img]][coveralls-url] [![][codecov-img]][codecov-url] |
+| Documentation | Build Status      | Coverage    |
+|:-------------:|:-----------------:|:-----------:|
+| [![][docs-dev-img]][docs-dev-url] [![][docs-stable-img]][docs-stable-url] |  [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] | [![][coveralls-img]][coveralls-url] [![][codecov-img]][codecov-url] |
+
+[docs-stable-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-stable-url]: https://javierbarbero.github.io/DataEnvelopmentAnalysis.jl/stable
+
+[docs-dev-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-dev-url]: https://javierbarbero.github.io/DataEnvelopmentAnalysis.jl/dev
 
 [travis-img]: https://travis-ci.org/javierbarbero/DataEnvelopmentAnalysis.jl.svg?branch=master
 [travis-url]: https://travis-ci.org/javierbarbero/DataEnvelopmentAnalysis.jl
