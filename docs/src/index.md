@@ -10,7 +10,7 @@ The packes uses internally the [JuMP](https://github.com/JuliaOpt/JuMP.jl) model
 
 The package can be installed with the Julia package manager:
 ```julia
-julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis.jl"))
+julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis.jl")
 ```
 
 ## Available models
