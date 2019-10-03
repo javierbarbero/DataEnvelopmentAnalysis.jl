@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Directional Distance Function Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li><a class="toctext" href="../radial/">Radial Models</a></li><li class="current"><a class="toctext" href>Directional Distance Function Models</a><ul class="internal"><li><a class="toctext" href="#Directional-Distance-Function-Model-1">Directional Distance Function Model</a></li></ul></li><li><a class="toctext" href="../additive/">Additive Models</a></li><li><a class="toctext" href="../generalizeddf/">Generalized Distance Function Models</a></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li><a class="toctext" href="../../economic/cost/">Cost Models</a></li><li><a class="toctext" href="../../economic/revenue/">Revenue Models</a></li><li><a class="toctext" href="../../economic/profit/">Profit Models</a></li><li><a class="toctext" href="../../economic/profitability/">Profitability Models</a></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Technical Efficiency Models</li><li><a href>Directional Distance Function Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/technical/directional.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Directional Distance Function Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Directional-Distance-Function-Models-1" href="#Directional-Distance-Function-Models-1">Directional Distance Function Models</a></h1><h2><a class="nav-anchor" id="Directional-Distance-Function-Model-1" href="#Directional-Distance-Function-Model-1">Directional Distance Function Model</a></h2><p><em>Chambers, Chung and Fare (1996)</em> introduced a measure of efficiency that projects observation <span>$\left( {{\mathbf{x}_o,\mathbf{y}_{o}}} \right)$</span> in a pre-assigned  direction  <span>$\mathbf{g}= {\left({-{\mathbf{g_{x}^-},\mathbf{g^{+}_y}}} \right)\neq\mathbf{0}_{m+s}}$</span>, <span>$\mathbf{g^{-}_{x}}\mathbb{\in R}^m$</span> and  <span>$\mathbf{g^{+}_{y}}\mathbb{\in R}^s$</span>, in a proportion <span>$\beta$</span>. The associated linear program is:</p><div>\[\begin{align}
+\label{eq:ddf}
+  &amp; \underset{\beta ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \beta  \\
+ &amp; \text{subject}\ \text{to} \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} -\beta{{\mathbf{g^-_x}}} \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \  Y\mathbf{\lambda }\ge\ {{\mathbf{y}}_{o}}+\beta {{\mathbf{g^+_y}}}   \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\nonumber\\  &amp; \quad \nonumber
+\end{align}\]</div><p>The measurement of technical efficiency assuming variable returns to scale, <strong>VRS</strong>, adds the following condition:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p>In this example we compute the directional distance function DEA model under constant returns to scale using ones as directions for both inputs and outputs:</p><pre><code class="language-julia-repl">julia&gt; using DataEnvelopmentAnalysis
+
+julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia&gt; deaddf(X, Y, ones(size(X)), ones(size(Y)))
+Directional DF DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Returns to Scale = CRS
+─────────────────────────────────────────────────────
+      efficiency       slackX1       slackX2  slackY1
+─────────────────────────────────────────────────────
+1   -3.43053e-16   0.0           0.0              0.0
+2    3.21996      -3.21359e-15   0.0              0.0
+3    2.12169       0.0          -4.80367e-15      0.0
+4    0.0          -8.03397e-16   0.0              0.0
+5    6.73567      -2.41019e-15   0.0              0.0
+6    1.94595      10.9189        0.0              0.0
+7    0.0           0.0           0.0              0.0
+8    3.63586       6.42718e-15   0.0              0.0
+9    1.83784       4.75676       0.0              0.0
+10  10.2311        6.12173e-15   0.0              0.0
+11   0.0           0.0           4.0              0.0
+─────────────────────────────────────────────────────</code></pre><p>To compute the variable returns to scale model, we simply set the <code>rts</code> parameter to <code>:VRS</code>:</p><pre><code class="language-julia-repl">julia&gt; deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS)
+Directional DF DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Returns to Scale = VRS
+────────────────────────────────────────────────────
+      efficiency       slackX1  slackX2      slackY1
+────────────────────────────────────────────────────
+1   -3.43053e-16   0.0              0.0  0.0        
+2    1.41887       0.0              0.0  7.41268e-15
+3    0.0           0.0              0.0  0.0        
+4    0.0          -8.03397e-16      0.0  0.0        
+5    4.06792       0.0              0.0  0.0        
+6   -1.81673e-16   2.70127e-16      0.0  3.78178e-16
+7    0.0           0.0              0.0  0.0        
+8    0.0           0.0              0.0  0.0        
+9    0.0           0.0              0.0  0.0        
+10   5.0           0.0              6.0  0.0        
+11   0.0           0.0              4.0  4.78849e-16
+────────────────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; deaddfvrs = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS);
+
+julia&gt; efficiency(deaddfvrs)
+11-element Array{Float64,1}:
+ -3.4305304041327586e-16
+  1.4188679245283022    
+  0.0                   
+  0.0                   
+  4.067924528301886     
+ -1.816728585750256e-16 
+  0.0                   
+  0.0                   
+  0.0                   
+  5.000000000000003     
+  0.0     </code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>SparseArrays.SparseMatrixCSC{Float64,Int64}</code> object:</p><pre><code class="language-julia">peers(deaddfvrs)</code></pre><h3><a class="nav-anchor" id="deaddf-Function-Documentation-1" href="#deaddf-Function-Documentation-1">deaddf Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deaddf" href="#DataEnvelopmentAnalysis.deaddf"><code>DataEnvelopmentAnalysis.deaddf</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deaddf(X, Y, Gx, Gy)</code></pre><p>Compute data envelopment analysis directional distance function model for inputs <code>X</code> and outputs <code>Y</code>, using directions <code>Gx</code> and <code>Gy</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia&gt; deaddf(X, Y, ones(size(X)), ones(size(Y)))
+Directional DF DEA Model
+DMUs = 11; Inputs = 2; Outputs = 1
+Returns to Scale = CRS
+────────────────
+      efficiency
+────────────────
+1   -3.43053e-16
+2    3.21996
+3    2.12169
+4    0.0
+5    6.73567
+6    1.94595
+7    0.0
+8    3.63586
+9    1.83784
+10  10.2311
+11   0.0
+────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/0b9c5e92e48d430ca014a0dcd24001cf1d12f5dc/src/deaddf.jl#L16-L53">source</a></section><footer><hr/><a class="previous" href="../radial/"><span class="direction">Previous</span><span class="title">Radial Models</span></a><a class="next" href="../additive/"><span class="direction">Next</span><span class="title">Additive Models</span></a></footer></article></body></html>

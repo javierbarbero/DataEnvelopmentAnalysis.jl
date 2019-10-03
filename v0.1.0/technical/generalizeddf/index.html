@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Generalized Distance Function Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li><a class="toctext" href="../radial/">Radial Models</a></li><li><a class="toctext" href="../directional/">Directional Distance Function Models</a></li><li><a class="toctext" href="../additive/">Additive Models</a></li><li class="current"><a class="toctext" href>Generalized Distance Function Models</a><ul class="internal"><li><a class="toctext" href="#Generalized-Distance-Function-Model-1">Generalized Distance Function Model</a></li></ul></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li><a class="toctext" href="../../economic/cost/">Cost Models</a></li><li><a class="toctext" href="../../economic/revenue/">Revenue Models</a></li><li><a class="toctext" href="../../economic/profit/">Profit Models</a></li><li><a class="toctext" href="../../economic/profitability/">Profitability Models</a></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Technical Efficiency Models</li><li><a href>Generalized Distance Function Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/technical/generalizeddf.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Generalized Distance Function Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Generalized-Distance-Function-Models-1" href="#Generalized-Distance-Function-Models-1">Generalized Distance Function Models</a></h1><h2><a class="nav-anchor" id="Generalized-Distance-Function-Model-1" href="#Generalized-Distance-Function-Model-1">Generalized Distance Function Model</a></h2><p><em>Chavas and Cox (1999)</em> introduced a generalized distance function efficiency measure that reescales both inputs and outputs toward the frontier technology.</p><div>\[\begin{align}
+\label{eq:rim}
+  &amp; \underset{\delta ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ \delta  \\
+ &amp; \text{subject}\ \text{to} \nonumber \\
+ &amp; \quad \quad \quad \quad \quad \ X\mathbf{\lambda } \le \delta^{1 - \alpha} {{\mathbf{x}}_{o}} \nonumber \\
+ &amp; \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}} / \delta^{\alpha} \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber
+\end{align}\]</div><p>The measurement of technical efficiency assuming variable returns to scale, <strong>VRS</strong>, adds the following condition:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p>In this example we compute the generalized distance function DEA model under variable returns to scale using <span>$0.5$</span> for the value of <span>$\alpha$</span>:</p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+
+julia&gt; deagdf(X, Y, 0.5, rts = :VRS)
+Generalized DF DEA Model 
+DMUs = 5; Inputs = 2; Outputs = 2
+alpha = 0.5; Returns to Scale = VRS
+─────────────────────────────────────────────────────────────────
+   efficiency      slackX1      slackX2      slackY1      slackY2
+─────────────────────────────────────────────────────────────────
+1     0.68185   0.605935     0.0          0.0          4.67865   
+2     1.0       0.0          0.0         -1.89292e-7  -1.51434e-7
+3     1.0      -3.75555e-8  -1.87777e-8  -7.5111e-8   -9.38887e-8
+4     0.25      0.0          0.0         -1.04638e-7  -8.37101e-8
+5     0.36      0.2          3.4          3.0         -1.91881e-8
+─────────────────────────────────────────────────────────────────</code></pre><h3><a class="nav-anchor" id="deagdf-Function-Documentation-1" href="#deagdf-Function-Documentation-1">deagdf Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deagdf" href="#DataEnvelopmentAnalysis.deagdf"><code>DataEnvelopmentAnalysis.deagdf</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deagdf(X, Y, alpha)</code></pre><p>Compute generalized distance function data envelopment analysis model for inputs <code>X</code>, outputs <code>Y</code>, and <code>alpha</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: compute input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+
+julia&gt; deagdf(X, Y, 0.5, rts = :VRS)
+Generalized DF DEA Model 
+DMUs = 5; Inputs = 2; Outputs = 2
+alpha = 0.5; Returns to Scale = VRS
+─────────────────────────────────────────────────────────────────
+   efficiency      slackX1      slackX2      slackY1      slackY2
+─────────────────────────────────────────────────────────────────
+1     0.68185   0.605935     0.0          0.0          4.67865   
+2     1.0       0.0          0.0         -1.89292e-7  -1.51434e-7
+3     1.0      -3.75555e-8  -1.87777e-8  -7.5111e-8   -9.38887e-8
+4     0.25      0.0          0.0         -1.04638e-7  -8.37101e-8
+5     0.36      0.2          3.4          3.0         -1.91881e-8
+─────────────────────────────────────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/0b9c5e92e48d430ca014a0dcd24001cf1d12f5dc/src/deagdf.jl#L18-L49">source</a></section><footer><hr/><a class="previous" href="../additive/"><span class="direction">Previous</span><span class="title">Additive Models</span></a><a class="next" href="../../economic/cost/"><span class="direction">Next</span><span class="title">Cost Models</span></a></footer></article></body></html>
