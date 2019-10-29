@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Revenue Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li><a class="toctext" href="../../technical/radial/">Radial Models</a></li><li><a class="toctext" href="../../technical/directional/">Directional Distance Function Models</a></li><li><a class="toctext" href="../../technical/additive/">Additive Models</a></li><li><a class="toctext" href="../../technical/generalizeddf/">Generalized Distance Function Models</a></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li><a class="toctext" href="../cost/">Cost Models</a></li><li class="current"><a class="toctext" href>Revenue Models</a><ul class="internal"><li><a class="toctext" href="#Revenue-Efficiency-Model-with-Radial-Technical-Efficiency-1">Revenue Efficiency Model with Radial Technical Efficiency</a></li></ul></li><li><a class="toctext" href="../profit/">Profit Models</a></li><li><a class="toctext" href="../profitability/">Profitability Models</a></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Economic Efficiency Models</li><li><a href>Revenue Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/economic/revenue.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Revenue Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Revenue-Models-1" href="#Revenue-Models-1">Revenue Models</a></h1><h2><a class="nav-anchor" id="Revenue-Efficiency-Model-with-Radial-Technical-Efficiency-1" href="#Revenue-Efficiency-Model-with-Radial-Technical-Efficiency-1">Revenue Efficiency Model with Radial Technical Efficiency</a></h2><p>Let us denote by <span>$R\left(\mathbf{x},\mathbf{p}\right)$</span> the maximum feasible revenue using inputs&#39; levels <span>$\mathbf{x}$</span> and given the outputs&#39; prices <span>$\mathbf{p}$</span>: <span>$R\left(\mathbf{x},\mathbf{p}\right)=\max \left\{ \sum\limits_{i=1}^{s}{{{p}_{i}}{{y}_{i}}} | {\mathbf{x}_{o}} \geqslant X\mathbf{\lambda},\;{\mathbf{y}} \leqslant Y{\mathbf{\lambda },\;{\mathbf{\lambda }} \geqslant {\mathbf{0}}} \right\}$</span>; i.e.,  considering the output possibility set producible with <span>$\mathbf{x}_{o}$</span>. In this case, we calculate maximum revenue along with the optimal output quantities <span>$\mathbf{y^{*}}$</span>  by solving the following program:</p><div>\[\begin{align}
+\label{eq:maxrev}
+  &amp; \underset{\mathbf{y} ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \;\ R\left(\mathbf{x}_{o},\mathbf{p}\right)=\mathbf{py^{*}}  \\ 
+ &amp; \text{subject}\ \text{to} \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad \ {{\mathbf{x}_o}}\ge X\mathbf{\lambda } \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}}  \nonumber\\ 
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
+\end{align}\]</div><p>The measurement of revenue efficiency assuming variable returns to scale, <strong>VRS</strong>, adds the following condition:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p><em>Revenue efficiency</em> defines as the ratio of observed revenue to maximum revenue: <span>$RE=\mathbf{py_{o}}/R\left(\mathbf{x},\mathbf{p}\right) $. Duality results presented in *Shephard (1953)* from an output perspective allow us to decompose $RE$</span> into the output oriented technical efficiency measure and the residual difference corresponding to the <em>allocative revenue efficiency</em>. Allocative efficiency defines as the ratio of revenue at the technically efficient projection of the observation to maximum revenue.</p><p>In this example we compute the revnue efficiency measure under variable returns to scale:</p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+julia&gt; dearevenue(X, Y, P)
+Revenue DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+Orientation = Output; Returns to Scale = VRS
+──────────────────────────────────
+    Revenue  Technical  Allocative
+──────────────────────────────────
+1  0.644444   0.777778    0.828571
+2  1.0        1.0         1.0
+3  1.0        1.0         1.0
+4  0.5        0.5         1.0
+5  0.456522   0.6         0.76087
+──────────────────────────────────</code></pre><h3><a class="nav-anchor" id="dearevenue-Function-Documentation-1" href="#dearevenue-Function-Documentation-1">dearevenue Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.dearevenue" href="#DataEnvelopmentAnalysis.dearevenue"><code>DataEnvelopmentAnalysis.dearevenue</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">dearevenue(X, Y, P)</code></pre><p>Compute revenue efficiency using data envelopment analysis for inputs <code>X</code>, outputs <code>Y</code> and price of outputs <code>P</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses variable returns to scale. For constraints returns to scale choose <code>:VRS</code>.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+julia&gt; dearevenue(X, Y, P)
+Revenue DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+Orientation = Output; Returns to Scale = VRS
+──────────────────────────────────
+    Revenue  Technical  Allocative
+──────────────────────────────────
+1  0.644444   0.777778    0.828571
+2  1.0        1.0         1.0
+3  1.0        1.0         1.0
+4  0.5        0.5         1.0
+5  0.456522   0.6         0.76087
+──────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/57919c045bce05aacfcf76ad50f456a068ec0e7b/src/dearevenue.jl#L18-L48">source</a></section><footer><hr/><a class="previous" href="../cost/"><span class="direction">Previous</span><span class="title">Cost Models</span></a><a class="next" href="../profit/"><span class="direction">Next</span><span class="title">Profit Models</span></a></footer></article></body></html>

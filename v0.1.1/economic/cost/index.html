@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Cost Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li><a class="toctext" href="../../technical/radial/">Radial Models</a></li><li><a class="toctext" href="../../technical/directional/">Directional Distance Function Models</a></li><li><a class="toctext" href="../../technical/additive/">Additive Models</a></li><li><a class="toctext" href="../../technical/generalizeddf/">Generalized Distance Function Models</a></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li class="current"><a class="toctext" href>Cost Models</a><ul class="internal"><li><a class="toctext" href="#Cost-Efficiency-Model-with-Radial-Technical-Efficiency-1">Cost Efficiency Model with Radial Technical Efficiency</a></li></ul></li><li><a class="toctext" href="../revenue/">Revenue Models</a></li><li><a class="toctext" href="../profit/">Profit Models</a></li><li><a class="toctext" href="../profitability/">Profitability Models</a></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Economic Efficiency Models</li><li><a href>Cost Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/economic/cost.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Cost Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Cost-Models-1" href="#Cost-Models-1">Cost Models</a></h1><h2><a class="nav-anchor" id="Cost-Efficiency-Model-with-Radial-Technical-Efficiency-1" href="#Cost-Efficiency-Model-with-Radial-Technical-Efficiency-1">Cost Efficiency Model with Radial Technical Efficiency</a></h2><p>Let us denote by <span>$C\left(\mathbf{y},\mathbf{w}\right)$</span> the minimum cost of producing the output level <span>$\mathbf{y}$</span> given the input price vector <span>$\mathbf{w}$</span>: <span>$C\left(\mathbf{y},\mathbf{w}\right)=\min \left\{ \sum\limits_{i=1}^{m}{{{w}_{i}}{{x}_{i}}} | {\mathbf{x}} \geqslant X\mathbf{\lambda} {\mathbf{y}_{o}} \leqslant Y{\mathbf{\lambda },\;{\mathbf{\lambda }} \geqslant {\mathbf{0}}} \right\}$</span>, which considers the input possibility set capable of producing <span>$\mathbf{y}_{o}$</span>. For the observed outputs levels we can calculate minimum cost and the associated optimal quantities of inputs <span>$\mathbf{x^{*}}$</span> consistent with the production technology by solving the following program:</p><div>\[\begin{align}
+\label{eq:mincost}
+  &amp; \underset{\mathbf{x} ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ C\left(\mathbf{y}_{},\mathbf{w}\right)=\mathbf{wx^{*}}  \\ 
+ &amp; \text{subject}\ \text{to} \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad \ {{\mathbf{x}}}\ge X\mathbf{\lambda } \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \nonumber\\ 
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
+\end{align}\]</div><p>The measurement of cost efficiency assuming variable returns to scale, <strong>VRS</strong>, adds the following condition:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p><em>Cost efficiency</em> defines as the ratio of minimum cost to observed cost: <span>$CE=C\left(\mathbf{y},\mathbf{w}\right)/\mathbf{wx_{o}}$</span>. Thanks to duality results presented by <em>Shephard (1953)</em> , and following <em>Farrell (1957)</em>, cost efficiency can be decomposed into the radially input oriented technical efficiency measure and the residual difference corresponding to <em>allocative cost efficiency</em>. Allocative  efficiency defines as the ratio between minimum cost to production cost at the technically efficient projection of the unit under evaluation.</p><p>In this example we compute the cost efficiency measure under variable returns to scale:</p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
+julia&gt; deacost(X, Y, W)
+Cost DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+Orientation = Input; Returns to Scale = VRS
+──────────────────────────────────
+       Cost  Technical  Allocative
+──────────────────────────────────
+1  0.615385      0.75     0.820513
+2  1.0           1.0      1.0
+3  1.0           1.0      1.0
+4  0.5           0.5      1.0
+5  0.347826      0.375    0.927536
+──────────────────────────────────</code></pre><h3><a class="nav-anchor" id="deacost-Function-Documentation-1" href="#deacost-Function-Documentation-1">deacost Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deacost" href="#DataEnvelopmentAnalysis.deacost"><code>DataEnvelopmentAnalysis.deacost</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deacost(X, Y, W)</code></pre><p>Compute cost efficiency using data envelopment analysis for inputs <code>X</code>, outputs <code>Y</code> and price of inputs <code>W</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses variable returns to scale. For constant returns to scale choose <code>:CRS</code>.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
+julia&gt; deacost(X, Y, W)
+Cost DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+Orientation = Input; Returns to Scale = VRS
+──────────────────────────────────
+       Cost  Technical  Allocative
+──────────────────────────────────
+1  0.615385      0.75     0.820513
+2  1.0           1.0      1.0
+3  1.0           1.0      1.0
+4  0.5           0.5      1.0
+5  0.347826      0.375    0.927536
+──────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/57919c045bce05aacfcf76ad50f456a068ec0e7b/src/deacost.jl#L18-L48">source</a></section><footer><hr/><a class="previous" href="../../technical/generalizeddf/"><span class="direction">Previous</span><span class="title">Generalized Distance Function Models</span></a><a class="next" href="../revenue/"><span class="direction">Next</span><span class="title">Revenue Models</span></a></footer></article></body></html>

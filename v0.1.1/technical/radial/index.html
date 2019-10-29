@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Radial Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li class="current"><a class="toctext" href>Radial Models</a><ul class="internal"><li><a class="toctext" href="#Radial-Input-Oriented-Model-1">Radial Input Oriented Model</a></li><li><a class="toctext" href="#Radial-Output-Oriented-Model-1">Radial Output Oriented Model</a></li></ul></li><li><a class="toctext" href="../directional/">Directional Distance Function Models</a></li><li><a class="toctext" href="../additive/">Additive Models</a></li><li><a class="toctext" href="../generalizeddf/">Generalized Distance Function Models</a></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li><a class="toctext" href="../../economic/cost/">Cost Models</a></li><li><a class="toctext" href="../../economic/revenue/">Revenue Models</a></li><li><a class="toctext" href="../../economic/profit/">Profit Models</a></li><li><a class="toctext" href="../../economic/profitability/">Profitability Models</a></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Technical Efficiency Models</li><li><a href>Radial Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/technical/radial.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Radial Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Radial-Models-1" href="#Radial-Models-1">Radial Models</a></h1><h2><a class="nav-anchor" id="Radial-Input-Oriented-Model-1" href="#Radial-Input-Oriented-Model-1">Radial Input Oriented Model</a></h2><p>Based on the data  matrix <span>$(X,Y)$</span>, we calculate the input oriented efficiency of each observation <em>o</em> by solving <span>$n$</span> times the following linear programming problem – known as the Charnes, Cooper, and Rhodes (1978), <strong>CCR</strong>, model:</p><div>\[\begin{align}
+\label{eq:rim}
+  &amp; \underset{\theta ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ \theta  \\
+ &amp; \text{subject}\ \text{to} \nonumber \\
+ &amp; \quad \quad \quad \quad \quad \ X\mathbf{\lambda } \le \theta {{\mathbf{x}}_{o}} \nonumber \\
+ &amp; \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber
+\end{align}\]</div><p>The measurement of technical efficiency assuming variable returns to scale, <strong>VRS</strong>, as introduced by <em>Banker, Charnes and Cooper (1984)</em> – known as the Banker, Charnes and Cooper, <strong>BCC</strong>, model – adds the following condition:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p>In this example we compute the radial input oriented DEA model under constant returns to scale:</p><pre><code class="language-julia-repl">julia&gt; using DataEnvelopmentAnalysis
+
+julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia&gt; dea(X, Y, orient = :Input, rts = :CRS)
+Radial DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Orientation = Input; Returns to Scale = CRS
+──────────────────────────────────────────────────
+    efficiency       slackX1      slackX2  slackY1
+──────────────────────────────────────────────────
+1     1.0        0.0          0.0              0.0
+2     0.62229   -4.41868e-15  0.0              0.0
+3     0.819856   0.0          8.17926e-15      0.0
+4     1.0       -8.03397e-16  0.0              0.0
+5     0.310371   1.80764e-15  0.0              0.0
+6     0.555556   4.44444      0.0              0.0
+7     1.0        0.0          0.0              0.0
+8     0.757669   1.60679e-15  0.0              0.0
+9     0.820106   1.64021      0.0              0.0
+10    0.490566   9.68683e-15  0.0              0.0
+11    1.0        0.0          4.0              0.0
+──────────────────────────────────────────────────</code></pre><p>To compute the variable returns to scale model, we simply set the <code>rts</code> parameter to <code>:VRS</code>:</p><pre><code class="language-julia-repl">julia&gt; dea(X, Y, orient = :Input, rts = :VRS)
+Radial DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Orientation = Input; Returns to Scale = VRS
+───────────────────────────────────────────────────────
+    efficiency       slackX1       slackX2      slackY1
+───────────────────────────────────────────────────────
+1     1.0        0.0           0.0          0.0        
+2     0.869986   0.0           0.0          0.0        
+3     1.0        0.0           2.56789e-13  0.0        
+4     1.0       -8.03397e-16   0.0          0.0        
+5     0.71164    0.0           0.0          2.69841    
+6     1.0        2.70127e-16   0.0          3.78178e-16
+7     1.0        0.0           0.0          0.0        
+8     1.0        0.0          -1.27018e-14  0.0        
+9     1.0        0.0           0.0          0.0        
+10    0.493121   3.90444e-15   0.0          0.0        
+11    1.0        0.0           4.0          4.78849e-16
+───────────────────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; deaiovrs = dea(X, Y, orient = :Input, rts = :VRS);
+
+julia&gt; efficiency(deaiovrs)
+11-element Array{Float64,1}:
+ 1.0
+ 0.8699861687413553
+ 1.0000000000000002
+ 1.0
+ 0.7116402116402116
+ 1.0
+ 1.0
+ 0.9999999999999999
+ 1.0
+ 0.4931209268645909
+ 1.0</code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>SparseArrays.SparseMatrixCSC{Float64,Int64}</code> object:</p><pre><code class="language-julia">peers(deaiovrs)</code></pre><h2><a class="nav-anchor" id="Radial-Output-Oriented-Model-1" href="#Radial-Output-Oriented-Model-1">Radial Output Oriented Model</a></h2><p>It is possible to calculate the output oriented technical efficiency of each observation by solving the following linear program:</p><div>\[\begin{align}
+\label{eq:rom}
+  &amp; \underset{\phi ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \phi  \\
+ &amp; \text{subject}\ \text{to} \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ Y\mathbf{\lambda }\ \ge \phi {{\mathbf{y}}_{o}}  \nonumber\\
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\nonumber\\  &amp; \quad \nonumber
+\end{align}\]</div><p>with the following condition when assuming variable returns to scale:</p><div>\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</div><p>In this example we compute the radial output oriented DEA model under variable returns to scale:</p><pre><code class="language-julia-repl">julia&gt; dea(X, Y, orient = :Output, rts = :VRS)
+Radial DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Orientation = Output; Returns to Scale = VRS
+──────────────────────────────────────────────────
+    efficiency       slackX1  slackX2      slackY1
+──────────────────────────────────────────────────
+1      1.0       0.0              0.0  0.0        
+2      1.50752   5.78599e-15      0.0  0.0        
+3      1.0       0.0              0.0  0.0        
+4      1.0      -8.03397e-16      0.0  0.0        
+5      3.20395  -3.38377e-15      0.0  0.0        
+6      1.0       2.70127e-16      0.0  3.78178e-16
+7      1.0       0.0              0.0  0.0        
+8      1.0       0.0              0.0  0.0        
+9      1.0       0.0              0.0  0.0        
+10     1.19231   5.0             11.0  0.0        
+11     1.0       0.0              4.0  4.78849e-16
+──────────────────────────────────────────────────</code></pre><h3><a class="nav-anchor" id="dea-Function-Documentation-1" href="#dea-Function-Documentation-1">dea Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.dea" href="#DataEnvelopmentAnalysis.dea"><code>DataEnvelopmentAnalysis.dea</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">dea(X, Y)</code></pre><p>Compute the radial model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the radially oriented input mode. For the radially oriented output model choose <code>:Output</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia&gt; dea(X, Y)
+Radial DEA Model
+DMUs = 11; Inputs = 2; Outputs = 1
+Orientation = Input; Returns to Scale = CRS
+──────────────────────────────────────────────────
+    efficiency       slackX1      slackX2  slackY1
+──────────────────────────────────────────────────
+1     1.0        0.0          0.0              0.0
+2     0.62229   -4.41868e-15  0.0              0.0
+3     0.819856   0.0          8.17926e-15      0.0
+4     1.0       -8.03397e-16  0.0              0.0
+5     0.310371   1.80764e-15  0.0              0.0
+6     0.555556   4.44444      0.0              0.0
+7     1.0        0.0          0.0              0.0
+8     0.757669   1.60679e-15  0.0              0.0
+9     0.820106   1.64021      0.0              0.0
+10    0.490566   9.68683e-15  0.0              0.0
+11    1.0        0.0          4.0              0.0
+──────────────────────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/57919c045bce05aacfcf76ad50f456a068ec0e7b/src/dea.jl#L24-L61">source</a></section><footer><hr/><a class="previous" href="../../"><span class="direction">Previous</span><span class="title">Home</span></a><a class="next" href="../directional/"><span class="direction">Next</span><span class="title">Directional Distance Function Models</span></a></footer></article></body></html>

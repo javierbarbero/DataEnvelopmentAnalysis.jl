@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Profitability Models · DataEnvelopment
+Analysis.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>DataEnvelopment
+Analysis.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Technical Efficiency Models</span><ul><li><a class="toctext" href="../../technical/radial/">Radial Models</a></li><li><a class="toctext" href="../../technical/directional/">Directional Distance Function Models</a></li><li><a class="toctext" href="../../technical/additive/">Additive Models</a></li><li><a class="toctext" href="../../technical/generalizeddf/">Generalized Distance Function Models</a></li></ul></li><li><span class="toctext">Economic Efficiency Models</span><ul><li><a class="toctext" href="../cost/">Cost Models</a></li><li><a class="toctext" href="../revenue/">Revenue Models</a></li><li><a class="toctext" href="../profit/">Profit Models</a></li><li class="current"><a class="toctext" href>Profitability Models</a><ul class="internal"><li><a class="toctext" href="#Profitability-Model-1">Profitability Model</a></li></ul></li></ul></li><li><span class="toctext">Productivity Change Models</span><ul><li><a class="toctext" href="../../productivity/malmquist/">Malmquist Index</a></li></ul></li><li><a class="toctext" href="../../bibliography/">Bibliography</a></li></ul></nav><article id="docs"><header><nav><ul><li>Economic Efficiency Models</li><li><a href>Profitability Models</a></li></ul><a class="edit-page" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/economic/profitability.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Profitability Models</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Profitability-Models-1" href="#Profitability-Models-1">Profitability Models</a></h1><h2><a class="nav-anchor" id="Profitability-Model-1" href="#Profitability-Model-1">Profitability Model</a></h2><p>The profitabilty function defines as <span>$\mathrm{P}\left(\mathbf{w},\mathbf{p}\right)=\max \Big\{ \sum\limits_{i=1}^{s}{{p}_{i}}{{y}_{i}}/\sum\limits_{i=1}^{m}{{w}_{i}}{{x}_{i}} \,|  {\mathbf{x}} \geqslant X\mathbf{\lambda},\;{\mathbf{y}} \leqslant Y{\mathbf{\lambda },\; \lambda } \geqslant {\mathbf{0}} \Big\}$</span>. <em>Zofío and Prieto (2006)</em> introduced the following program that allows calculating profitability efficiency.</p><div>\[\begin{align}
+\label{eq:maxprofit}
+  &amp; \underset{\mathbf{x,y,\lambda_{j},\omega} }{\mathop{\min }}\,\quad \quad \quad \;\ \omega  \\ 
+ &amp; \text{subject}\ \text{to} \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad \ {\sum_{j=1}^{j} \lambda^{j} \frac{w^{j} x^{j}}{p^{j} y^{j}} = \omega \frac{w^{j} x^{j}_{o}}{p^{j} y^{j}_{o}} } \nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad  \; \sum\nolimits_{j=1}^{n}\lambda^{j}=1 \nonumber\\
+
+\nonumber \\ 
+ &amp; \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
+\end{align}\]</div><p><em>Profitabilty efficiency</em> defines as the ratio between maximum profitabilty and observed profitabilty. Following the duality results introduced by <em>Zofío and Prieto (2006)</em> it is possible to decompose it into technical and allocative efficiencies under constant returns to scale. Profitabilty efficiency can be then decomposed into the generalizaed distance fucntion and the residual ratio corresponding to the <em>allocative profit efficiency</em>. Allocative efficiency defines then as the ratio of profitability at the technically efficient projection on the frontier to maximum profitability. </p><p>In this example we compute the profitability efficiency measure:</p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
+julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+julia&gt; deaprofitability(X, Y, W, P)
+Profitability DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+alpha = 0.5; Returns to Scale = VRS
+─────────────────────────────────────────────────────────
+   Profitability       CRS      VRS     Scale  Allocative
+─────────────────────────────────────────────────────────
+1       0.38796   0.636364  0.68185  0.93329     0.609651
+2       1.0       1.0       1.0      1.0         1.0
+3       0.765217  1.0       1.0      1.0         0.765217
+4       0.25      0.25      0.25     1.0         1.0
+5       0.15879   0.26087   0.36     0.724638    0.608696
+─────────────────────────────────────────────────────────</code></pre><h3><a class="nav-anchor" id="deaprofitability-Function-Documentation-1" href="#deaprofitability-Function-Documentation-1">deaprofitability Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deaprofitability" href="#DataEnvelopmentAnalysis.deaprofitability"><code>DataEnvelopmentAnalysis.deaprofitability</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deaprofitability(X, Y, W, P)</code></pre><p>Compute profitability efficiency using data envelopment analysis for inputs <code>X</code>, outputs <code>Y</code>, price of inputs <code>W</code>, and price of outputs <code>P</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>alpha=0.5</code>: alpha to use for the generalized distance function.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+
+julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
+julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+julia&gt; deaprofitability(X, Y, W, P)
+Profitability DEA Model
+DMUs = 5; Inputs = 2; Outputs = 2
+alpha = 0.5; Returns to Scale = VRS
+─────────────────────────────────────────────────────────
+   Profitability       CRS      VRS     Scale  Allocative
+─────────────────────────────────────────────────────────
+1       0.38796   0.636364  0.68185  0.93329     0.609651
+2       1.0       1.0       1.0      1.0         1.0
+3       0.765217  1.0       1.0      1.0         0.765217
+4       0.25      0.25      0.25     1.0         1.0
+5       0.15879   0.26087   0.36     0.724638    0.608696
+─────────────────────────────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/57919c045bce05aacfcf76ad50f456a068ec0e7b/src/deaprofitability.jl#L20-L52">source</a></section><footer><hr/><a class="previous" href="../profit/"><span class="direction">Previous</span><span class="title">Profit Models</span></a><a class="next" href="../../productivity/malmquist/"><span class="direction">Next</span><span class="title">Malmquist Index</span></a></footer></article></body></html>
