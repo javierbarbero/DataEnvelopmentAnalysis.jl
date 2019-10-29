@@ -1,7 +1,7 @@
 name = "DataEnvelopmentAnalysis"
 uuid = "a100299e-89d6-11e9-0fa0-2daf497e6a05"
 authors = ["Javier Barbero <jbarberoeco@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
@@ -15,10 +15,10 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 julia = "1"
-GLPK = "0.11.4"
-Ipopt = "0.6.0"
-JuMP = "0.20.0"
-StatsBase = "0.32.0"
+GLPK = "0.12"
+Ipopt = "0.6"
+JuMP = "0.20"
+StatsBase = "0.32"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
