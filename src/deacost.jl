@@ -3,7 +3,7 @@
     CostDEAModel
 An data structure representing a cost DEA model.
 """
-struct CostDEAModel <: AbstractEconomicDEAModel
+struct CostDEAModel <: AbstractCostDEAModel
     n::Int64
     m::Int64
     s::Int64

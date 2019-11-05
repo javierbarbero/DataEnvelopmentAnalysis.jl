@@ -3,7 +3,7 @@
     ProfitabilityDEAModel
 An data structure representing a profitability DEA model.
 """
-struct ProfitabilityDEAModel <: AbstractEconomicDEAModel
+struct ProfitabilityDEAModel <: AbstractProfitabilityDEAModel
     n::Int64
     m::Int64
     s::Int64

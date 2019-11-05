@@ -3,7 +3,7 @@
     RevenueDEAModel
 An data structure representing a revenue DEA model.
 """
-struct RevenueDEAModel <: AbstractEconomicDEAModel
+struct RevenueDEAModel <: AbstractRevenueDEAModel
     n::Int64
     m::Int64
     s::Int64

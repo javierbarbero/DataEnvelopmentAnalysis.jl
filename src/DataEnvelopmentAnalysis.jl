@@ -25,6 +25,7 @@ module DataEnvelopmentAnalysis
     TechnicalDEAModel,
     RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel,
     AbstractEconomicDEAModel,
+    AbstractCostDEAModel, AbstractRevenueDEAModel, AbstractProfitDEAModel, AbstractProfitabilityDEAModel,
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,

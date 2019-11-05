@@ -6,6 +6,30 @@ An abstract type representing an economic DEA model.
 abstract type AbstractEconomicDEAModel <: AbstractTechnicalDEAModel end
 
 """
+    AbstractCostDEAModel
+An abstract type representing a cost DEA model.
+"""
+abstract type AbstractCostDEAModel <: AbstractEconomicDEAModel end
+
+"""
+    AbstractRevenueDEAModel
+An abstract type representing a revenue DEA model.
+"""
+abstract type AbstractRevenueDEAModel <: AbstractEconomicDEAModel end
+
+"""
+    AbstractProfitDEAModel
+An abstract type representing a revenue DEA model.
+"""
+abstract type AbstractProfitDEAModel <: AbstractEconomicDEAModel end
+
+"""
+    AbstractProfitabilityDEAModel
+An abstract type representing a revenue DEA model.
+"""
+abstract type AbstractProfitabilityDEAModel <: AbstractEconomicDEAModel end
+
+"""
     efficiency(model::AbstractEconomicDEAModel)
 Return efficiency scores of an economic DEA model.
 
