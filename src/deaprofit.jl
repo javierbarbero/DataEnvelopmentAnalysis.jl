@@ -87,7 +87,7 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     n = nx
 
     Xefficient = zeros(n,m)
-    Yefficient = zeros(n,m)
+    Yefficient = zeros(n,s)
     pefficiency = zeros(n)
     plambdaeff = spzeros(n, n)
 
@@ -99,7 +99,7 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
         # Create the optimization model
         deamodel = Model(with_optimizer(GLPK.Optimizer))
         @variable(deamodel, Xeff[1:m])
-        @variable(deamodel, Yeff[1:m])
+        @variable(deamodel, Yeff[1:s])
         @variable(deamodel, lambda[1:n] >= 0)
 
         @objective(deamodel, Max, (sum(p0[j] .* Yeff[j] for j in 1:s)) - (sum(w0[j] .* Xeff[j] for j in 1:m)))

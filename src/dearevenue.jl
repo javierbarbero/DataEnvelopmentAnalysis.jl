@@ -21,7 +21,7 @@ Compute revenue efficiency using data envelopment analysis for
 inputs `X`, outputs `Y` and price of outputs `P`.
 
 # Optional Arguments
-- `rts=:CRS`: chooses variable returns to scale. For constraints returns to scale choose `:VRS`.
+- `rts=:VRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
 
 # Examples
 ```jldoctest
@@ -66,7 +66,7 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::Revenu
     # Compute efficiency for each DMU
     n = nx
 
-    Yefficient = zeros(n,m)
+    Yefficient = zeros(n,s)
     refficiency = zeros(n)
     rlambdaeff = spzeros(n, n)
 
@@ -77,7 +77,7 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::Revenu
 
         # Create the optimization model
         deamodel = Model(with_optimizer(GLPK.Optimizer))
-        @variable(deamodel, Yeff[1:m])
+        @variable(deamodel, Yeff[1:s])
         @variable(deamodel, lambda[1:n] >= 0)
 
         @objective(deamodel, Max, sum(p0[j] .* Yeff[j] for j in 1:s))
