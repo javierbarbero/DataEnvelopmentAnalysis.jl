@@ -7,7 +7,7 @@
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
     # Additive CRS
-    deaaddcrs1 = deaadd(X, Y, wX = ones(size(X)), wY = ones(size(Y)), rts = :CRS)
+    deaaddcrs1 = deaadd(X, Y, :Custom, wX = ones(size(X)), wY = ones(size(Y)), rts = :CRS)
 
     @test nobs(deaaddcrs1) == 11
     @test ninputs(deaaddcrs1) == 2
@@ -38,7 +38,7 @@
       1.0000000000  0  0 0.0000000000  0  0 0.0000000000  0  0   0   0]
 
     # Additive VRS model
-    deaaddvrs1 = deaadd(X, Y, wX = ones(size(X)), wY = ones(size(Y)), rts = :VRS)
+    deaaddvrs1 = deaadd(X, Y, :Custom, wX = ones(size(X)), wY = ones(size(Y)), rts = :VRS)
 
     @test nobs(deaaddvrs1) == 11
     @test ninputs(deaaddvrs1) == 2
@@ -391,11 +391,11 @@
                                 0]
 
     # Test model with Custom weights
-    deaddcustomcrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
+    deaddcustomcrs = deaadd(X, Y, :Custom, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
     @test deaddcustomcrs.weights == :Custom
     @test efficiency(deaddcustomcrs) ≈ efficiency(deaaddmipcrs)
 
-    deaddcustomvrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
+    deaddcustomvrs = deaadd(X, Y, :Custom, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
     @test deaddcustomvrs.weights == :Custom
     @test efficiency(deaddcustomvrs) ≈ efficiency(deaaddmipvrs)
 
@@ -413,15 +413,6 @@
     deaaddmipcrs_ref_eff = zeros(size(X, 1))
     deaaddmipvrs_ref_eff = zeros(size(X, 1))
 
-    deaaddnormalizedcrs_ref_eff = zeros(size(X, 1))
-    deaaddnormalizedvrs_ref_eff = zeros(size(X, 1))
-
-    deaaddramcrs_ref_eff = zeros(size(X, 1))
-    deaaddramvrs_ref_eff = zeros(size(X, 1))
-
-    deaaddbamcrs_ref_eff = zeros(size(X, 1))
-    deaaddbamvrs_ref_eff = zeros(size(X, 1))
-
     Xref = X[:,:]
     Yref = Y[:,:]
 
@@ -434,8 +425,8 @@
         deaadddefaultcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaadddefaultvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-        deaaddcustomcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :CRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
-        deaaddcustomvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :VRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+        deaaddcustomcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :CRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+        deaaddcustomvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :VRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
 
         deaaddonescrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddonesvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :VRS, Xref = Xref, Yref = Yref))[1]
@@ -443,14 +434,6 @@
         deaaddmipcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddmipvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :MIP, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-        deaaddnormalizedcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Normalized, rts = :CRS, Xref = Xref, Yref = Yref))[1]
-        deaaddnormalizedvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Normalized, rts = :VRS, Xref = Xref, Yref = Yref))[1]
-
-        deaaddramcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
-        deaaddramvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :RAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
-
-        deaaddbamcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :CRS, Xref = Xref, Yref = Yref))[1]
-        deaaddbamvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :BAM, rts = :VRS, Xref = Xref, Yref = Yref))[1]
     end
 
     @test deaadddefaultcrs_ref_eff ≈ efficiency(deaadddefaultcrs)
@@ -464,15 +447,6 @@
 
     @test deaaddmipcrs_ref_eff ≈ efficiency(deaaddmipcrs)
     @test deaaddmipvrs_ref_eff ≈ efficiency(deaaddmipvrs)
-
-    @test deaaddnormalizedcrs_ref_eff ≈ efficiency(deaaddnormalizedcrs)
-    @test deaaddnormalizedvrs_ref_eff ≈ efficiency(deaaddnormalizedvrs)
-
-    @test deaaddramcrs_ref_eff ≈ efficiency(deaaddramcrs)
-    @test deaaddramvrs_ref_eff ≈ efficiency(deaaddramvrs)
-
-    @test deaaddbamcrs_ref_eff ≈ efficiency(deaaddbamcrs)
-    @test deaaddbamvrs_ref_eff ≈ efficiency(deaaddbamvrs)
 
     # Print
     show(IOBuffer(), deaaddcrs1)
@@ -490,7 +464,7 @@
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], wX = [1; 2; 3; 4]) # Different size of weights
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], wY = [4; 5; 6; 7]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wX = [1; 2; 3; 4]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wY = [4; 5; 6; 7]) # Different size of weights
   
 end
