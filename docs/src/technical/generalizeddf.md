@@ -2,6 +2,10 @@
 CurrentModule = DataEnvelopmentAnalysis
 DocTestSetup = quote
     using DataEnvelopmentAnalysis
+    # Solve nonlinear problem to display Ipopt initial message
+    X = [1; 2; 3];
+    Y = [1; 1; 1];
+    deagdf(X, Y, 0.5, rts = :VRS)
 end
 ```
 

@@ -56,10 +56,7 @@ module DataEnvelopmentAnalysis
     include("malmquist.jl")
 
     function __init__()
-        # Solve nonlinear problem to display Ipopt initial message
-        X = [5 3; 2 4; 4 2; 4 8; 7 9];
-        Y = [7 4; 10 8; 8 10; 5 4; 3 6];
-        deagdf(X, Y, 0.5, rts = :VRS)
+
         nothing
     end
 
