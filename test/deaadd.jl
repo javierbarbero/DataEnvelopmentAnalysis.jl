@@ -391,14 +391,17 @@
                                 0]
 
     # Test model with Custom weights
-    deaddcustomcrs = deaadd(X, Y, :Custom, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
+    deaddcustomcrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
     @test deaddcustomcrs.weights == :Custom
     @test efficiency(deaddcustomcrs) ≈ efficiency(deaaddmipcrs)
 
-    deaddcustomvrs = deaadd(X, Y, :Custom, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
+    deaddcustomvrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
     @test deaddcustomvrs.weights == :Custom
     @test efficiency(deaddcustomvrs) ≈ efficiency(deaaddmipvrs)
 
+    # Test that slacks are zero when weights are zero
+    @test all(slacks(deaadd(X, Y, wX = zeros(size(X)), wY = ones(size(Y))) , :X) .== 0)
+    @test all(slacks(deaadd(X, Y, wX = ones(size(X)) , wY = zeros(size(Y))), :Y) .== 0)
 
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
     deaadddefaultcrs_ref_eff = zeros(size(X, 1))
@@ -466,5 +469,7 @@
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wX = [1; 2; 3; 4]) # Different size of weights
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wY = [4; 5; 6; 7]) # Different size of weights
-  
+
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, wX = [1; 1; 1]) # Weights not allowed if model != :Custom
+
 end

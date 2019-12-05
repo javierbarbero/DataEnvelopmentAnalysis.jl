@@ -25,7 +25,7 @@ Model specification:
 - `:Normalized`: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
 - `:RAM`: Range Adjusted Measure. (Cooper et al., 1999)
 - `:BAM`: Bounded Adjusted Measure. (Cooper et al, 2011)
-- `:Custom`: User supplied weights. 
+- `:Custom`: User supplied weights.
 
 # Optional Arguments
 - `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
@@ -61,8 +61,8 @@ Weights = MIP; Returns to Scale = VRS
 ─────────────────────────────────────────────────────
 ```
 """
-function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS, 
-    wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0), 
+function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :VRS,
+    wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Matrix = X, Yref::Matrix = Y)::AdditiveDEAModel
 
     # Check parameters
@@ -85,8 +85,24 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS,
         error("number of outputs in evaluation set and reference set is different")
     end
 
+    # Default behaviour
+    if model == :Default
+        # If no weights are specified use :Ones
+        if length(wX) == 0 && length(wY) == 0
+            model = :Ones
+        else
+            model = :Custom
+        end
+    end
+
     # Get weights based on the selected model
     if model != :Custom
+        # Display error if both model and weights are specified
+        if length(wX) != 0 || length(wY) != 0
+            error("Weights not allowed if model != :Custom")
+        end
+
+        # Get weights for selected model
         wX, wY = deaaddweights(X, Y, model)
     end
 
@@ -142,6 +158,19 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS,
             error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
         end
 
+        # Fix values of slacks when weight are zero
+        for j = 1:m
+            if wX0[j] == 0
+                fix(sX[j], 0, force = true)
+            end
+        end
+
+        for j = 1:s
+            if wY0[j] == 0
+                fix(sY[j], 0, force = true)
+            end
+        end
+
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
@@ -156,7 +185,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS,
 
 end
 
-function deaadd(X::Vector, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS, 
+function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
 
@@ -166,7 +195,7 @@ function deaadd(X::Vector, Y::Matrix, model::Symbol = :Ones; rts::Symbol = :VRS,
     return deaadd(X, Y, model, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
-function deaadd(X::Matrix, Y::Vector, model::Symbol = :Ones; rts::Symbol = :VRS, 
+function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
 
@@ -176,7 +205,7 @@ function deaadd(X::Matrix, Y::Vector, model::Symbol = :Ones; rts::Symbol = :VRS,
     return deaadd(X, Y, model, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
-function deaadd(X::Vector, Y::Vector, model::Symbol = :Ones; rts::Symbol = :VRS, 
+function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
 
@@ -191,7 +220,7 @@ end
 
 function Base.show(io::IO, x::AdditiveDEAModel)
     compact = get(io, :compact, false)
-    
+
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
@@ -210,7 +239,7 @@ function Base.show(io::IO, x::AdditiveDEAModel)
         print(io, "\n")
         show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
     end
-    
+
 end
 
 """
