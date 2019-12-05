@@ -31,6 +31,8 @@ Compute the radial model using data envelopment analysis for inputs X and output
 - `slack=true`: computes input and output slacks.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
+- `disposalX=:Strong`: chooses strong disposal of inputs. For weak disposal choose `:Weak`.
+- `disposalY=:Strong`: chooses strong disposal of outputs. For weak disposal choose `:Weak`.
 
 # Examples
 ```jldoctest
@@ -59,7 +61,9 @@ Orientation = Input; Returns to Scale = CRS
 ──────────────────────────────────────────────────
 ```
 """
-function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y)::RadialDEAModel
+function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::RadialDEAModel
+
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -78,6 +82,14 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
     end
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
+    end
+
+    if disposalX != :Strong && disposalX != :Weak
+        error("Invalued inputs disposal $disposalX. Disposal should be :Strong or :Weak")
+    end
+
+    if disposalY != :Strong && disposalY != :Weak
+        error("Invalid outputs disposal $disposalY. Disposal should be :Strong or :Weak")
     end
 
     # Compute efficiency for each DMU
@@ -101,8 +113,19 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
             # Input orientation
             @objective(deamodel, Min, eff)
 
-            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff * x0[j])
-            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
+            # Inequality or equality restrictions based on disposability
+            if disposalX == :Strong
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff * x0[j])
+            elseif disposalX == :Weak
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == eff * x0[j])
+            end
+
+            if disposalY == :Strong
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
+            elseif disposalY == :Weak
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j])
+            end
+
         elseif orient == :Output
             # Output orientation
             @objective(deamodel, Max, eff)
@@ -143,7 +166,19 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         end
 
         # Use additive model with radial efficient X and Y to get slacks
-        radialSlacks = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        if disposalX == :Strong
+            wX = ones(size(X))
+        elseif disposalX == :Weak
+            wX = zeros(size(X))
+        end
+
+        if disposalY == :Strong
+            wY = ones(size(Y))
+        elseif disposalY == :Weak
+            wY = zeros(size(Y))
+        end
+
+        radialSlacks = deaadd(Xeff, Yeff, wX = wX, wY = wY, rts = rts, Xref = Xref, Yref = Yref)
         slackX = slacks(radialSlacks, :X)
         slackY = slacks(radialSlacks, :Y)
     else
@@ -155,24 +190,30 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
 
 end
 
-function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::RadialDEAModel
+function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::RadialDEAModel
+
     X = X[:,:]
     Xref = Xref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
-function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::RadialDEAModel
+function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::RadialDEAModel
+
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
-function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::RadialDEAModel
+function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::RadialDEAModel
+
     X = X[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
 function Base.show(io::IO, x::RadialDEAModel)
@@ -195,6 +236,7 @@ function Base.show(io::IO, x::RadialDEAModel)
         print(io, "Orientation = ", string(x.orient))
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
+
         if hasslacks == true
             show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
         else

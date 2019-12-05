@@ -183,7 +183,7 @@
                                 5   11;
                                 0.000000000   4]
     @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-15
-    
+
     # Test no slacks
     deaionoslack = dea(X, Y, slack = false)
     @test efficiency(deaionoslack) == efficiency(deaio)
@@ -239,5 +239,8 @@
     @test_throws ErrorException dea([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException dea([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
     @test_throws ErrorException dea([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+
+    @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposalX = :Error)  # Invalid inputs disposal
+    @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposalY = :Error)  # Invalid outputs disposal
 
 end
