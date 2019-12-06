@@ -46,7 +46,7 @@ Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, disposal::Symbol = :Strong)::RevenueDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -61,6 +61,10 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::Revenu
     end
     if sp != s
         error("number of output prices and outputs is different")
+    end
+
+    if disposal != :Strong && disposal != :Weak
+        error("Invalued disposal $disposal. Disposal should be :Strong or :Weak")
     end
 
     # Compute efficiency for each DMU
@@ -82,7 +86,12 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::Revenu
 
         @objective(deamodel, Max, sum(p0[j] .* Yeff[j] for j in 1:s))
 
-        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= x0[j])
+        if disposal == :Strong
+            @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= x0[j])
+        elseif disposal == :Weak
+            @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) == x0[j])
+        end
+
         @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
 
         # Add return to scale constraints
@@ -100,32 +109,36 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS)::Revenu
         Yefficient[i,:]  = JuMP.value.(Yeff)
         rlambdaeff[i,:] = JuMP.value.(lambda)
 
+        if termination_status(deamodel) != MOI.OPTIMAL
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
     end
 
     # Revenue, technical and allocative efficiency
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
-    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false))
+    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false, disposalX = disposal))
     allocefficiency = refficiency ./ techefficiency
     return RevenueDEAModel(n, m, s, rts, refficiency, rlambdaeff, techefficiency, allocefficiency)
 
 end
 
-function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS, disposal::Symbol = :Strong)::RevenueDEAModel
     X = X[:,:]
-    return dearevenue(X, Y, P, rts = rts)
+    return dearevenue(X, Y, P, rts = rts, disposal = disposal)
 end
 
-function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, disposal::Symbol = :Strong)::RevenueDEAModel
     Y = Y[:,:]
     P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts)
+    return dearevenue(X, Y, P, rts = rts, disposal = disposal)
 end
 
-function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, disposal::Symbol = :Strong)::RevenueDEAModel
     X = X[:,:]
     Y = Y[:,:]
     P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts)
+    return dearevenue(X, Y, P, rts = rts, disposal = disposal)
 end
 
 function Base.show(io::IO, x::RevenueDEAModel)

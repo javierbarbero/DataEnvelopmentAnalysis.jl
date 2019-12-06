@@ -15,7 +15,7 @@ end
 
 
 """
-    deaprofit(X, Y, P)
+    deaprofit(X, Y, W, P)
 Compute profit efficiency using data envelopment analysis model for
 inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 

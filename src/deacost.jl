@@ -63,6 +63,10 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
         error("number of input prices and intputs is different")
     end
 
+    if disposal != :Strong && disposal != :Weak
+        error("Invalued disposal $disposal. Disposal should be :Strong or :Weak")
+    end
+
     # Compute efficiency for each DMU
     n = nx
 
