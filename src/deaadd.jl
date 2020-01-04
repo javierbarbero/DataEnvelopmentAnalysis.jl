@@ -179,6 +179,11 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :V
         slackX[i,:] = JuMP.value.(sX)
         slackY[i,:] = JuMP.value.(sY)
 
+        # Check termination status
+        if termination_status(deamodel) != MOI.OPTIMAL
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
     end
 
     return AdditiveDEAModel(n, m, s, rts, effi, slackX, slackY, lambdaeff, model)

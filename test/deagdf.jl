@@ -7,7 +7,7 @@
 
     # alpha = 0.5 CRS equals Input Oriented CRS
     deaio = dea(X, Y, orient = :Input, rts = :CRS)
-    deagdf05crs = deagdf(X, Y, 0.5, rts = :CRS)
+    deagdf05crs = deagdf(X, Y, 0.5, rts = :CRS, slack = false)
     @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
 
     @test nobs(deagdf05crs) == 5
@@ -15,7 +15,7 @@
     @test noutputs(deagdf05crs) == 2
 
     # alphpa = 0.5 VRS
-    deagdf05vrs = deagdf(X, Y, 0.5, rts = :VRS)
+    deagdf05vrs = deagdf(X, Y, 0.5, rts = :VRS, slack = false)
 
     @test nobs(deagdf05vrs) == 5
     @test ninputs(deagdf05vrs) == 2
@@ -46,9 +46,9 @@
          Yeval = Y[i:i,:]
          Yeval = Yeval[:,:]
 
-         deagdf05crs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, 0.5, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+         deagdf05crs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, 0.5, rts = :CRS, Xref = Xref, Yref = Yref, slack = false))[1]
 
-         deagdf05vrs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, 0.5, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+         deagdf05vrs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, 0.5, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))[1]
      end
 
      @test deagdf05crs_ref_eff ≈ efficiency(deagdf05crs)

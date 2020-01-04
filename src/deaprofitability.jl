@@ -104,6 +104,11 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
         pefficiency[i]  = JuMP.objective_value(deamodel)
         plambdaeff[i,:] = JuMP.value.(lambda)
 
+        # Check termination status
+        if termination_status(deamodel) != MOI.LOCALLY_SOLVED
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
     end
 
     # Technical, scale and allocative efficiency

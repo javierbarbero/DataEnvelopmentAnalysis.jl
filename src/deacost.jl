@@ -109,6 +109,7 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
         Xefficient[i,:]  = JuMP.value.(Xeff)
         clambdaeff[i,:] = JuMP.value.(lambda)
 
+        # Check termination status
         if termination_status(deamodel) != MOI.OPTIMAL
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end

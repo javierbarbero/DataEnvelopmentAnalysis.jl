@@ -151,6 +151,11 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         effi[i]  = JuMP.objective_value(deamodel)
         lambdaeff[i,:] = JuMP.value.(lambda)
 
+        # Check termination status
+        if termination_status(deamodel) != MOI.OPTIMAL
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
     end
 
     # Compute slacks

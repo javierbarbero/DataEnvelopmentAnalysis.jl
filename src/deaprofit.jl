@@ -36,20 +36,20 @@ julia> Gx = repeat(GxGydollar, 1, 2);
 julia> Gy = repeat(GxGydollar, 1, 2);
 
 julia> deaprofit(X, Y, W, P, Gx, Gy)
-Profit DEA Model 
+Profit DEA Model
 DMUs = 8; Inputs = 2; Outputs = 2
 Returns to Scale = VRS
 ─────────────────────────────────────
    Profit     Technical    Allocative
 ─────────────────────────────────────
-1     2.0   0.0           2.0        
-2     2.0  -5.41234e-16   2.0        
-3     0.0   0.0           0.0        
-4     2.0   0.0           2.0        
-5     2.0   0.0           2.0        
-6     8.0   6.0           2.0        
+1     2.0   0.0           2.0
+2     2.0  -5.41234e-16   2.0
+3     0.0   0.0           0.0
+4     2.0   0.0           2.0
+5     2.0   0.0           2.0
+6     8.0   6.0           2.0
 7    12.0  12.0          -1.77636e-15
-8     4.0   3.0           1.0        
+8     4.0   3.0           1.0
 ─────────────────────────────────────
 ```
 """
@@ -115,6 +115,11 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
         Xefficient[i,:]  = JuMP.value.(Xeff)
         Yefficient[i,:]  = JuMP.value.(Yeff)
         plambdaeff[i,:] = JuMP.value.(lambda)
+
+        # Check termination status
+        if termination_status(deamodel) != MOI.OPTIMAL
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
 
     end
 

@@ -109,6 +109,7 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, disposa
         Yefficient[i,:]  = JuMP.value.(Yeff)
         rlambdaeff[i,:] = JuMP.value.(lambda)
 
+        # Check termination status
         if termination_status(deamodel) != MOI.OPTIMAL
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
