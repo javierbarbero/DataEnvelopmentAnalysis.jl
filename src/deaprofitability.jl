@@ -94,7 +94,7 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
 
         @NLobjective(deamodel, Min, eff)
 
-        @NLconstraint(deamodel, sum(sum(W[t,mi] * X[t,mi] for mi in 1:m) / sum(P[t,si] * Y[t,si] for si in 1:s) * lambda[t] for t in 1:n) == eff * sum(w0[j] * x0[j] for j in 1:m ) / sum(p0[j] * y0[j] for j in 1:s))
+        @NLconstraint(deamodel, sum(sum(w0[mi] * X[t,mi] for mi in 1:m) / sum(p0[si] * Y[t,si] for si in 1:s) * lambda[t] for t in 1:n) == eff * sum(w0[j] * x0[j] for j in 1:m ) / sum(p0[j] * y0[j] for j in 1:s))
 
         @constraint(deamodel, sum(lambda) == 1)
 
