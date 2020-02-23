@@ -130,8 +130,19 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
             # Output orientation
             @objective(deamodel, Max, eff)
 
-            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
-            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= eff * y0[j])
+            # Inequality or equality restrictions based on disposability
+            if disposalX == :Strong
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
+            elseif disposalX == :Weak
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j])
+            end
+
+            if disposalY == :Strong
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= eff * y0[j])
+            elseif disposalY == :Weak
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == eff * y0[j])
+            end
+
         else
             error("Invalid orientation $orient. Orientation should be :Input or :Output")
         end
