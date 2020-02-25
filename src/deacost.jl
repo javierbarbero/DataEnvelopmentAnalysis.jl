@@ -22,6 +22,7 @@ inputs `X`, outputs `Y` and price of inputs `W`.
 
 # Optional Arguments
 - `rts=:VRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
+- `disposal=:Strong`: chooses strong disposal of outputs. For weak disposal choose `:Weak`.
 
 # Examples
 ```jldoctest

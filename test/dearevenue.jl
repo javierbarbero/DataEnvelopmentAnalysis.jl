@@ -68,4 +68,22 @@
     @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException dearevenue([1; 2; 3], [4 4; 5 5; 6 6], [4 4 4; 5 5 5; 6 6 6]) # Different number of output prices and outputs
 
+    # ------------------
+    # Weak Diposal Tests
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+    P = [1; 1; 1; 1; 1]
+
+    dearevenueStrong = dearevenue(X, Y, P, disposal = :Strong)
+    @test efficiency(dearevenueStrong, :Economic) ≈ [1.0; 1.0; 1.0; 0.3333333333333333; 0.75]
+    @test efficiency(dearevenueStrong, :Technical) ≈ [1.0; 1.0; 1.0; 0.3333333333333333; 0.75]
+    @test efficiency(dearevenueStrong, :Allocative) ≈ [1.0; 1.0; 1.0; 1.0; 1.0]
+
+    dearevenueWeak = dearevenue(X, Y, P, disposal = :Weak)
+    @test efficiency(dearevenueWeak, :Economic) ≈ [1.0; 1.0; 1.0; 0.3333333333333333; 1.0]
+    @test efficiency(dearevenueWeak, :Technical) ≈ [1.0; 1.0; 1.0; 0.3333333333333333; 1.0]
+    @test efficiency(dearevenueWeak, :Allocative) ≈ [1.0; 1.0; 1.0; 1.0; 1.0]
+
 end

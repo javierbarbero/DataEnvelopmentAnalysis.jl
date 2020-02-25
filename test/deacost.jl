@@ -68,4 +68,22 @@
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
 
+    # ------------------
+    # Weak Diposal Tests
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+    W = [1; 1; 1; 1; 1]
+
+    deacostStrong = deacost(X, Y, W, disposal = :Strong)
+    @test efficiency(deacostStrong, :Economic) ≈ [1.0; 1.0; 1.0; 0.5; 0.5]
+    @test efficiency(deacostStrong, :Technical) ≈ [1.0; 1.0; 1.0; 0.5; 0.5]
+    @test efficiency(deacostStrong, :Allocative) ≈ [1.0; 1.0; 1.0; 1.0; 1.0]
+
+    deacostWeak = deacost(X, Y, W, disposal = :Weak)
+    @test efficiency(deacostWeak, :Economic) ≈ [1.0; 1.0; 1.0; 1.0; 0.5]
+    @test efficiency(deacostWeak, :Technical) ≈ [1.0; 1.0; 1.0; 1.0; 0.5]
+    @test efficiency(deacostWeak, :Allocative) ≈ [1.0; 1.0; 1.0; 1.0; 1.0]
+
 end

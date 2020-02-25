@@ -243,4 +243,31 @@
     @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposalX = :Error)  # Invalid inputs disposal
     @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposalY = :Error)  # Invalid outputs disposal
 
+    # ------------------
+    # Weak Diposal Tests
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+
+    deaioStrong = dea(X, Y, orient = :Input, rts = :VRS)
+    @test efficiency(deaioStrong ) ≈ [1.0; 1.0; 1.0; 0.5; 0.5]
+    @test slacks(deaioStrong, :X) ≈ [0; 0; 0; 0; 0] atol=1e-15
+    @test slacks(deaioStrong, :Y) ≈ [0; 0; 0; 1; 0] atol=1e-15
+
+    deaioWeak = dea(X, Y, orient = :Input, rts = :VRS, disposalY = :Weak)
+    @test efficiency(deaioWeak ) ≈ [1.0; 1.0; 1.0; 1.0; 0.5]
+    @test slacks(deaioWeak, :X) ≈ [0; 0; 0; 0; 0] atol=1e-15
+    @test slacks(deaioWeak, :Y) ≈ [0; 0; 0; 0; 0] atol=1e-15
+
+    deaooStrong = dea(X, Y, orient = :Output, rts = :VRS)
+    @test efficiency(deaooStrong ) ≈ [1.0; 1.0; 1.0; 3.0; 1.3333333333333333]
+    @test slacks(deaooStrong, :X) ≈ [0; 0; 0; 0; 1] atol=1e-15
+    @test slacks(deaooStrong, :Y) ≈ [0; 0; 0; 0; 0] atol=1e-15
+
+    deaooWeak = dea(X, Y, orient = :Output, rts = :VRS, disposalX = :Weak)
+    @test efficiency(deaooWeak ) ≈ [1.0; 1.0; 1.0; 3.0; 1.0]
+    @test slacks(deaooWeak, :X) ≈ [0; 0; 0; 0; 0] atol=1e-14
+    @test slacks(deaooWeak, :Y) ≈ [0; 0; 0; 0; 0] atol=1e-14
+
 end
