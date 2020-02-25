@@ -136,7 +136,8 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :V
         wY0 = wY[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        deamodel = Model(GLPK.Optimizer)
+        
         @variable(deamodel, sX[1:m] >= 0)
         @variable(deamodel, sY[1:s] >= 0)
         @variable(deamodel, lambda[1:nref] >= 0)

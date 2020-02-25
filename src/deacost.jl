@@ -81,7 +81,8 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
         w0 = W[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        deamodel = Model(GLPK.Optimizer)
+        
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, lambda[1:n] >= 0)
 

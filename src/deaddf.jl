@@ -98,7 +98,8 @@ function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS
         Gy0 = Gy[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        deamodel = Model(GLPK.Optimizer)
+        
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
 

@@ -88,7 +88,10 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
         p0 = P[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(Ipopt.Optimizer, print_level= 0 ))
+        deamodel = Model(Ipopt.Optimizer)
+        set_silent(deamodel)
+        set_optimizer_attribute(deamodel, "print_level", 0)
+
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:n] >= 0)
 

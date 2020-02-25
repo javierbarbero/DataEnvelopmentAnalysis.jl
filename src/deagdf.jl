@@ -81,7 +81,10 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack 
         y0 = Y[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(Ipopt.Optimizer, print_level = 0))
+        deamodel = Model(Ipopt.Optimizer)
+        set_silent(deamodel)
+        set_optimizer_attribute(deamodel, "print_level", 0)
+
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:nref] >= 0)
 

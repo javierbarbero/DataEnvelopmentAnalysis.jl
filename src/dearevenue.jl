@@ -81,7 +81,7 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, disposa
         p0 = P[i,:]
 
         # Create the optimization model
-        deamodel = Model(with_optimizer(GLPK.Optimizer))
+        deamodel = Model(GLPK.Optimizer)
         @variable(deamodel, Yeff[1:s])
         @variable(deamodel, lambda[1:n] >= 0)
 
