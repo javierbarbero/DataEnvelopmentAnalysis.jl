@@ -36,6 +36,8 @@ Model specification:
 - `WY`: matrix of weights of outputs. Only if `model=:Custom`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
+- `disposalX=:Strong`: chooses strong disposal of inputs. For weak disposal choose `:Weak`.
+- `disposalY=:Strong`: chooses strong disposal of outputs. For weak disposal choose `:Weak`.
 
 # Examples
 ```jldoctest
@@ -68,7 +70,8 @@ Weights = MIP
 function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
-    Xref::Matrix = X, Yref::Matrix = Y)::AdditiveDEAModel
+    Xref::Matrix = X, Yref::Matrix = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
 
     # Check parameters
     nx, m = size(X)
@@ -88,6 +91,23 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     end
     if s != sref
         error("number of outputs in evaluation set and reference set is different")
+    end
+
+    if disposalX != :Strong && disposalX != :Weak
+        error("Invalued inputs disposal $disposalX. Disposal should be :Strong or :Weak")
+    end
+    if disposalY != :Strong && disposalY != :Weak
+        error("Invalid outputs disposal $disposalY. Disposal should be :Strong or :Weak")
+    end
+
+    if orient == :Input && disposalX == :Weak
+        error("Weak input disposal not possible in input oriented model")
+    end
+    if orient == :Output && disposalY == :Weak
+        error("Weak output disposal not possible in output oriented model")
+    end
+    if orient == :Graph && (disposalX == :Weak || disposalY == :Weak)
+        error("Weak disposal not possible in graph oriented model")
     end
 
     # Default behaviour
@@ -139,6 +159,15 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         # Value of weights to evaluate
         wX0 = wX[i,:]
         wY0 = wY[i,:]
+
+        # Set weights to zero if Weak disposal
+        if disposalX == :Weak
+            wX0 = zeros(1, n)
+        end
+
+        if disposalY == :Weak
+            wY0 = zeros(1, n)
+        end
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
@@ -209,29 +238,32 @@ end
 function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
-    Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
+    Xref::Vector = X, Yref::Matrix = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
     wX = wX[:,:]
     Xref = Xref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
 function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Vector = Array{Float64}(undef, 0),
-    Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
+    Xref::Matrix = X, Yref::Vector = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
 
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
 function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Vector = Array{Float64}(undef, 0),
-    Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
+    Xref::Vector = X, Yref::Vector = Y,
+    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
     wX = wX[:,:]
@@ -239,7 +271,7 @@ function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol =
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
 end
 
 function Base.show(io::IO, x::AdditiveDEAModel)

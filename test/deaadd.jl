@@ -501,4 +501,26 @@
     @test slacks(deaaddoutput, :X) ≈ [0; 0; 0; 0.0; 1.0]
     @test slacks(deaaddoutput, :Y) ≈ [0; 0; 0; 2.0; 1.0]
 
+    # Input orientation with Weak disposal in outputs
+    deaaddinputweak = deaadd(X, Y, orient = :Input, disposalY = :Weak)
+    @test efficiency(deaaddinputweak) ≈ [0; 0; 0; 0.0; 2.0]
+    @test slacks(deaaddinputweak, :X) ≈ [0; 0; 0; 0.0; 2.0]
+    @test slacks(deaaddinputweak, :Y) ≈ [0; 0; 0; 0.0; 0.0]
+
+    # Output orientation with Weak disposal in inputs
+    deaaddoutputweak = deaadd(X, Y, orient = :Output, disposalX = :Weak)
+    @test efficiency(deaaddoutputweak) ≈ [0; 0; 0; 2.0; 0.0]
+    @test slacks(deaaddoutputweak, :X) ≈ [0; 0; 0; 0.0; 0.0]
+    @test slacks(deaaddoutputweak, :Y) ≈ [0; 0; 0; 2.0; 0.0]
+
+    # Test errors with orientation and disposal
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposalX = :Error)  # Invalid inputs disposal
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposalY = :Error)  # Invalid output disposal
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposalX = :Weak)  # Weak disposal not possible in graph oriented model
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposalX = :Weak)  # Weak disposal not possible in graph oriented model
+
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Input, disposalX = :Weak)  # Weak input disposal not possible in input oriented model
+
+    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Output, disposalY = :Weak)  # Weak output disposal not possible in output oriented model
+
 end
