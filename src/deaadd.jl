@@ -7,12 +7,14 @@ struct AdditiveDEAModel <: AbstractTechnicalDEAModel
     n::Int64
     m::Int64
     s::Int64
+    weights::Symbol
+    orient::Symbol
     rts::Symbol
     eff::Vector
     slackX::Matrix
     slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
-    weights::Symbol
+
 end
 
 """
@@ -28,7 +30,8 @@ Model specification:
 - `:Custom`: User supplied weights.
 
 # Optional Arguments
-- `rts=:VRS`: chosse between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
+- `orient=:Graph`: choose between graph oriented `:Graph`, input oriented `:Input`, or output oriented model `:Output`.
+- `rts=:VRS`: choose between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
 - `wX`: matrix of weights of inputs. Only if `model=:Custom`.
 - `WY`: matrix of weights of outputs. Only if `model=:Custom`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
@@ -43,7 +46,8 @@ julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 julia> deaadd(X, Y, :MIP)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = MIP; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = MIP
 ─────────────────────────────────────────────────────
       efficiency       slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────────
@@ -61,7 +65,8 @@ Weights = MIP; Returns to Scale = VRS
 ─────────────────────────────────────────────────────
 ```
 """
-function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :VRS,
+function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
+    rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Matrix = X, Yref::Matrix = Y)::AdditiveDEAModel
 
@@ -137,12 +142,21 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :V
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
-        
+
         @variable(deamodel, sX[1:m] >= 0)
         @variable(deamodel, sY[1:s] >= 0)
         @variable(deamodel, lambda[1:nref] >= 0)
 
-        @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m) + sum(wY0[j] * sY[j] for j in 1:s) )
+        if orient == :Graph
+            @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m) + sum(wY0[j] * sY[j] for j in 1:s) )
+        elseif orient == :Input
+            @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m)  )
+        elseif orient == :Output
+            @objective(deamodel, Max, sum(wY0[j] * sY[j] for j in 1:s) )
+        else
+            error("Invalid orientation $orient. Orientation should be :Graph, :Input or :Output")
+        end
+
         @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
         @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
 
@@ -177,6 +191,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :V
 
         effi[i]  = JuMP.objective_value(deamodel)
         lambdaeff[i,:] = JuMP.value.(lambda)
+
         slackX[i,:] = JuMP.value.(sX)
         slackY[i,:] = JuMP.value.(sY)
 
@@ -187,31 +202,34 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; rts::Symbol = :V
 
     end
 
-    return AdditiveDEAModel(n, m, s, rts, effi, slackX, slackY, lambdaeff, model)
+    return AdditiveDEAModel(n, m, s, model, orient, rts, effi, slackX, slackY, lambdaeff)
 
 end
 
-function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; rts::Symbol = :VRS,
+function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
+    rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Vector = X, Yref::Matrix = Y)::AdditiveDEAModel
 
     X = X[:,:]
     wX = wX[:,:]
     Xref = Xref[:,:]
-    return deaadd(X, Y, model, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
-function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; rts::Symbol = :VRS,
+function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
+    rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Matrix = X, Yref::Vector = Y)::AdditiveDEAModel
 
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
-function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; rts::Symbol = :VRS,
+function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
+    rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Vector = X, Yref::Vector = Y)::AdditiveDEAModel
 
@@ -221,7 +239,7 @@ function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; rts::Symbol = :V
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref)
 end
 
 function Base.show(io::IO, x::AdditiveDEAModel)
@@ -240,8 +258,10 @@ function Base.show(io::IO, x::AdditiveDEAModel)
         print(io, "; Inputs = ", m)
         print(io, "; Outputs = ", s)
         print(io, "\n")
-        print(io, "Weights = ", string(x.weights))
+        print(io, "Orientation = ", string(x.orient))
         print(io, "; Returns to Scale = ", string(x.rts))
+        print(io, "\n")
+        print(io, "Weights = ", string(x.weights))
         print(io, "\n")
         show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
     end

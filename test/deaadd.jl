@@ -461,6 +461,7 @@
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5], :Ones) # Different number of inputs
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Error) # Invalid model
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, orient = :Error) # Invalid orientation
 
     @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5]) #  Different number of observations
     @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
@@ -471,5 +472,33 @@
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wY = [4; 5; 6; 7]) # Different size of weights
 
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, wX = [1; 1; 1]) # Weights not allowed if model != :Custom
+
+    # ------------------
+    # Orientation Tests
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+
+    # Test default is graph
+    @test efficiency(deaadd(X, Y)) == efficiency(deaadd(X, Y, orient = :Graph))
+
+    # Graph orientaiton
+    deaaddgraph = deaadd(X, Y, orient = :Graph)
+    @test efficiency(deaaddgraph) ≈ [0; 0; 0; 2.0; 2.0]
+    @test slacks(deaaddgraph, :X) ≈ [0; 0; 0; 0; 1.0]
+    @test slacks(deaaddgraph, :Y) ≈ [0; 0; 0; 2.0; 1.0]
+
+    # Input orientation
+    deaaddinput = deaadd(X, Y, orient = :Input)
+    @test efficiency(deaaddinput) ≈ [0; 0; 0; 1.0; 2.0]
+    @test slacks(deaaddinput, :X) ≈ [0; 0; 0; 1.0; 2.0]
+    @test slacks(deaaddinput, :Y) ≈ [0; 0; 0; 1.0; 0.0]
+
+    # Output orientation
+    deaaddoutput = deaadd(X, Y, orient = :Output)
+    @test efficiency(deaaddoutput) ≈ [0; 0; 0; 2.0; 1.0]
+    @test slacks(deaaddoutput, :X) ≈ [0; 0; 0; 0.0; 1.0]
+    @test slacks(deaaddoutput, :Y) ≈ [0; 0; 0; 2.0; 1.0]
 
 end

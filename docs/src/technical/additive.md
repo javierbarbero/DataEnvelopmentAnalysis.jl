@@ -36,7 +36,8 @@ julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 julia> deaadd(X, Y)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = Ones; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = Ones
 ────────────────────────────────────────────────────
       efficiency       slackX1  slackX2      slackY1
 ────────────────────────────────────────────────────
@@ -81,7 +82,8 @@ The measure of inefficiency proportions (MIP), *Charnes et al. (1987)* and *Coop
 julia> deaadd(X, Y, :MIP)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = MIP; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = MIP
 ─────────────────────────────────────────────────────
       efficiency       slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────────
@@ -110,7 +112,8 @@ where ``\mathbf{σ^-}``and ``\mathbf{σ^+}`` are the standard deviations of inpu
 julia> deaadd(X, Y, :Normalized)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = Normalized; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = Normalized
 ──────────────────────────────────────────────────────────
       efficiency       slackX1       slackX2       slackY1
 ──────────────────────────────────────────────────────────
@@ -139,7 +142,8 @@ where ``R^-``and ``R^+``are the inputs and outputs variables' ranges.
 julia> deaadd(X, Y, :RAM)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = RAM; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = RAM
 ──────────────────────────────────────────────────────────
       efficiency       slackX1       slackX2       slackY1
 ──────────────────────────────────────────────────────────
@@ -167,7 +171,8 @@ where ``\mathbf{\underline{x}}`` and ``\mathbf{\overline{y}}`` are the minimum a
 julia> deaadd(X, Y, :BAM)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = BAM; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = BAM
 ─────────────────────────────────────────────────
       efficiency   slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────
