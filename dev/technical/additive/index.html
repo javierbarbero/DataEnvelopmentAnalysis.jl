@@ -18,7 +18,8 @@ julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 julia&gt; deaadd(X, Y)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = Ones; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = Ones
 ────────────────────────────────────────────────────
       efficiency       slackX1  slackX2      slackY1
 ────────────────────────────────────────────────────
@@ -36,7 +37,8 @@ Weights = Ones; Returns to Scale = VRS
 ────────────────────────────────────────────────────</code></pre><p>The same model is computed with:</p><pre><code class="language-julia">deaadd(X, Y, :Ones)</code></pre><p>The additive DEA model can be computed under constant returns to scale setting the <code>rts</code> parameter to <code>:CRS</code>:</p><pre><code class="language-julia">deaadd(X, Y, :Ones, rts = :CRS)</code></pre><p>The package can compute a wide class of different DEA models known as general  efficiency measures (GEMs):</p><ul><li>The measure of inefficiency proportions (MIP).</li><li>The normalized weighted additive DEA model.</li><li>The range adjusted measure (RAM).</li><li>The bounded adjusted  measure (BAM).</li></ul><h2><a class="nav-anchor" id="Measure-of-Inefficiency-Proportions-(MIP)-1" href="#Measure-of-Inefficiency-Proportions-(MIP)-1">Measure of Inefficiency Proportions (MIP)</a></h2><p>The measure of inefficiency proportions (MIP), <em>Charnes et al. (1987)</em> and <em>Cooper et al. (1999)</em>, use the weights:</p><div>\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/{\mathbf{x}}_{o},1/{{\mathbf{y}}_{o}})\]</div><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :MIP)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = MIP; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = MIP
 ─────────────────────────────────────────────────────
       efficiency       slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────────
@@ -54,7 +56,8 @@ Weights = MIP; Returns to Scale = VRS
 ─────────────────────────────────────────────────────</code></pre><h2><a class="nav-anchor" id="Normalized-Weighted-Additive-Model-1" href="#Normalized-Weighted-Additive-Model-1">Normalized Weighted Additive Model</a></h2><p>The normalized weighted additive DEA model, <em>Lovell and Pastor (1995)</em>, use the weights:</p><div>\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/{\mathbf{σ^-}},1/{{\mathbf{σ^+}}})\]</div><p>where <span>$\mathbf{σ^-}$</span>and <span>$\mathbf{σ^+}$</span> are the standard deviations of inputs and outputs respectively.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :Normalized)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = Normalized; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = Normalized
 ──────────────────────────────────────────────────────────
       efficiency       slackX1       slackX2       slackY1
 ──────────────────────────────────────────────────────────
@@ -72,7 +75,8 @@ Weights = Normalized; Returns to Scale = VRS
 ──────────────────────────────────────────────────────────</code></pre><h2><a class="nav-anchor" id="Range-Adjusted-Measure-(RAM)-1" href="#Range-Adjusted-Measure-(RAM)-1">Range Adjusted Measure (RAM)</a></h2><p>The range adjusted measure (RAM), <em>Cooper et al. (1999)</em>, use the weights::</p><div>\[(\mathbf{\rho^{-}, \mathbf{\rho^{+}}})=(1/(m+s)R^-,(1/(m+s)R^+)\]</div><p>where <span>$R^-$</span>and <span>$R^+$</span>are the inputs and outputs variables&#39; ranges.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :RAM)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = RAM; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = RAM
 ──────────────────────────────────────────────────────────
       efficiency       slackX1       slackX2       slackY1
 ──────────────────────────────────────────────────────────
@@ -90,7 +94,8 @@ Weights = RAM; Returns to Scale = VRS
 ──────────────────────────────────────────────────────────</code></pre><h2><a class="nav-anchor" id="Bounded-Adjusted-Measure-(BAM)-1" href="#Bounded-Adjusted-Measure-(BAM)-1">Bounded Adjusted  Measure (BAM)</a></h2><p>The bounded adjusted  measure (BAM), <em>Cooper et al. (2011)</em>, use the weights:::</p><div>\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/(m+s)({\mathbf{x}}_{o}-{\mathbf{\underline{x}}}),(1/(m+s)({\mathbf{\overline{y}}} - {\mathbf{y}}_{o})\]</div><p>where <span>$\mathbf{\underline{x}}$</span> and <span>$\mathbf{\overline{y}}$</span> are the minimum and maximum observed values of inputs and outputs respectively.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :BAM)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = BAM; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = BAM
 ─────────────────────────────────────────────────
       efficiency   slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────
@@ -105,14 +110,15 @@ Weights = BAM; Returns to Scale = VRS
 9    0.0           0.0          0.0   0.0
 10   0.571361      5.0         11.0   5.0
 11   0.121212      0.0          4.0   0.0
-─────────────────────────────────────────────────</code></pre><h3><a class="nav-anchor" id="deaadd-Function-Documentation-1" href="#deaadd-Function-Documentation-1">deaadd Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deaadd" href="#DataEnvelopmentAnalysis.deaadd"><code>DataEnvelopmentAnalysis.deaadd</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deaadd(X, Y, model)</code></pre><p>Compute related data envelopment analysis weighted additive models for inputs <code>X</code> and outputs <code>Y</code>.</p><p>Model specification:</p><ul><li><code>:Ones</code>: standard additive DEA model.</li><li><code>:MIP</code>: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)</li><li><code>:Normalized</code>: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)</li><li><code>:RAM</code>: Range Adjusted Measure. (Cooper et al., 1999)</li><li><code>:BAM</code>: Bounded Adjusted Measure. (Cooper et al, 2011)</li><li><code>:Custom</code>: User supplied weights.</li></ul><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:VRS</code>: chosse between constant returns to scale <code>:CRS</code> or variable returns to scale <code>:VRS</code>.</li><li><code>wX</code>: matrix of weights of inputs. Only if <code>model=:Custom</code>.</li><li><code>WY</code>: matrix of weights of outputs. Only if <code>model=:Custom</code>.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+─────────────────────────────────────────────────</code></pre><h3><a class="nav-anchor" id="deaadd-Function-Documentation-1" href="#deaadd-Function-Documentation-1">deaadd Function Documentation</a></h3><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="DataEnvelopmentAnalysis.deaadd" href="#DataEnvelopmentAnalysis.deaadd"><code>DataEnvelopmentAnalysis.deaadd</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-julia">deaadd(X, Y, model)</code></pre><p>Compute related data envelopment analysis weighted additive models for inputs <code>X</code> and outputs <code>Y</code>.</p><p>Model specification:</p><ul><li><code>:Ones</code>: standard additive DEA model.</li><li><code>:MIP</code>: Measure of Inefficiency Proportions. (Charnes et al., 1987; Cooper et al., 1999)</li><li><code>:Normalized</code>: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)</li><li><code>:RAM</code>: Range Adjusted Measure. (Cooper et al., 1999)</li><li><code>:BAM</code>: Bounded Adjusted Measure. (Cooper et al, 2011)</li><li><code>:Custom</code>: User supplied weights.</li></ul><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Graph</code>: choose between graph oriented <code>:Graph</code>, input oriented <code>:Input</code>, or output oriented model <code>:Output</code>.</li><li><code>rts=:VRS</code>: choose between constant returns to scale <code>:CRS</code> or variable returns to scale <code>:VRS</code>.</li><li><code>wX</code>: matrix of weights of inputs. Only if <code>model=:Custom</code>.</li><li><code>WY</code>: matrix of weights of outputs. Only if <code>model=:Custom</code>.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
 
 julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia&gt; deaadd(X, Y, :MIP)
 Weighted Additive DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
-Weights = MIP; Returns to Scale = VRS
+Orientation = Graph; Returns to Scale = VRS
+Weights = MIP
 ─────────────────────────────────────────────────────
       efficiency       slackX1  slackX2       slackY1
 ─────────────────────────────────────────────────────
@@ -127,4 +133,4 @@ Weights = MIP; Returns to Scale = VRS
 9    0.0           0.0              0.0   0.0
 10   1.04322      17.0             15.0   1.0
 11   0.235294      0.0              4.0   0.0
-─────────────────────────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/69e5e7e58175a101362747bc0bc0c071e6cf5e8f/src/deaadd.jl#L18-L63">source</a></section><footer><hr/><a class="previous" href="../directional/"><span class="direction">Previous</span><span class="title">Directional Distance Function Models</span></a><a class="next" href="../generalizeddf/"><span class="direction">Next</span><span class="title">Generalized Distance Function Models</span></a></footer></article></body></html>
+─────────────────────────────────────────────────────</code></pre></div></div><a class="source-link" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/7f356c9ebfcbb26b7540e988ab08a55ad6897fc0/src/deaadd.jl#L20-L67">source</a></section><footer><hr/><a class="previous" href="../directional/"><span class="direction">Previous</span><span class="title">Directional Distance Function Models</span></a><a class="next" href="../generalizeddf/"><span class="direction">Next</span><span class="title">Generalized Distance Function Models</span></a></footer></article></body></html>
