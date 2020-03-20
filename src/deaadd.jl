@@ -94,7 +94,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     end
 
     if disposalX != :Strong && disposalX != :Weak
-        error("Invalued inputs disposal $disposalX. Disposal should be :Strong or :Weak")
+        error("Invalid inputs disposal $disposalX. Disposal should be :Strong or :Weak")
     end
     if disposalY != :Strong && disposalY != :Weak
         error("Invalid outputs disposal $disposalY. Disposal should be :Strong or :Weak")
@@ -128,7 +128,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         end
 
         # Get weights for selected model
-        wX, wY = deaaddweights(X, Y, model)
+        wX, wY = deaaddweights(X, Y, model, orient = orient)
     end
 
     if size(wX) != size(X)
@@ -310,79 +310,144 @@ Model specification:
 - `:Normalized`: Normalized weighted additive DEA model. (Lovell and Pastor, 1995)
 - `:RAM`: Range Adjusted Measure. (Cooper et al., 1999)
 - `:BAM`: Bounded Adjusted Measure. (Cooper et al, 2011)
+
+# Optional Arguments
+- `orient=:Graph`: choose between graph oriented `:Graph`, input oriented `:Input`, or output oriented model `:Output`.
+
 """
-function deaaddweights(X::Matrix, Y::Matrix, model::Symbol)
+function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Graph)
+
+    # Check orientation
+    if orient != :Graph && orient != :Input && orient != :Output
+        error("Invalid orientation $orient. Orientation should be :Graph, :Input or :Output")
+    end
 
     # Compute specific weights based on the model
     if model == :Ones
         # Standard Additive DEA model
-        wX = ones(size(X))
-        wY = ones(size(Y))
+        if orient == :Graph || orient == :Input
+            wX = ones(size(X))
+        end
+        if orient == :Graph || orient == :Output
+            wY = ones(size(Y))
+        end
+
     elseif model == :MIP
         # Measure of Inefficiency Proportions
-        wX = 1 ./ X
-        wY = 1 ./ Y
+        if orient == :Graph || orient == :Input
+            wX = 1 ./ X
+        end
+        if orient == :Graph || orient == :Output
+            wY = 1 ./ Y
+        end
+
     elseif model == :Normalized
         # Normalized weighted additive DEA model
-        wX = zeros(size(X))
-        wY = zeros(size(Y))
+        if orient == :Graph || orient == :Input
 
-        m = size(X, 2)
-        s = size(Y, 2)
+            wX = zeros(size(X))
+            m = size(X, 2)
 
-        for i=1:m
-            wX[:,i] .= 1 ./ std(X[:,i])
+            for i=1:m
+                wX[:,i] .= 1 ./ std(X[:,i])
+            end
+
+            wX[isinf.(wX)] .= 0
         end
-        for i=1:s
-            wY[:,i] .= 1 ./ std(Y[:,i])
-        end
+        if orient == :Graph || orient == :Output
 
-        wX[isinf.(wX)] .= 0
-        wY[isinf.(wY)] .= 0
+            wY = zeros(size(Y))
+            s = size(Y, 2)
+
+            for i=1:s
+                wY[:,i] .= 1 ./ std(Y[:,i])
+            end
+
+            wY[isinf.(wY)] .= 0
+        end
 
     elseif model == :RAM
         # Range Adjusted Measure
         m = size(X, 2)
         s = size(Y, 2)
 
-        wX = zeros(size(X))
-        wY = zeros(size(Y))
-
-        for i=1:m
-            wX[:,i] .= 1 ./ ((m + s) * (maximum(X[:,i])  - minimum(X[:,i])))
+        normalization = 0
+        if orient == :Graph
+            normalization = m + s
+        elseif orient == :Input
+            normalization = m
+        elseif orient == :Output
+            normalization = s
         end
-        for i=1:s
-            wY[:,i] .= 1 ./ ((m + s) * (maximum(Y[:,i])  - minimum(Y[:,i])))
-        end
 
-        wX[isinf.(wX)] .= 0
-        wY[isinf.(wY)] .= 0
+        if orient == :Graph || orient == :Input
+
+            wX = zeros(size(X))
+
+            for i=1:m
+                wX[:,i] .= 1 ./ (normalization * (maximum(X[:,i])  - minimum(X[:,i])))
+            end
+
+            wX[isinf.(wX)] .= 0
+        end
+        if orient == :Graph || orient == :Output
+
+            wY = zeros(size(Y))
+
+            for i=1:s
+                wY[:,i] .= 1 ./ (normalization * (maximum(Y[:,i])  - minimum(Y[:,i])))
+            end
+
+            wY[isinf.(wY)] .= 0
+        end
 
     elseif model == :BAM
         # Bounded Adjusted Measure
         m = size(X, 2)
         s = size(Y, 2)
 
-        minX = zeros(m)
-        maxY = zeros(s)
-
-        wX = zeros(size(X))
-        wY = zeros(size(Y))
-
-        for i=1:m
-            minX[i] = minimum(X[:,i])
-            wX[:,i] = 1 ./ ((m  + s) .* (X[:,i] .- minX[i] ))
-        end
-        for i=1:s
-            maxY[i] = maximum(Y[:,i])
-            wY[:,i] = 1 ./ ((m + s) .* (maxY[i] .- Y[:,i]))
+        normalization = 0
+        if orient == :Graph
+            normalization = m + s
+        elseif orient == :Input
+            normalization = m
+        elseif orient == :Output
+            normalization = s
         end
 
-        wX[isinf.(wX)] .= 0
-        wY[isinf.(wY)] .= 0
+        if orient == :Graph || orient == :Input
+
+            wX = zeros(size(X))
+            minX = zeros(m)
+
+            for i=1:m
+                minX[i] = minimum(X[:,i])
+                wX[:,i] = 1 ./ (normalization .* (X[:,i] .- minX[i] ))
+            end
+
+            wX[isinf.(wX)] .= 0
+        end
+        if orient == :Graph || orient == :Output
+
+            wY = zeros(size(Y))
+            maxY = zeros(s)
+
+            for i=1:s
+                maxY[i] = maximum(Y[:,i])
+                wY[:,i] = 1 ./ (normalization .* (maxY[i] .- Y[:,i]))
+            end
+
+            wY[isinf.(wY)] .= 0
+        end
 
     else
         error("Invalid model ", model)
+    end
+
+    if orient == :Input
+        wY = ones(size(Y))
+    elseif orient == :Output
+        wX = ones(size(X))
     end
 
     return wX, wY
