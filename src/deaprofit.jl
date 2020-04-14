@@ -7,6 +7,7 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     n::Int64
     m::Int64
     s::Int64
+    dmunames::Vector{String}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -18,6 +19,9 @@ end
     deaprofit(X, Y, W, P)
 Compute profit efficiency using data envelopment analysis model for
 inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
+
+# Optional Arguments
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -53,7 +57,9 @@ Returns to Scale = VRS
 ─────────────────────────────────────
 ```
 """
-function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::Matrix)::ProfitDEAModel
+function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::Matrix;
+    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
+
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -134,32 +140,38 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     techefficiency = efficiency(deaddf(X, Y, Gx, Gy, rts = :VRS, slack = false))
     allocefficiency = pefficiency - techefficiency
 
-    return ProfitDEAModel(n, m, s, pefficiency, plambdaeff, techefficiency, allocefficiency)
+    return ProfitDEAModel(n, m, s, names, pefficiency, plambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix)::ProfitDEAModel
+function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix;
+    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
+    
     X = X[:,:]
     W = W[:,:]
     Gx = Gx[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy)
+    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
 end
 
-function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector)::ProfitDEAModel
+function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector;
+    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
+
     Y = Y[:,:]
     P = P[:,:]
     Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy)
+    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
 end
 
-function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector)::ProfitDEAModel
+function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector;
+    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
+
     X = X[:,:]
     Y = Y[:,:]
     W = W[:,:]
     P = P[:,:]
     Gx = Gx[:,:]
     Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy)
+    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
 end
 
 function Base.show(io::IO, x::ProfitDEAModel)
@@ -168,6 +180,8 @@ function Base.show(io::IO, x::ProfitDEAModel)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    dmunames = names(x)
+
     eff = efficiency(x)
     techeff = efficiency(x, :Technical)
     alloceff = efficiency(x, :Allocative)
@@ -180,9 +194,7 @@ function Base.show(io::IO, x::ProfitDEAModel)
         print(io, "\n")
         print(io, "Returns to Scale = VRS")
         print(io, "\n")
-        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Profit", "Technical", "Allocative"], ["$i" for i in 1:n]))
-
-    else
-
+        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Profit", "Technical", "Allocative"], dmunames))
     end
+
 end

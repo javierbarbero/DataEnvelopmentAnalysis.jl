@@ -9,6 +9,7 @@ struct RevenueDEAModel <: AbstractRevenueDEAModel
     s::Int64
     rts::Symbol
     disposX::Symbol
+    dmunames::Vector{String}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -24,6 +25,7 @@ inputs `X`, outputs `Y` and price of outputs `P`.
 # Optional Arguments
 - `rts=:VRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
 - `dispos=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -48,7 +50,9 @@ Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
+
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -122,26 +126,32 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos:
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
     techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false, disposX = dispos))
     allocefficiency = refficiency ./ techefficiency
-    return RevenueDEAModel(n, m, s, rts, dispos, refficiency, rlambdaeff, techefficiency, allocefficiency)
+    return RevenueDEAModel(n, m, s, rts, dispos, names, refficiency, rlambdaeff, techefficiency, allocefficiency)
 
 end
 
-function dearevenue(X::Vector, Y::Matrix, P::Matrix, rts::Symbol = :VRS, dispos::Symbol = :Strong)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
+
     X = X[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos)
+    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
 end
 
-function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong)::RevenueDEAModel
+function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
+
     Y = Y[:,:]
     P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos)
+    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
 end
 
-function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong)::RevenueDEAModel
+function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
+
     X = X[:,:]
     Y = Y[:,:]
     P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos)
+    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
 end
 
 function Base.show(io::IO, x::RevenueDEAModel)
@@ -151,6 +161,7 @@ function Base.show(io::IO, x::RevenueDEAModel)
     m = ninputs(x)
     s = noutputs(x)
     disposX = x.disposX
+    dmunames = names(x)
 
     eff = efficiency(x)
     techeff = efficiency(x, :Technical)
@@ -167,7 +178,7 @@ function Base.show(io::IO, x::RevenueDEAModel)
         print(io, "\n")
         if disposX == :Weak println("Weak disposability of inputs") end
 
-        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Revenue", "Technical", "Allocative"], ["$i" for i in 1:n]))
+        show(io, CoefTable(hcat(eff, techeff, alloceff), ["Revenue", "Technical", "Allocative"], dmunames))
     end
 
 end

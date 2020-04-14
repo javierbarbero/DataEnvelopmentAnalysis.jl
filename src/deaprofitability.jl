@@ -8,6 +8,7 @@ struct ProfitabilityDEAModel <: AbstractProfitabilityDEAModel
     m::Int64
     s::Int64
     alpha::Float64
+    dmunames::Vector{String}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     crseff::Vector
@@ -24,6 +25,7 @@ inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 
 # Optional Arguments
 - `alpha=0.5`: alpha to use for the generalized distance function.
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -50,7 +52,9 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────────────────────────────────────────────────
 ```
 """
-function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Float64 = 0.5)::ProfitabilityDEAModel
+function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Float64 = 0.5,
+    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
+
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -120,28 +124,34 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
     scalefficiency = crsefficiency ./ vrsefficiency
     allocefficiency = pefficiency ./ crsefficiency
 
-    return ProfitabilityDEAModel(n, m, s, alpha, pefficiency, plambdaeff, crsefficiency, vrsefficiency, scalefficiency, allocefficiency)
+    return ProfitabilityDEAModel(n, m, s, alpha, names, pefficiency, plambdaeff, crsefficiency, vrsefficiency, scalefficiency, allocefficiency)
 
 end
 
-function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5)::ProfitabilityDEAModel
+function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5,
+    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
+
     X = X[:,:]
     W = W[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha)
+    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
 end
 
-function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5)::ProfitabilityDEAModel
+function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5,
+    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
+
     Y = Y[:,:]
     P = P[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha)
+    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
 end
 
-function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5)::ProfitabilityDEAModel
+function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5,
+    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
+
     X = X[:,:]
     W = W[:,:]
     Y = Y[:,:]
     P = P[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha)
+    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
 end
 
 function Base.show(io::IO, x::ProfitabilityDEAModel)
@@ -150,6 +160,8 @@ function Base.show(io::IO, x::ProfitabilityDEAModel)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    dmunames = names(x)
+
     eff = efficiency(x)
     crseff = efficiency(x, :CRS)
     vrseff = efficiency(x, :VRS)
@@ -165,8 +177,7 @@ function Base.show(io::IO, x::ProfitabilityDEAModel)
         print(io, "alpha = ", x.alpha)
         print(io, "; Returns to Scale = VRS")
         print(io, "\n")
-        show(io, CoefTable(hcat(eff, crseff, vrseff, scaleeff, alloceff), ["Profitability", "CRS", "VRS", "Scale", "Allocative"], ["$i" for i in 1:n]))
-    else
-
+        show(io, CoefTable(hcat(eff, crseff, vrseff, scaleeff, alloceff), ["Profitability", "CRS", "VRS", "Scale", "Allocative"], dmunames))
     end
+
 end

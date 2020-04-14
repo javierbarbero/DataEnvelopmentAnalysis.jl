@@ -270,4 +270,26 @@
     @test slacks(deaooWeak, :X) ≈ [0; 0; 0; 0; 0] atol=1e-14
     @test slacks(deaooWeak, :Y) ≈ [0; 0; 0; 0; 0] atol=1e-14
 
+    # ------------------
+    # DMU names
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+
+    @test names(dea(X, Y)) == ["1"; "2"; "3"; "4"; "5"]
+    @test names(dea(X, Y, names = ["A", "B", "C", "D", "E"])) == ["A", "B", "C", "D", "E"]
+
+    logs, value = Test.collect_test_logs() do
+        names(dea(X, Y, names = ["A", "B", "C", "D"]))
+    end
+    @test occursin("Length of names lower than number of observations", string(logs))
+    @test value == ["A", "B", "C", "D", "5"]
+
+    logs, value = Test.collect_test_logs() do
+        names(dea(X, Y, names = ["A", "B", "C", "D", "E", "F"]))
+    end
+    @test occursin("Length of names greater than number of observations", string(logs))
+    @test value == ["A", "B", "C", "D", "E"]
+    
 end

@@ -10,6 +10,7 @@ struct MalmquistDEAModel <: AbstractProductivityDEAModel
     orient::Symbol
     rts::Symbol
     refperiod::Symbol
+    dmunames::Vector{String}
     Prod::Matrix
     EC::Matrix
     TC::Matrix
@@ -23,6 +24,7 @@ Compute the Malmquist productivity index using data envelopment analysis for inp
 - `orient=:Input`: chooses between input oriented radial model `:Input` or output oriented radial model `:Output`.
 - `refperiod=:Geomean`: chooses reference period for technological change: `:Base`, `:Comparison` or `:Geomean`.
 - `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -57,7 +59,8 @@ EC = Efficiency Change
 TC = Technological Change
 ```
 """
-function malmquist(X::Array{Float64,3}, Y::Array{Float64,3}; orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean)::MalmquistDEAModel
+function malmquist(X::Array{Float64,3}, Y::Array{Float64,3}; orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
+    names::Vector{String} = Array{String}(undef, 0))::MalmquistDEAModel
     # Check dimensions
     if ndims(X) != 3
         error("X should be a 3-dimensions array")
@@ -127,20 +130,22 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3}; orient::Symbol = :I
 
     end
 
-    return MalmquistDEAModel(n, m, s, T, orient, rts, refperiod, Prod, EC, TC)
+    return MalmquistDEAModel(n, m, s, T, orient, rts, refperiod, names, Prod, EC, TC)
 
 end
 
 function Base.show(io::IO, x::MalmquistDEAModel)
     compact = get(io, :compact, false)
 
-    Prod = prodchange(x, :Prod)
-    EC   = prodchange(x, :EC)
-    TC   = prodchange(x, :TC)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    dmunames = names(x)
+
     periods = nperiods(x)
+    Prod = prodchange(x, :Prod)
+    EC   = prodchange(x, :EC)
+    TC   = prodchange(x, :TC)
 
     if !compact
         print(io, "Mamlmquist DEA Model \n")
@@ -155,18 +160,17 @@ function Base.show(io::IO, x::MalmquistDEAModel)
         print(io, "Referene period = ", string(x.refperiod))
         print(io, "\n")
         if periods == 2
-            show(io, CoefTable(hcat(Prod, EC, TC), ["M", "EC", "TC"], ["$i" for i in 1:n]))
+            show(io, CoefTable(hcat(Prod, EC, TC), ["M", "EC", "TC"], dmunames))
         end
         if periods > 2
             show(io, CoefTable(hcat(Prod, EC, TC),
                                vcat(["M$i" for i in 1:2], ["EC$i" for i in 1:2], ["TC$i" for i in 1:2 ]),
-                               ["$i" for i in 1:n]))
+                               dmunames))
         end
         print(io, "\n")
         print(io, "M  = Malmquist Productivity Index \n")
         print(io, "EC = Efficiency Change \n")
         print(io, "TC = Technological Change")
-    else
-
     end
+
 end

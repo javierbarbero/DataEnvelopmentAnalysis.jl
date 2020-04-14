@@ -9,6 +9,7 @@ struct GeneralizedDFDEAModel <: AbstractTechnicalDEAModel
     s::Int64
     alpha::Float64
     rts::Symbol
+    dmunames::Vector{String}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -25,6 +26,7 @@ inputs `X`, outputs `Y`, and `alpha`.
 - `slack=true`: compute input and output slacks.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -47,7 +49,9 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────
 ```
 """
-function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
+function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
+    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
+
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -131,28 +135,34 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack 
         slackY = Array{Float64}(undef, 0, 0)
     end
 
-    return GeneralizedDFDEAModel(n, m, s, alpha, rts, effi, slackX, slackY, lambdaeff)
+    return GeneralizedDFDEAModel(n, m, s, alpha, rts, names, effi, slackX, slackY, lambdaeff)
 
 end
 
-function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y)::GeneralizedDFDEAModel
+function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
+    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
+
     X = X[:,:]
     Xref = Xref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
-function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y)::GeneralizedDFDEAModel
+function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
+    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
+
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
-function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y)::GeneralizedDFDEAModel
+function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
+    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
+
     X = X[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref)
+    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
 function Base.show(io::IO, x::GeneralizedDFDEAModel)
@@ -162,6 +172,8 @@ function Base.show(io::IO, x::GeneralizedDFDEAModel)
     m = ninputs(x)
     s = noutputs(x)
     eff = efficiency(x)
+    dmunames = names(x)
+
     slackX = slacks(x, :X)
     slackY = slacks(x, :Y)
     hasslacks = ! isempty(slackX)
@@ -176,9 +188,9 @@ function Base.show(io::IO, x::GeneralizedDFDEAModel)
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
         if hasslacks == true
-            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
+            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
         else
-            show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
+            show(io, CoefTable(hcat(eff), ["efficiency"], dmunames))
         end
     end
 

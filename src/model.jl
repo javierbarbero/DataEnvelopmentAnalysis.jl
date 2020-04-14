@@ -56,3 +56,60 @@ julia> noutputs(deaio)
 """
 noutputs(model::AbstractDEAModel) = model.s
 
+"""
+    names(model::AbstractDEAModel)
+Return the names of the decision making units (DMUs)
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> dmunames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+
+julia> deaio = dea(X, Y, names = dmunames);
+
+julia> names(deaio)
+11-element Array{String,1}:
+ "A"
+ "B"
+ "C"
+ "D"
+ "E"
+ "F"
+ "G"
+ "H"
+ "I"
+ "J"
+ "K"
+```
+"""
+function Base.names(model::AbstractDEAModel)
+
+    xnobs = nobs(model)
+
+    if isdefined(model, :dmunames)    
+
+        xnameslength = length(model.dmunames)
+
+        if xnameslength == 0
+            # If model have no names, return numeric sequence
+            retnames = ["$i" for i in 1:xnobs]      
+        elseif xnameslength == xnobs
+            retnames = model.dmunames  
+        elseif xnameslength < xnobs
+            # If length of names is lower than number of observations, append numbers to match 
+            @warn("Length of names lower than number of observations")
+            retnames = [model.dmunames; ["$i" for i in (xnameslength + 1):xnobs]]
+        elseif xnameslength > xnobs
+            # If length of names is greater than number of observations, split
+            @warn("Length of names greater than number of observations")
+            retnames = model.dmunames[1:xnobs]
+        end
+    else
+        # Return numeric sequence
+        retnames = ["$i" for i in 1:xnobs]
+    end
+
+    return retnames
+end

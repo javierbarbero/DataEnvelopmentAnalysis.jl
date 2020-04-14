@@ -17,6 +17,7 @@ struct RadialDEAModel <: AbstractRadialDEAModel
     rts::Symbol
     disposX::Symbol
     disposY::Symbol
+    dmunames::Vector{String}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -35,6 +36,7 @@ Compute the radial model using data envelopment analysis for inputs X and output
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
+- `names`: a vector of strings with the names of the decision making units.
 
 # Examples
 ```jldoctest
@@ -64,7 +66,8 @@ Orientation = Input; Returns to Scale = CRS
 ```
 """
 function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::RadialDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong, 
+    names::Vector{String} = Array{String}(undef, 0))::RadialDEAModel
 
     # Check parameters
     nx, m = size(X)
@@ -205,34 +208,37 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
         slackY = Array{Float64}(undef, 0, 0)
     end
 
-    return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, effi, slackX, slackY, lambdaeff)
+    return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff)
 
 end
 
 function dea(X::Vector, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::RadialDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RadialDEAModel
 
     X = X[:,:]
     Xref = Xref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
 end
 
 function dea(X::Matrix, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::RadialDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RadialDEAModel
 
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
 end
 
 function dea(X::Vector, Y::Vector; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::RadialDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
+    names::Vector{String} = Array{String}(undef, 0))::RadialDEAModel
 
     X = X[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return dea(X, Y, orient = orient, rts = rts, slack = slack, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
 end
 
 function Base.show(io::IO, x::RadialDEAModel)
@@ -243,6 +249,7 @@ function Base.show(io::IO, x::RadialDEAModel)
     s = noutputs(x)
     disposX = x.disposX
     disposY = x.disposY
+    dmunames = names(x)
     
     eff = efficiency(x)
     slackX = slacks(x, :X)
@@ -262,9 +269,9 @@ function Base.show(io::IO, x::RadialDEAModel)
         if disposY == :Weak println("Weak disposability of outputs") end
 
         if hasslacks == true
-            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
+            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
         else
-            show(io, CoefTable(hcat(eff), ["efficiency"], ["$i" for i in 1:n]))
+            show(io, CoefTable(hcat(eff), ["efficiency"], dmunames))
         end
     end
 
