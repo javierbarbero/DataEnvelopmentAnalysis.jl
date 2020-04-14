@@ -7,7 +7,7 @@
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
     # Additive CRS
-    deaaddcrs1 = deaadd(X, Y, :Custom, wX = ones(size(X)), wY = ones(size(Y)), rts = :CRS)
+    deaaddcrs1 = deaadd(X, Y, :Custom, rhoX = ones(size(X)), rhoY = ones(size(Y)), rts = :CRS)
 
     @test nobs(deaaddcrs1) == 11
     @test ninputs(deaaddcrs1) == 2
@@ -38,7 +38,7 @@
       1.0000000000  0  0 0.0000000000  0  0 0.0000000000  0  0   0   0]
 
     # Additive VRS model
-    deaaddvrs1 = deaadd(X, Y, :Custom, wX = ones(size(X)), wY = ones(size(Y)), rts = :VRS)
+    deaaddvrs1 = deaadd(X, Y, :Custom, rhoX = ones(size(X)), rhoY = ones(size(Y)), rts = :VRS)
 
     @test nobs(deaaddvrs1) == 11
     @test ninputs(deaaddvrs1) == 2
@@ -391,17 +391,17 @@
                                 0]
 
     # Test model with Custom weights
-    deaddcustomcrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :CRS)
+    deaddcustomcrs = deaadd(X, Y, rhoX = 1 ./ X, rhoY = 1 ./ Y, rts = :CRS)
     @test deaddcustomcrs.weights == :Custom
     @test efficiency(deaddcustomcrs) ≈ efficiency(deaaddmipcrs)
 
-    deaddcustomvrs = deaadd(X, Y, wX = 1 ./ X, wY = 1 ./ Y, rts = :VRS)
+    deaddcustomvrs = deaadd(X, Y, rhoX = 1 ./ X, rhoY = 1 ./ Y, rts = :VRS)
     @test deaddcustomvrs.weights == :Custom
     @test efficiency(deaddcustomvrs) ≈ efficiency(deaaddmipvrs)
 
     # Test that slacks are zero when weights are zero
-    @test all(slacks(deaadd(X, Y, wX = zeros(size(X)), wY = ones(size(Y))) , :X) .== 0)
-    @test all(slacks(deaadd(X, Y, wX = ones(size(X)) , wY = zeros(size(Y))), :Y) .== 0)
+    @test all(slacks(deaadd(X, Y, rhoX = zeros(size(X)), rhoY = ones(size(Y))) , :X) .== 0)
+    @test all(slacks(deaadd(X, Y, rhoX = ones(size(X)) , rhoY = zeros(size(Y))), :Y) .== 0)
 
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
     deaadddefaultcrs_ref_eff = zeros(size(X, 1))
@@ -428,8 +428,8 @@
         deaadddefaultcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaadddefaultvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-        deaaddcustomcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :CRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
-        deaaddcustomvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :VRS, wX = 1 ./ Xeval, wY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+        deaaddcustomcrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :CRS, rhoX = 1 ./ Xeval, rhoY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
+        deaaddcustomvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Custom, rts = :VRS, rhoX = 1 ./ Xeval, rhoY = 1 ./ Yeval, Xref = Xref, Yref = Yref))[1]
 
         deaaddonescrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :CRS, Xref = Xref, Yref = Yref))[1]
         deaaddonesvrs_ref_eff[i] = efficiency(deaadd(Xeval, Yeval, :Ones, rts = :VRS, Xref = Xref, Yref = Yref))[1]
@@ -468,10 +468,10 @@
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wX = [1; 2; 3; 4]) # Different size of weights
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, wY = [4; 5; 6; 7]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 2; 3; 4]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoY = [4; 5; 6; 7]) # Different size of weights
 
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, wX = [1; 1; 1]) # Weights not allowed if model != :Custom
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rhoX = [1; 1; 1]) # Weights not allowed if model != :Custom
 
     # ------------------
     # Orientation Tests

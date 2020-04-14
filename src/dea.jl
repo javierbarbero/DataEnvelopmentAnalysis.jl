@@ -186,18 +186,18 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
 
         # Use additive model with radial efficient X and Y to get slacks
         if disposX == :Strong
-            wX = ones(size(X))
+            rhoX = ones(size(X))
         elseif disposX == :Weak
-            wX = zeros(size(X))
+            rhoX = zeros(size(X))
         end
 
         if disposY == :Strong
-            wY = ones(size(Y))
+            rhoY = ones(size(Y))
         elseif disposY == :Weak
-            wY = zeros(size(Y))
+            rhoY = zeros(size(Y))
         end
 
-        radialSlacks = deaadd(Xeff, Yeff, wX = wX, wY = wY, rts = rts, Xref = Xref, Yref = Yref)
+        radialSlacks = deaadd(Xeff, Yeff, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = Xref, Yref = Yref)
         slackX = slacks(radialSlacks, :X)
         slackY = slacks(radialSlacks, :Y)
     else

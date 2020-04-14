@@ -34,8 +34,8 @@ Model specification:
 # Optional Arguments
 - `orient=:Graph`: choose between graph oriented `:Graph`, input oriented `:Input`, or output oriented model `:Output`.
 - `rts=:VRS`: choose between constant returns to scale `:CRS` or variable returns to scale `:VRS`.
-- `wX`: matrix of weights of inputs. Only if `model=:Custom`.
-- `WY`: matrix of weights of outputs. Only if `model=:Custom`.
+- `rhoX`: matrix of weights of inputs. Only if `model=:Custom`.
+- `rhoY`: matrix of weights of outputs. Only if `model=:Custom`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
@@ -71,7 +71,7 @@ Weights = MIP
 """
 function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
+    rhoX::Matrix = Array{Float64}(undef, 0, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Matrix = X, Yref::Matrix = Y,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
@@ -115,7 +115,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     # Default behaviour
     if model == :Default
         # If no weights are specified use :Ones
-        if length(wX) == 0 && length(wY) == 0
+        if length(rhoX) == 0 && length(rhoY) == 0
             model = :Ones
         else
             model = :Custom
@@ -125,18 +125,18 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     # Get weights based on the selected model
     if model != :Custom
         # Display error if both model and weights are specified
-        if length(wX) != 0 || length(wY) != 0
+        if length(rhoX) != 0 || length(rhoY) != 0
             error("Weights not allowed if model != :Custom")
         end
 
         # Get weights for selected model
-        wX, wY = deaaddweights(X, Y, model, orient = orient)
+        rhoX, rhoY = deaaddweights(X, Y, model, orient = orient)
     end
 
-    if size(wX) != size(X)
+    if size(rhoX) != size(X)
         error("size of weights matrix for inputs should be equal to size of inputs")
     end
-    if size(wY) != size(Y)
+    if size(rhoY) != size(Y)
         error("size of weights matrix for outputs should be qual to size of outputs")
     end
 
@@ -159,16 +159,16 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         y0 = Y[i,:]
 
         # Value of weights to evaluate
-        wX0 = wX[i,:]
-        wY0 = wY[i,:]
+        rhoX0 = rhoX[i,:]
+        rhoY0 = rhoY[i,:]
 
         # Set weights to zero if Weak disposability
         if disposX == :Weak
-            wX0 = zeros(1, n)
+            rhoX0 = zeros(1, n)
         end
 
         if disposY == :Weak
-            wY0 = zeros(1, n)
+            rhoY0 = zeros(1, n)
         end
 
         # Create the optimization model
@@ -179,11 +179,11 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         @variable(deamodel, lambda[1:nref] >= 0)
 
         if orient == :Graph
-            @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m) + sum(wY0[j] * sY[j] for j in 1:s) )
+            @objective(deamodel, Max, sum(rhoX0[j] * sX[j] for j in 1:m) + sum(rhoY0[j] * sY[j] for j in 1:s) )
         elseif orient == :Input
-            @objective(deamodel, Max, sum(wX0[j] * sX[j] for j in 1:m)  )
+            @objective(deamodel, Max, sum(rhoX0[j] * sX[j] for j in 1:m)  )
         elseif orient == :Output
-            @objective(deamodel, Max, sum(wY0[j] * sY[j] for j in 1:s) )
+            @objective(deamodel, Max, sum(rhoY0[j] * sY[j] for j in 1:s) )
         else
             error("Invalid orientation $orient. Orientation should be :Graph, :Input or :Output")
         end
@@ -206,13 +206,13 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
 
         # Fix values of slacks when weight are zero
         for j = 1:m
-            if wX0[j] == 0
+            if rhoX0[j] == 0
                 fix(sX[j], 0, force = true)
             end
         end
 
         for j = 1:s
-            if wY0[j] == 0
+            if rhoY0[j] == 0
                 fix(sY[j], 0, force = true)
             end
         end
@@ -239,41 +239,41 @@ end
 
 function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    wX::Vector = Array{Float64}(undef, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
+    rho::Vector = Array{Float64}(undef, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Vector = X, Yref::Matrix = Y,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
-    wX = wX[:,:]
+    rhoX = rhoX[:,:]
     Xref = Xref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    wX::Matrix = Array{Float64}(undef, 0, 0), wY::Vector = Array{Float64}(undef, 0),
+    rhoX::Matrix = Array{Float64}(undef, 0, 0), rhoY::Vector = Array{Float64}(undef, 0),
     Xref::Matrix = X, Yref::Vector = Y,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     Y = Y[:,:]
-    wY = wY[:,:]
+    rhoY = rhoY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    wX::Vector = Array{Float64}(undef, 0), wY::Vector = Array{Float64}(undef, 0),
+    rhoX::Vector = Array{Float64}(undef, 0), rhoY::Vector = Array{Float64}(undef, 0),
     Xref::Vector = X, Yref::Vector = Y,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
-    wX = wX[:,:]
+    rhoX = rhoX[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]
-    wY = wY[:,:]
+    rhoY = rhoY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function Base.show(io::IO, x::AdditiveDEAModel)
@@ -335,44 +335,44 @@ function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Gr
     if model == :Ones
         # Standard Additive DEA model
         if orient == :Graph || orient == :Input
-            wX = ones(size(X))
+            rhoX = ones(size(X))
         end
         if orient == :Graph || orient == :Output
-            wY = ones(size(Y))
+            rhoY = ones(size(Y))
         end
 
     elseif model == :MIP
         # Measure of Inefficiency Proportions
         if orient == :Graph || orient == :Input
-            wX = 1 ./ X
+            rhoX = 1 ./ X
         end
         if orient == :Graph || orient == :Output
-            wY = 1 ./ Y
+            rhoY = 1 ./ Y
         end
 
     elseif model == :Normalized
         # Normalized weighted additive DEA model
         if orient == :Graph || orient == :Input
 
-            wX = zeros(size(X))
+            rhoX = zeros(size(X))
             m = size(X, 2)
 
             for i=1:m
-                wX[:,i] .= 1 ./ std(X[:,i])
+                rhoX[:,i] .= 1 ./ std(X[:,i])
             end
 
-            wX[isinf.(wX)] .= 0
+            rhoX[isinf.(rhoX)] .= 0
         end
         if orient == :Graph || orient == :Output
 
-            wY = zeros(size(Y))
+            rhoY = zeros(size(Y))
             s = size(Y, 2)
 
             for i=1:s
-                wY[:,i] .= 1 ./ std(Y[:,i])
+                rhoY[:,i] .= 1 ./ std(Y[:,i])
             end
 
-            wY[isinf.(wY)] .= 0
+            rhoY[isinf.(rhoY)] .= 0
         end
 
     elseif model == :RAM
@@ -391,23 +391,23 @@ function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Gr
 
         if orient == :Graph || orient == :Input
 
-            wX = zeros(size(X))
+            rhoX = zeros(size(X))
 
             for i=1:m
-                wX[:,i] .= 1 ./ (normalization * (maximum(X[:,i])  - minimum(X[:,i])))
+                rhoX[:,i] .= 1 ./ (normalization * (maximum(X[:,i])  - minimum(X[:,i])))
             end
 
-            wX[isinf.(wX)] .= 0
+            rhoX[isinf.(rhoX)] .= 0
         end
         if orient == :Graph || orient == :Output
 
-            wY = zeros(size(Y))
+            rhoY = zeros(size(Y))
 
             for i=1:s
-                wY[:,i] .= 1 ./ (normalization * (maximum(Y[:,i])  - minimum(Y[:,i])))
+                rhoY[:,i] .= 1 ./ (normalization * (maximum(Y[:,i])  - minimum(Y[:,i])))
             end
 
-            wY[isinf.(wY)] .= 0
+            rhoY[isinf.(rhoY)] .= 0
         end
 
     elseif model == :BAM
@@ -426,27 +426,27 @@ function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Gr
 
         if orient == :Graph || orient == :Input
 
-            wX = zeros(size(X))
+            rhoX = zeros(size(X))
             minX = zeros(m)
 
             for i=1:m
                 minX[i] = minimum(X[:,i])
-                wX[:,i] = 1 ./ (normalization .* (X[:,i] .- minX[i] ))
+                rhoX[:,i] = 1 ./ (normalization .* (X[:,i] .- minX[i] ))
             end
 
-            wX[isinf.(wX)] .= 0
+            rhoX[isinf.(rhoX)] .= 0
         end
         if orient == :Graph || orient == :Output
 
-            wY = zeros(size(Y))
+            rhoY = zeros(size(Y))
             maxY = zeros(s)
 
             for i=1:s
                 maxY[i] = maximum(Y[:,i])
-                wY[:,i] = 1 ./ (normalization .* (maxY[i] .- Y[:,i]))
+                rhoY[:,i] = 1 ./ (normalization .* (maxY[i] .- Y[:,i]))
             end
 
-            wY[isinf.(wY)] .= 0
+            rhoY[isinf.(rhoY)] .= 0
         end
 
     else
@@ -454,11 +454,11 @@ function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Gr
     end
 
     if orient == :Input
-        wY = ones(size(Y))
+        rhoY = ones(size(Y))
     elseif orient == :Output
-        wX = ones(size(X))
+        rhoX = ones(size(X))
     end
 
-    return wX, wY
+    return rhoX, rhoY
 
 end
