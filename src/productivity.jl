@@ -3,7 +3,7 @@
     AbstractProductivityDEAlModel
 An abstract type representing a productivity DEA model.
 """
-abstract type AbstractProductivityDEAModel end
+abstract type AbstractProductivityDEAModel <: AbstractDEAModel end
 
 """
     nbos(model::AbstractProductivityDEAModel)

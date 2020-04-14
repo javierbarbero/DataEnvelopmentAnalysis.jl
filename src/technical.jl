@@ -3,7 +3,7 @@
     AbstractTechnicaDEAlModel
 An abstract type representing a technical DEA model.
 """
-abstract type AbstractTechnicalDEAModel end
+abstract type AbstractTechnicalDEAModel  <: AbstractDEAModel end
 
 """
     efficiency(model::AbstractTechnicalDEAModel)
@@ -33,56 +33,6 @@ julia> efficiency(deaio)
 """
 efficiency(model::AbstractTechnicalDEAModel) = model.eff
 
-"""
-    nbos(model::AbstractTechnicalDEAModel)
-Return number of observations of a technical DEA model.
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> nobs(deaio)
-11
-```
-"""
-nobs(model::AbstractTechnicalDEAModel) = model.n
-
-"""
-    ninputs(model::AbstractTechnicalDEAModel)
-Return number of inputs of a technical DEA model.
-## Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> ninputs(deaio)
-2
-```
-"""
-ninputs(model::AbstractTechnicalDEAModel) = model.m
-
-"""
-    noutputs(model::AbstractTechnicalDEAModel)
-Return number of outputs of a technical DEA model.
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> noutputs(deaio)
-1
-```
-"""
-noutputs(model::AbstractTechnicalDEAModel) = model.s
 
 """
     peers(model::AbstractTechnicalDEAModel)

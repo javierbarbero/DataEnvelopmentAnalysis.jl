@@ -3,7 +3,7 @@
     AbstractEconomicDEAlModel
 An abstract type representing an economic DEA model.
 """
-abstract type AbstractEconomicDEAModel <: AbstractTechnicalDEAModel end
+abstract type AbstractEconomicDEAModel <: AbstractDEAModel end
 
 """
     AbstractCostDEAModel
