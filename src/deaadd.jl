@@ -10,6 +10,8 @@ struct AdditiveDEAModel <: AbstractTechnicalDEAModel
     weights::Symbol
     orient::Symbol
     rts::Symbol
+    disposX::Symbol
+    disposY::Symbol
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -36,8 +38,8 @@ Model specification:
 - `WY`: matrix of weights of outputs. Only if `model=:Custom`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
-- `disposalX=:Strong`: chooses strong disposal of inputs. For weak disposal choose `:Weak`.
-- `disposalY=:Strong`: chooses strong disposal of outputs. For weak disposal choose `:Weak`.
+- `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
+- `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 
 # Examples
 ```jldoctest
@@ -71,7 +73,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Matrix = X, Yref::Matrix = Y,
-    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     # Check parameters
     nx, m = size(X)
@@ -93,21 +95,21 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         error("number of outputs in evaluation set and reference set is different")
     end
 
-    if disposalX != :Strong && disposalX != :Weak
-        error("Invalid inputs disposal $disposalX. Disposal should be :Strong or :Weak")
+    if disposX != :Strong && disposX != :Weak
+        error("Invalid inputs disposability $disposX. Disposability should be :Strong or :Weak")
     end
-    if disposalY != :Strong && disposalY != :Weak
-        error("Invalid outputs disposal $disposalY. Disposal should be :Strong or :Weak")
+    if disposY != :Strong && disposY != :Weak
+        error("Invalid outputs disposability $disposY. Disposability should be :Strong or :Weak")
     end
 
-    if orient == :Input && disposalX == :Weak
-        error("Weak input disposal not possible in input oriented model")
+    if orient == :Input && disposX == :Weak
+        error("Weak input disposability not possible in input oriented model")
     end
-    if orient == :Output && disposalY == :Weak
-        error("Weak output disposal not possible in output oriented model")
+    if orient == :Output && disposY == :Weak
+        error("Weak output disposability not possible in output oriented model")
     end
-    if orient == :Graph && (disposalX == :Weak || disposalY == :Weak)
-        error("Weak disposal not possible in graph oriented model")
+    if orient == :Graph && (disposX == :Weak || disposY == :Weak)
+        error("Weak disposability not possible in graph oriented model")
     end
 
     # Default behaviour
@@ -160,12 +162,12 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
         wX0 = wX[i,:]
         wY0 = wY[i,:]
 
-        # Set weights to zero if Weak disposal
-        if disposalX == :Weak
+        # Set weights to zero if Weak disposability
+        if disposX == :Weak
             wX0 = zeros(1, n)
         end
 
-        if disposalY == :Weak
+        if disposY == :Weak
             wY0 = zeros(1, n)
         end
 
@@ -231,7 +233,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
 
     end
 
-    return AdditiveDEAModel(n, m, s, model, orient, rts, effi, slackX, slackY, lambdaeff)
+    return AdditiveDEAModel(n, m, s, model, orient, rts, disposX, disposY, effi, slackX, slackY, lambdaeff)
 
 end
 
@@ -239,31 +241,31 @@ function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Vector = X, Yref::Matrix = Y,
-    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
     wX = wX[:,:]
     Xref = Xref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Matrix = Array{Float64}(undef, 0, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Matrix = X, Yref::Vector = Y,
-    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
     wX::Vector = Array{Float64}(undef, 0), wY::Vector = Array{Float64}(undef, 0),
     Xref::Vector = X, Yref::Vector = Y,
-    disposalX::Symbol = :Strong, disposalY::Symbol = :Strong)::AdditiveDEAModel
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong)::AdditiveDEAModel
 
     X = X[:,:]
     wX = wX[:,:]
@@ -271,7 +273,7 @@ function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol =
     Y = Y[:,:]
     wY = wY[:,:]
     Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposalX = disposalX, disposalY = disposalY)
+    return deaadd(X, Y, model, orient = orient, rts = rts, wX = wX, wY = wY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY)
 end
 
 function Base.show(io::IO, x::AdditiveDEAModel)
@@ -280,6 +282,9 @@ function Base.show(io::IO, x::AdditiveDEAModel)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
+    disposX = x.disposX
+    disposY = x.disposY
+    
     eff = efficiency(x)
     slackX = slacks(x, :X)
     slackY = slacks(x, :Y)
@@ -295,6 +300,10 @@ function Base.show(io::IO, x::AdditiveDEAModel)
         print(io, "\n")
         print(io, "Weights = ", string(x.weights))
         print(io, "\n")
+
+        if disposX == :Weak println("Weak disposability of inputs") end
+        if disposY == :Weak println("Weak disposability of outputs") end
+
         show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], ["$i" for i in 1:n]))
     end
 

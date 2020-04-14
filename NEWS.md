@@ -4,7 +4,7 @@ DataEnvelopmentAnalysis.jl release notes
 Version 0.1.2 (Feb 25, 2020)
 ----------------------------
 - Compatibility with JuMP 0.21.
-- Weak disposal in radial, cost, and revenue models.
+- Weak disposability in radial, cost, and revenue models.
 - Minor bugs fixed.
 
 Version 0.1.1 (Oct 29, 2019)

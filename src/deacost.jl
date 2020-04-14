@@ -8,6 +8,7 @@ struct CostDEAModel <: AbstractCostDEAModel
     m::Int64
     s::Int64
     rts::Symbol
+    disposY::Symbol
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -22,7 +23,7 @@ inputs `X`, outputs `Y` and price of inputs `W`.
 
 # Optional Arguments
 - `rts=:VRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
-- `disposal=:Strong`: chooses strong disposal of outputs. For weak disposal choose `:Weak`.
+- `dispos=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 
 # Examples
 ```jldoctest
@@ -47,7 +48,7 @@ Orientation = Input; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::Symbol = :Strong)::CostDEAModel
+function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong)::CostDEAModel
     # Check parameters
     nx, m = size(X)
     ny, s = size(Y)
@@ -64,8 +65,8 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
         error("number of input prices and intputs is different")
     end
 
-    if disposal != :Strong && disposal != :Weak
-        error("Invalued disposal $disposal. Disposal should be :Strong or :Weak")
+    if dispos != :Strong && dispos != :Weak
+        error("Invalued disposability $dispos. Disposability should be :Strong or :Weak")
     end
 
     # Compute efficiency for each DMU
@@ -90,9 +91,9 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
 
         @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
 
-        if disposal == :Strong
+        if dispos == :Strong
             @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= y0[j])
-        elseif disposal == :Weak
+        elseif dispos == :Weak
             @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) == y0[j])
         end
 
@@ -120,28 +121,28 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, disposal::
 
     # Cost, technical and allocative efficiency
     cefficiency  = vec( sum(W .* Xefficient, dims = 2) ./ sum(W .* X, dims = 2) )
-    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false, disposalY = disposal))
+    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false, disposY = dispos))
     allocefficiency = cefficiency ./ techefficiency
-    return CostDEAModel(n, m, s, rts, cefficiency, clambdaeff, techefficiency, allocefficiency)
+    return CostDEAModel(n, m, s, rts, dispos, cefficiency, clambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS, disposal::Symbol = :Strong)::CostDEAModel
+function deacost(X::Vector, Y::Matrix, W::Vector, rts::Symbol = :VRS, dispos::Symbol = :Strong)::CostDEAModel
     X = X[:,:]
     W = W[:,:]
-    return deacost(X, Y, W, rts = rts, disposal = disposal)
+    return deacost(X, Y, W, rts = rts, dispos = dispos)
 end
 
-function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, disposal::Symbol = :Strong)::CostDEAModel
+function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong)::CostDEAModel
     Y = Y[:,:]
-    return deacost(X, Y, W, rts = rts, disposal = disposal)
+    return deacost(X, Y, W, rts = rts, dispos = dispos)
 end
 
-function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, disposal::Symbol = :Strong)::CostDEAModel
+function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong)::CostDEAModel
     X = X[:,:]
     W = W[:,:]
     Y = Y[:,:]
-    return deacost(X, Y, W, rts = rts, disposal = disposal)
+    return deacost(X, Y, W, rts = rts, dispos = dispos)
 end
 
 function Base.show(io::IO, x::CostDEAModel)
@@ -150,7 +151,9 @@ function Base.show(io::IO, x::CostDEAModel)
     n = nobs(x)
     m = ninputs(x)
     s = noutputs(x)
-    eff = efficiency(x)
+    disposY = x.disposY
+
+    eff = efficiency(x)    
     techeff = efficiency(x, :Technical)
     alloceff = efficiency(x, :Allocative)
 
@@ -163,9 +166,9 @@ function Base.show(io::IO, x::CostDEAModel)
         print(io, "Orientation = Input")
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
+        if disposY == :Weak println("Weak disposability of outputs") end
+
         show(io, CoefTable(hcat(eff, techeff, alloceff), ["Cost", "Technical", "Allocative"], ["$i" for i in 1:n]))
-
-    else
-
     end
+
 end
