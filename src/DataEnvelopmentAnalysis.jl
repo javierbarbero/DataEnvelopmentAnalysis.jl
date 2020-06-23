@@ -23,6 +23,8 @@ module DataEnvelopmentAnalysis
     # Types
     AbstractDEAModel,
     DEAModel,
+    AbstractDEAPeers, AbstractDEAPeersDMU,
+    DEAPeers, DEAPeersDMU,
     AbstractTechnicalDEAModel, AbstractRadialDEAModel,
     TechnicalDEAModel,
     RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel,
@@ -33,9 +35,11 @@ module DataEnvelopmentAnalysis
     MalmquistDEAModel,
     # All models
     nobs, ninputs, noutputs,
+    # Peers
+    peers, ispeer,
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf,
-    efficiency, slacks, peers,
+    efficiency, slacks,
     # Economic models
     deacost, dearevenue, deaprofit, deaprofitability,
     # Productivity models
@@ -44,7 +48,8 @@ module DataEnvelopmentAnalysis
 
     # Include code of functions
     include("model.jl")
-    
+    include("peers.jl")
+
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")

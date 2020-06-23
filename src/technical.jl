@@ -8,6 +8,7 @@ abstract type AbstractTechnicalDEAModel  <: AbstractDEAModel end
 """
     efficiency(model::AbstractTechnicalDEAModel)
 Return efficiency scores of a technical DEA model.
+
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
@@ -33,35 +34,6 @@ julia> efficiency(deaio)
 """
 efficiency(model::AbstractTechnicalDEAModel) = model.eff
 
-
-"""
-    peers(model::AbstractTechnicalDEAModel)
-Return peers of a technical DEA model.
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> peers(deaio)
-11×11 SparseArrays.SparseMatrixCSC{Float64,Int64} with 17 stored entries:
-  [1 ,  1]  =  1.0
-  [3 ,  1]  =  1.13432
-  [2 ,  4]  =  0.424978
-  [3 ,  4]  =  0.438005
-  [4 ,  4]  =  1.0
-  ⋮
-  [7 ,  7]  =  1.0
-  [8 ,  7]  =  0.114574
-  [9 ,  7]  =  1.14815
-  [10,  7]  =  0.490566
-  [11, 11]  =  1.0
-```
-"""
-peers(model::AbstractTechnicalDEAModel) = model.lambda
-
 """
     slacks(model::AbstractTechnicalDEAModel, slack::Symbol)
 Return slacks a technical DEA model.
@@ -75,17 +47,17 @@ julia> deaio = dea(X, Y);
 
 julia> slacks(deaio, :X)
 11×2 Array{Float64,2}:
-  0.0          0.0        
- -4.41868e-15  0.0        
+  0.0          0.0
+ -4.41868e-15  0.0
   0.0          8.17926e-15
- -8.03397e-16  0.0        
-  1.80764e-15  0.0        
-  4.44444      0.0        
-  0.0          0.0        
-  1.60679e-15  0.0        
-  1.64021      0.0        
-  9.68683e-15  0.0        
-  0.0          4.0        
+ -8.03397e-16  0.0
+  1.80764e-15  0.0
+  4.44444      0.0
+  0.0          0.0
+  1.60679e-15  0.0
+  1.64021      0.0
+  9.68683e-15  0.0
+  0.0          4.0
 
 julia> slacks(deaio, :Y)
 11×1 Array{Float64,2}:
