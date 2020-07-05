@@ -75,7 +75,7 @@
     gdf2 = deagdf(X, Y, alpha = 0.7, rts = :VRS)
 
     @test efficiency(gdf2) ≈ [1; 1; 1; 1; 0.423216; 0.69836; 1; 0.2315] atol = 1e-4
-    @test slacks(gdf2, :X) ≈ [0; 0; 0; 0; 0; 0.570479; 2.0; 0]  atol = 1e-6
+    @test slacks(gdf2, :X) ≈ [0; 0; 0; 0; 0; 0.570479; 2.0; 0]  atol = 1e-5
     @test slacks(gdf2, :Y) ≈ [0; 0; 0; 0; 0; 0; 0; 0] atol = 1e-6
 
     # Print
