@@ -7,7 +7,7 @@
 
     # alpha = 0.5 CRS equals Input Oriented CRS
     deaio = dea(X, Y, orient = :Input, rts = :CRS)
-    deagdf05crs = deagdf(X, Y, alpha = 0.5, rts = :CRS, slack = false)
+    deagdf05crs = deagdf(X, Y, alpha = 0.5, rts = :CRS)
     @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
 
     @test nobs(deagdf05crs) == 5
@@ -15,7 +15,7 @@
     @test noutputs(deagdf05crs) == 2
 
     # alphpa = 0.5 VRS
-    deagdf05vrs = deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
+    deagdf05vrs = deagdf(X, Y, alpha = 0.5, rts = :VRS)
 
     @test nobs(deagdf05vrs) == 5
     @test ninputs(deagdf05vrs) == 2
@@ -25,6 +25,17 @@
                                1;
                                0.250;
                                0.360] atol = 1e-3
+    @test slacks(deagdf05vrs, :X) ≈ [0.605935 0;
+                                     0 0;
+                                     0 0;
+                                     0 0;
+                                     0.2 3.4] atol = 1e-6
+
+    @test slacks(deagdf05vrs, :Y) ≈ [0 4.67865;
+                                     0 0;
+                                     0 0;
+                                     0 0;
+                                     3.0 0] atol = 1e-5
 
     # Test no slacks
     deagdfnoslack = deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
@@ -32,27 +43,40 @@
     @test isempty(slacks(deagdfnoslack, :X)) == 1
     @test isempty(slacks(deagdfnoslack, :Y)) == 1
 
-     ## Test if one-by-one DEA using evaluation and reference sets match initial results
-     deagdf05crs_ref_eff = zeros(size(X, 1))
+    # Test default alpha is 0.4
+    @test efficiency(deagdf(X, Y, rts = :CRS)) == efficiency(deagdf(X, Y, alpha = 0.5, rts = :CRS))
 
-     deagdf05vrs_ref_eff = zeros(size(X, 1))
+    ## Test if one-by-one DEA using evaluation and reference sets match initial results
+    deagdf05crs_ref_eff = zeros(size(X, 1))
 
-     Xref = X[:,:]
-     Yref = Y[:,:]
+    deagdf05vrs_ref_eff = zeros(size(X, 1))
 
-     for i = 1:size(X, 1)
-         Xeval = X[i:i,:]
-         Xeval = Xeval[:,:]
-         Yeval = Y[i:i,:]
-         Yeval = Yeval[:,:]
+    Xref = X[:,:]
+    Yref = Y[:,:]
 
-         deagdf05crs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, alpha = 0.5, rts = :CRS, Xref = Xref, Yref = Yref, slack = false))[1]
+    for i = 1:size(X, 1)
+        Xeval = X[i:i,:]
+        Xeval = Xeval[:,:]
+        Yeval = Y[i:i,:]
+        Yeval = Yeval[:,:]
 
-         deagdf05vrs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, alpha = 0.5, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))[1]
-     end
+        deagdf05crs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, alpha = 0.5, rts = :CRS, Xref = Xref, Yref = Yref, slack = false))[1]
 
-     @test deagdf05crs_ref_eff ≈ efficiency(deagdf05crs)
-     @test deagdf05vrs_ref_eff ≈ efficiency(deagdf05vrs)
+        deagdf05vrs_ref_eff[i] = efficiency(deagdf(Xeval, Yeval, alpha = 0.5, rts = :VRS, Xref = Xref, Yref = Yref, slack = false))[1]
+    end
+
+    @test deagdf05crs_ref_eff ≈ efficiency(deagdf05crs)
+    @test deagdf05vrs_ref_eff ≈ efficiency(deagdf05vrs)
+
+    # Test with another data
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+
+    gdf2 = deagdf(X, Y, alpha = 0.7, rts = :VRS)
+
+    @test efficiency(gdf2) ≈ [1; 1; 1; 1; 0.423216; 0.69836; 1; 0.2315] atol = 1e-4
+    @test slacks(gdf2, :X) ≈ [0; 0; 0; 0; 0; 0.570479; 2.0; 0]  atol = 1e-6
+    @test slacks(gdf2, :Y) ≈ [0; 0; 0; 0; 0; 0; 0; 0] atol = 1e-6
 
     # Print
     show(IOBuffer(), deagdf05crs)
@@ -64,6 +88,5 @@
     @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Xref = [1 1 1; 2 2 2]) # Different number of inputs
     @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deagdf([1; 2; 3], [4; 5; 6], alpha = 0.5, rts = :Error) # Invalid returns to scale
-
 
 end

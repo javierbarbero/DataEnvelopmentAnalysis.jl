@@ -22,6 +22,7 @@ Compute generalized distance function data envelopment analysis model for
 inputs `X`, outputs `Y`, and `alpha`.
 
 # Optional Arguments
+- `alpha=0.5`: alpha value.
 - `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
 - `slack=true`: compute input and output slacks.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
@@ -34,19 +35,19 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
 
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
 
-julia> deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
+julia> deagdf(X, Y, alpha = 0.5, rts = :VRS)
 Generalized DF DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
 alpha = 0.5; Returns to Scale = VRS
-─────────────
-   efficiency
-─────────────
-1     0.68185
-2     1.0
-3     1.0
-4     0.25
-5     0.36
-─────────────
+─────────────────────────────────────────────────────────────
+   efficiency     slackX1     slackX2     slackY1     slackY2
+─────────────────────────────────────────────────────────────
+1     0.68185  0.605935    4.26672e-8  3.91163e-8  4.67865
+2     1.0      5.19411e-8  6.85405e-8  2.54977e-8  4.97494e-8
+3     1.0      4.5869e-8   7.51401e-8  5.75966e-8  1.92107e-8
+4     0.25     4.71611e-8  9.87945e-8  5.46022e-8  9.69031e-8
+5     0.36     0.2         3.4         3.0         8.07052e-8
+─────────────────────────────────────────────────────────────
 ```
 """
 function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
@@ -119,17 +120,59 @@ function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, 
 
     end
 
+    # Get first-stage efficient X and Y
+    Xeff = X .* effi .^(1-alpha)
+    Yeff = Y ./ ( effi .^alpha )
+
     # Compute slacks
     if slack == true
 
-        # Get first-stage efficient X and Y
-        Xeff = X .* effi .^(1-alpha)
-        Yeff = Y ./ ( effi .^alpha )
+        slackX = zeros(n, m)
+        slackY = zeros(n, s)
+        lambdaeff = spzeros(n, nref)
 
-        # Use additive model with radial efficient X and Y to get slacks
-        radialSlacks = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
-        slackX = slacks(radialSlacks, :X)
-        slackY = slacks(radialSlacks, :Y)
+        for i=1:n
+            # Value of inputs and outputs to evaluate
+            x0 = Xeff[i,:]
+            y0 = Yeff[i,:]
+
+            # Create the optimization model
+            deamodel = Model(Ipopt.Optimizer)
+            set_silent(deamodel)
+            set_optimizer_attribute(deamodel, "print_level", 0)
+
+            @variable(deamodel, sX[1:m] >= 0)
+            @variable(deamodel, sY[1:s] >= 0)
+            @variable(deamodel, lambda[1:nref] >= 0)
+
+            @objective(deamodel, Max, sum(sX[j] for j in 1:m) + sum(sY[j] for j in 1:s) )
+
+            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
+            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
+
+            # Add return to scale constraints
+            if rts == :CRS
+                # No contraint to add for constant returns to scale
+            elseif rts == :VRS
+                @constraint(deamodel, sum(lambda) == 1)
+            else
+                error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            end
+
+            # Optimize and return results
+            JuMP.optimize!(deamodel)
+
+            lambdaeff[i,:] = JuMP.value.(lambda)
+
+            slackX[i,:] = JuMP.value.(sX)
+            slackY[i,:] = JuMP.value.(sY)
+
+            # Check termination status
+            if termination_status(deamodel) != MOI.LOCALLY_SOLVED
+                @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            end
+
+        end
     else
         slackX = Array{Float64}(undef, 0, 0)
         slackY = Array{Float64}(undef, 0, 0)
@@ -155,7 +198,7 @@ function deagdf(X::Matrix, Y::Vector; alpha::Float64 = 0.5, rts::Symbol = :CRS, 
     return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
-function deagdf(X::Vector, Y::Vector; alpha::Float64, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
+function deagdf(X::Vector, Y::Vector; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
     names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
 
     X = X[:,:]

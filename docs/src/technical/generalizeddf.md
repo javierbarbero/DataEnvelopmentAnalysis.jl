@@ -5,7 +5,7 @@ DocTestSetup = quote
     # Solve nonlinear problem to display Ipopt initial message
     X = [1; 2; 3];
     Y = [1; 1; 1];
-    deagdf(X, Y, 0.5, rts = :VRS)
+    deagdf(X, Y, alpha = 0.5, rts = :VRS)
 end
 ```
 
@@ -37,19 +37,19 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
 
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
 
-julia> deagdf(X, Y, 0.5, rts = :VRS, slack = false)
+julia> deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
 Generalized DF DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
 alpha = 0.5; Returns to Scale = VRS
-─────────────
-   efficiency
-─────────────
-1     0.68185
-2     1.0    
-3     1.0    
-4     0.25   
-5     0.36   
-─────────────
+─────────────────────────────────────────────────────────────
+   efficiency     slackX1     slackX2     slackY1     slackY2
+─────────────────────────────────────────────────────────────
+1     0.68185  0.605935    4.26672e-8  3.91163e-8  4.67865
+2     1.0      5.19411e-8  6.85405e-8  2.54977e-8  4.97494e-8
+3     1.0      4.5869e-8   7.51401e-8  5.75966e-8  1.92107e-8
+4     0.25     4.71611e-8  9.87945e-8  5.46022e-8  9.69031e-8
+5     0.36     0.2         3.4         3.0         8.07052e-8
+─────────────────────────────────────────────────────────────
 ```
 
 ### deagdf Function Documentation
