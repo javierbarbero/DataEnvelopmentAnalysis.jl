@@ -8,7 +8,10 @@
     P = peers(dea(X, Y, orient = :Input, rts = :CRS))
 
     @test typeof(P) == DEAPeers
+    @test eltype(P) == DEAPeersDMU
+    @test IndexStyle(P) == IndexLinear()
 
+    @test size(P) == (11,)
     @test ispeer(P, 1, 1) == true
     @test ispeer(P, 1, 2) == false
     @test ispeer(P, 2, 1) == false
@@ -41,7 +44,10 @@
     P2 = P[2]
 
     @test typeof(P2) == DEAPeersDMU
+    @test eltype(P2) == Tuple{Tuple{Int64,String},Float64}
+    @test IndexStyle(P) == IndexLinear()
 
+    @test size(P2) == (2,)
     @test ispeer(P2, 1) == false
     @test ispeer(P2, 2) == false
     @test ispeer(P2, 3) == false
@@ -60,5 +66,9 @@
     # Test conversions
     @test typeof(convert(Matrix, P)) == Array{Float64,2}
     #@test typeof(convert(SparseMatrixCSC, P)) == SparseMatrixCSC{Float64,Int64}
+
+    # Print
+    show(IOBuffer(), P)
+    show(IOBuffer(), P2)
 
 end
