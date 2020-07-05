@@ -103,7 +103,7 @@ function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
-        
+
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
 
@@ -142,9 +142,9 @@ function deaddf(X::Matrix, Y::Matrix, Gx::Matrix, Gy::Matrix; rts::Symbol = :CRS
         Yeff = Y .+ effi .* Gy
 
         # Use additive model with radial efficient X and Y to get slacks
-        radialSlacks = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
-        slackX = slacks(radialSlacks, :X)
-        slackY = slacks(radialSlacks, :Y)
+        slacksmodel = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        slackX = slacks(slacksmodel, :X)
+        slackY = slacks(slacksmodel, :Y)
     else
         slackX = Array{Float64}(undef, 0, 0)
         slackY = Array{Float64}(undef, 0, 0)

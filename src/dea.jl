@@ -66,7 +66,7 @@ Orientation = Input; Returns to Scale = CRS
 ```
 """
 function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong, 
+    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
     names::Vector{String} = Array{String}(undef, 0))::RadialDEAModel
 
     # Check parameters
@@ -111,7 +111,7 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
-        
+
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
 
@@ -200,9 +200,9 @@ function dea(X::Matrix, Y::Matrix; orient::Symbol = :Input, rts::Symbol = :CRS, 
             rhoY = zeros(size(Y))
         end
 
-        radialSlacks = deaadd(Xeff, Yeff, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = Xref, Yref = Yref)
-        slackX = slacks(radialSlacks, :X)
-        slackY = slacks(radialSlacks, :Y)
+        slacksmodel = deaadd(Xeff, Yeff, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = Xref, Yref = Yref)
+        slackX = slacks(slacksmodel, :X)
+        slackY = slacks(slacksmodel, :Y)
     else
         slackX = Array{Float64}(undef, 0, 0)
         slackY = Array{Float64}(undef, 0, 0)
@@ -250,7 +250,7 @@ function Base.show(io::IO, x::RadialDEAModel)
     disposX = x.disposX
     disposY = x.disposY
     dmunames = names(x)
-    
+
     eff = efficiency(x)
     slackX = slacks(x, :X)
     slackY = slacks(x, :Y)
