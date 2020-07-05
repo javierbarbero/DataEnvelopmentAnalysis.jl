@@ -37,7 +37,7 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
 
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
 
-julia> deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
+julia> deagdf(X, Y, alpha = 0.5, rts = :VRS)
 Generalized DF DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
 alpha = 0.5; Returns to Scale = VRS

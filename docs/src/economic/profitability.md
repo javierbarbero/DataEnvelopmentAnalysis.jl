@@ -5,7 +5,7 @@ DocTestSetup = quote
     # Solve nonlinear problem to display Ipopt initial message
     X = [1; 2; 3];
     Y = [1; 1; 1];
-    deagdf(X, Y, 0.5, rts = :VRS)
+    deagdf(X, Y, alpha = 0.5, rts = :VRS)
 end
 ```
 
@@ -17,16 +17,16 @@ The profitabilty function defines as $\mathrm{P}\left(\mathbf{w},\mathbf{p}\righ
 ```math
 \begin{align}
 \label{eq:maxprofit}
-  & \underset{\mathbf{x,y,\lambda_{j},\omega} }{\mathop{\min }}\,\quad \quad \quad \;\ \omega  \\ 
- & \text{subject}\ \text{to} \nonumber \\ 
- & \quad \quad \quad \quad \quad \ {\sum_{j=1}^{j} \lambda^{j} \frac{w^{j} x^{j}}{p^{j} y^{j}} = \omega \frac{w^{j} x^{j}_{o}}{p^{j} y^{j}_{o}} } \nonumber \\ 
+  & \underset{\mathbf{x,y,\lambda_{j},\omega} }{\mathop{\min }}\,\quad \quad \quad \;\ \omega  \\
+ & \text{subject}\ \text{to} \nonumber \\
+ & \quad \quad \quad \quad \quad \ {\sum_{j=1}^{j} \lambda^{j} \frac{w^{j} x^{j}}{p^{j} y^{j}} = \omega \frac{w^{j} x^{j}_{o}}{p^{j} y^{j}_{o}} } \nonumber \\
  & \quad \quad \quad \quad \quad  \; \sum\nolimits_{j=1}^{n}\lambda^{j}=1 \nonumber\\
 
-\nonumber \\ 
+\nonumber \\
  & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
 \end{align}
 ```
-*Profitabilty efficiency* defines as the ratio between maximum profitabilty and observed profitabilty. Following the duality results introduced by *Zofío and Prieto (2006)* it is possible to decompose it into technical and allocative efficiencies under constant returns to scale. Profitabilty efficiency can be then decomposed into the generalizaed distance fucntion and the residual ratio corresponding to the *allocative profit efficiency*. Allocative efficiency defines then as the ratio of profitability at the technically efficient projection on the frontier to maximum profitability. 
+*Profitabilty efficiency* defines as the ratio between maximum profitabilty and observed profitabilty. Following the duality results introduced by *Zofío and Prieto (2006)* it is possible to decompose it into technical and allocative efficiencies under constant returns to scale. Profitabilty efficiency can be then decomposed into the generalizaed distance fucntion and the residual ratio corresponding to the *allocative profit efficiency*. Allocative efficiency defines then as the ratio of profitability at the technically efficient projection on the frontier to maximum profitability.
 
 In this example we compute the profitability efficiency measure:
 ```jldoctest 1
