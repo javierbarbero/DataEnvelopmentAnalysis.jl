@@ -119,8 +119,8 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
     end
 
     # Technical, scale and allocative efficiency
-    crsefficiency = efficiency(deagdf(X, Y, alpha, rts = :CRS, slack = false))
-    vrsefficiency = efficiency(deagdf(X, Y, alpha, rts = :VRS, slack = false))
+    crsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :CRS, slack = false))
+    vrsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :VRS, slack = false))
     scalefficiency = crsefficiency ./ vrsefficiency
     allocefficiency = pefficiency ./ crsefficiency
 

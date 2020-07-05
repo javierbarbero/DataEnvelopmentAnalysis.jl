@@ -34,7 +34,7 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
 
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
 
-julia> deagdf(X, Y, 0.5, rts = :VRS, slack = false)
+julia> deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
 Generalized DF DEA Model
 DMUs = 5; Inputs = 2; Outputs = 2
 alpha = 0.5; Returns to Scale = VRS
@@ -49,7 +49,7 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────
 ```
 """
-function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
+function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
     names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
 
     # Check parameters
@@ -139,30 +139,30 @@ function deagdf(X::Matrix, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack 
 
 end
 
-function deagdf(X::Vector, Y::Matrix, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
+function deagdf(X::Vector, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
     names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
 
     X = X[:,:]
     Xref = Xref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
+    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
-function deagdf(X::Matrix, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
+function deagdf(X::Matrix, Y::Vector; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
     names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
 
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
+    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
-function deagdf(X::Vector, Y::Vector, alpha::Float64; rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
+function deagdf(X::Vector, Y::Vector; alpha::Float64, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
     names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
 
     X = X[:,:]
     Xref = Xref[:,:]
     Y = Y[:,:]
     Yref = Yref[:,:]
-    return deagdf(X, Y, alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
+    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
 function Base.show(io::IO, x::GeneralizedDFDEAModel)
