@@ -79,7 +79,7 @@
 
     # Test conversions
     @test typeof(convert(Matrix, P)) == Array{Float64,2}
-    #@test typeof(convert(SparseMatrixCSC, P)) == SparseMatrixCSC{Float64,Int64}
+    @test typeof(convert(SparseMatrixCSC, P)) == SparseMatrixCSC{Float64,Int64}
 
     # Print
     show(IOBuffer(), P)

@@ -8,6 +8,9 @@
     W = [4 2; 4 2; 4 2]
 
     deacostcooper = deacost(X, Y, W, rts = :CRS)
+
+    @test typeof(deacostcooper) == CostDEAModel
+
     @test efficiency(deacostcooper, :Economic)   ≈ [0.375; 1; 0.429] atol = 1e-3
     @test efficiency(deacostcooper, :Technical)  ≈ [0.9  ; 1; 0.6  ] atol = 1e-3
     @test efficiency(deacostcooper, :Allocative) ≈ [0.417; 1; 0.714] atol = 1e-3

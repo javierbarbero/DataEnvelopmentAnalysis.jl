@@ -8,6 +8,9 @@
     # alpha = 0.5 CRS equals Input Oriented CRS
     deaio = dea(X, Y, orient = :Input, rts = :CRS)
     deagdf05crs = deagdf(X, Y, alpha = 0.5, rts = :CRS)
+
+    @test typeof(deagdf05crs) == GeneralizedDFDEAModel
+
     @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
 
     @test nobs(deagdf05crs) == 5

@@ -8,6 +8,9 @@
     P = [6; 6; 6]
 
     dearevenuecooper = dearevenue(X, Y, P, rts = :CRS)
+
+    @test typeof(dearevenuecooper) == RevenueDEAModel
+
     @test efficiency(dearevenuecooper, :Economic)   ≈ [0.9; 1; 0.6] atol = 1e-3
     @test efficiency(dearevenuecooper, :Technical)  ≈ [0.9; 1; 0.6  ] atol = 1e-3
     @test efficiency(dearevenuecooper, :Allocative) ≈ [1; 1; 1] atol = 1e-3

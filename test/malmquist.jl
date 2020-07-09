@@ -13,6 +13,8 @@
     # Default Malmquist Productivity Index
     mprod = malmquist(X, Y)
 
+    @test typeof(mprod) == MalmquistDEAModel
+
     @test nobs(mprod) == 5
     @test ninputs(mprod) == 1
     @test noutputs(mprod) == 1

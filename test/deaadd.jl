@@ -9,6 +9,8 @@
     # Additive CRS
     deaaddcrs1 = deaadd(X, Y, :Custom, rhoX = ones(size(X)), rhoY = ones(size(Y)), rts = :CRS)
 
+    @test typeof(deaaddcrs1) == AdditiveDEAModel
+
     @test nobs(deaaddcrs1) == 11
     @test ninputs(deaaddcrs1) == 2
     @test noutputs(deaaddcrs1) == 1

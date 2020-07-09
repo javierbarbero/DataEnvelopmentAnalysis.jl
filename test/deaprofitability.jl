@@ -9,6 +9,9 @@
 
     # alpha = 0.5 CRS equals Input Oriented CRS
     deaprofbl = deaprofitability(X, Y, W, P)
+
+    @test typeof(deaprofbl) == ProfitabilityDEAModel
+
     @test efficiency(deaprofbl) ≈ [0.388;
                                    1.000;
                                    0.765;

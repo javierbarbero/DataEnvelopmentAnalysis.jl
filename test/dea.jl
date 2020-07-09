@@ -9,6 +9,8 @@
     # Input oriented CRS
     deaio = dea(X, Y, orient = :Input, rts = :CRS)
 
+    @test typeof(deaio) == RadialDEAModel
+
     @test nobs(deaio) == 11
     @test ninputs(deaio) == 2
     @test noutputs(deaio) == 1
@@ -291,5 +293,5 @@
     end
     @test occursin("Length of names greater than number of observations", string(logs))
     @test value == ["A", "B", "C", "D", "E"]
-    
+
 end

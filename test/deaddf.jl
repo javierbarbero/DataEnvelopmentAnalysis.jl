@@ -9,6 +9,8 @@
     # Observed CRS
     deaddfobs = deaddf(X, Y, X, Y, rts = :CRS)
 
+    @test typeof(deaddfobs) == DirectionalDEAModel
+
     @test nobs(deaddfobs) == 11
     @test ninputs(deaddfobs) == 2
     @test noutputs(deaddfobs) == 1
@@ -164,7 +166,7 @@
                             1.640211640   0;
                             0.000000000   0;
                             0.000000000   4]
-    @test slacks(deaddfonlyX, :Y) ≈ zeros(11) 
+    @test slacks(deaddfonlyX, :Y) ≈ zeros(11)
 
     # Only X VRS
     deaddfonlyXvrs = deaddf(X, Y, X, zeros(size(Y)), rts = :VRS)

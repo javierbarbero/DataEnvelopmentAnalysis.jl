@@ -1,5 +1,6 @@
 using DataEnvelopmentAnalysis
 using LinearAlgebra
+using SparseArrays
 using Test
 
 @testset "DataEnvelopmentAnalysis" begin
