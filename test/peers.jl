@@ -9,7 +9,6 @@
 
     @test typeof(P) == DEAPeers
     @test eltype(P) == DEAPeersDMU
-    @test IndexStyle(P) == IndexLinear()
 
     @test size(P) == (11,)
     @test ispeer(P, 1, 1) == true
@@ -35,6 +34,14 @@
 
     Pn = peers(dea(X, Y, orient = :Input, rts = :CRS, names = firms))
 
+    @test typeof(P) == DEAPeers
+    @test eltype(P) == DEAPeersDMU
+
+    @test size(P) == (11,)
+    @test length(P) == 11
+    @test firstindex(P) == 1
+    @test lastindex(P) == 11
+
     @test ispeer(Pn, "A", "A") == true
     @test ispeer(Pn, "A", "B") == false
     @test ispeer(Pn, "B", "A") == false
@@ -45,9 +52,12 @@
 
     @test typeof(P2) == DEAPeersDMU
     @test eltype(P2) == Tuple{Tuple{Int64,String},Float64}
-    @test IndexStyle(P) == IndexLinear()
 
     @test size(P2) == (2,)
+    @test length(P2) == 2
+    @test firstindex(P2) == 1
+    @test lastindex(P2) == 2
+
     @test ispeer(P2, 1) == false
     @test ispeer(P2, 2) == false
     @test ispeer(P2, 3) == false
@@ -62,6 +72,10 @@
     @test ispeer(P2n, "C") == false
     @test ispeer(P2n, "D") == true
     @test ispeer(P2n, "G") == true
+
+    # Test elements of DEAPeersDMU
+    @test P2n[1] == ((4, "D"), 0.424978317432784)
+    @test P2n[2] == ((7, "G"), 0.10928013876843023)
 
     # Test conversions
     @test typeof(convert(Matrix, P)) == Array{Float64,2}

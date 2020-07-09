@@ -3,7 +3,7 @@
     AbstractDEAPeersDMU
 An abstract type representing the DEA Peers of a DMU.
 """
-abstract type AbstractDEAPeersDMU <: AbstractArray{Tuple{Tuple{Int64,String},Float64}, 1} end
+abstract type AbstractDEAPeersDMU end
 
 """
     DEAPeersDMU
@@ -17,11 +17,20 @@ struct DEAPeersDMU <: AbstractDEAPeersDMU
     dmunamesref::Vector{String}
 end
 
+
 Base.size(P::DEAPeersDMU) = (length(P.J),)
 
-Base.IndexStyle(::Type{<:DEAPeersDMU}) = IndexLinear()
+Base.length(P::DEAPeersDMU) = length(P.J)
+
+Base.eltype(P::DEAPeersDMU) = Tuple{Tuple{Int64,String},Float64}
+
+Base.firstindex(P::DEAPeersDMU) = 1
+
+Base.lastindex(P::DEAPeersDMU) = length(P)
 
 Base.getindex(P::DEAPeersDMU, i::Int) = return (P.J[i], P.dmunamesref[i]), P.V[i]
+
+Base.iterate(P::DEAPeersDMU, state=1) = state > length(P) ? nothing : (P[state], state + 1)
 
 function Base.show(io::IO, x::DEAPeersDMU)
     compact = get(io, :compact, false)
@@ -39,27 +48,12 @@ function Base.show(io::IO, x::DEAPeersDMU)
 
 end
 
-function Base.show(io::IO, ::MIME"text/plain", x::DEAPeersDMU)
-    compact = get(io, :compact, false)
-
-    J = x.J
-    V = x.V
-    dmuname = x.dmuname
-    dmunamesref = x.dmunamesref
-
-    print(io, "Peers of ", dmuname, ": ")
-    for p in x
-        print(io, p[1][2], " ( ", p[2], " ) ")
-    end
-
-end
-
 
 """
     AbstractDEAPeers
 An abstract type representing a DEA Peers.
 """
-abstract type AbstractDEAPeers <: AbstractArray{DEAPeersDMU, 1}end
+abstract type AbstractDEAPeers end
 
 """
     DEAPeers
@@ -124,7 +118,13 @@ end
 
 Base.size(P::DEAPeers) = (P.n,)
 
-Base.IndexStyle(::Type{<:DEAPeers}) = IndexLinear()
+Base.length(P::DEAPeers) = P.n
+
+Base.eltype(P::DEAPeers) = DEAPeersDMU
+
+Base.firstindex(P::DEAPeers) = 1
+
+Base.lastindex(P::DEAPeers) = length(P)
 
 function Base.getindex(P::DEAPeers, i::Int)::DEAPeersDMU
 
@@ -138,6 +138,8 @@ function Base.getindex(P::DEAPeers, i::Int)::DEAPeersDMU
 
 end
 
+Base.iterate(P::DEAPeers, state = 1) = state > length(P) ? nothing : (P[state], state+1)
+
 function Base.show(io::IO, x::DEAPeers)
     compact = get(io, :compact, false)
 
@@ -149,10 +151,6 @@ function Base.show(io::IO, x::DEAPeers)
         println(io, p)
     end
 
-end
-
-function Base.show(io::IO, ::MIME"text/plain", x::DEAPeers)
-    show(io, x)
 end
 
 """
