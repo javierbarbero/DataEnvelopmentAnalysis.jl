@@ -300,6 +300,36 @@ function ispeer(p::DEAPeersDMU, j::String)::Bool
     return any(p.dmunamesref .== j)
 end
 
+"""
+    sum(P::DEAPeers; dims)
+
+Sum elements of the peers matrix over the given dimension.
+
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> P = peers(dea(X, Y));
+
+julia> sum(P, dims = 2)
+11×1 Array{Float64,2}:
+ 1.0
+ 0.5342584562012143
+ 1.5723270440251573
+ 1.0
+ 0.30582891748675245
+ 0.3333333333333333
+ 1.0
+ 1.1494394480719479
+ 1.1481481481481481
+ 0.9811320754716981
+ 1.0
+```
+"""
+Base.sum(P::DEAPeers; dims) = sum(P.lambda; dims = dims)
+
 # CONVERT FUNCTIONS
 
 Base.convert(::Type{Matrix}, x::DEAPeers) = convert(Matrix, x.lambda);

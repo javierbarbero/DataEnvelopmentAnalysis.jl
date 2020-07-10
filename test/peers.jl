@@ -77,6 +77,21 @@
     @test P2n[1] == ((4, "D"), 0.424978317432784)
     @test P2n[2] == ((7, "G"), 0.10928013876843023)
 
+    # Sum function
+    @test sum(P, dims = 2) ≈ [ 1.0
+            0.5342584562012143
+            1.5723270440251573
+            1.0
+            0.30582891748675245
+            0.3333333333333333
+            1.0
+            1.1494394480719479
+            1.1481481481481481
+            0.9811320754716981
+            1.0]
+
+    @test sum(peers(dea(X, Y, rts = :VRS)), dims = 2) ≈ ones(11, 1)
+
     # Test conversions
     @test typeof(convert(Matrix, P)) == Array{Float64,2}
     @test typeof(convert(SparseMatrixCSC, P)) == SparseMatrixCSC{Float64,Int64}
