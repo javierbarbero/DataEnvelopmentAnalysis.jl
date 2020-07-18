@@ -36,10 +36,11 @@ julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 
 
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
-julia> deaddf(X, Y, ones(size(X)), ones(size(Y)))
-Directional DF DEA Model 
+julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones)
+Directional DF DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = CRS
+Gx = Ones; Gy = Ones
 ─────────────────────────────────────────────────────
       efficiency       slackX1       slackX2  slackY1
 ─────────────────────────────────────────────────────
@@ -59,30 +60,31 @@ Returns to Scale = CRS
 
 To compute the variable returns to scale model, we simply set the `rts` parameter to `:VRS`:
 ```jldoctest 1
-julia> deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS)
-Directional DF DEA Model 
+julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
+Directional DF DEA Model
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = VRS
+Gx = Ones; Gy = Ones
 ────────────────────────────────────────────────────
       efficiency       slackX1  slackX2      slackY1
 ────────────────────────────────────────────────────
-1   -3.43053e-16   0.0              0.0  0.0        
+1   -3.43053e-16   0.0              0.0  0.0
 2    1.41887       0.0              0.0  7.41268e-15
-3    0.0           0.0              0.0  0.0        
-4    0.0          -8.03397e-16      0.0  0.0        
-5    4.06792       0.0              0.0  0.0        
+3    0.0           0.0              0.0  0.0
+4    0.0          -8.03397e-16      0.0  0.0
+5    4.06792       0.0              0.0  0.0
 6   -1.81673e-16   2.70127e-16      0.0  3.78178e-16
-7    0.0           0.0              0.0  0.0        
-8    0.0           0.0              0.0  0.0        
-9    0.0           0.0              0.0  0.0        
-10   5.0           0.0              6.0  0.0        
+7    0.0           0.0              0.0  0.0
+8    0.0           0.0              0.0  0.0
+9    0.0           0.0              0.0  0.0
+10   5.0           0.0              6.0  0.0
 11   0.0           0.0              4.0  4.78849e-16
 ────────────────────────────────────────────────────
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
 ```jldoctest 1
-julia> deaddfvrs = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS);
+julia> deaddfvrs = deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
 
 julia> efficiency(deaddfvrs)
 11-element Array{Float64,1}:
@@ -91,7 +93,7 @@ julia> efficiency(deaddfvrs)
   0.0                   
   0.0                   
   4.067924528301886     
- -1.816728585750256e-16 
+ -1.816728585750256e-16
   0.0                   
   0.0                   
   0.0                   

@@ -16,7 +16,7 @@ module DataEnvelopmentAnalysis
     using Statistics: std
     using StatsBase: CoefTable
 
-    import StatsBase: nobs
+    import StatsBase: nobs, mean
 
 
     export

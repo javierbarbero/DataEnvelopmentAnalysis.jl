@@ -11,7 +11,7 @@
     GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2))
     GxGydollar = repeat(GxGydollar, 1, 2)
 
-    deaprofitdollar = deaprofit(X, Y, W, P, GxGydollar, GxGydollar)
+    deaprofitdollar = deaprofit(X, Y, W, P, Gx = GxGydollar, Gy = GxGydollar)
 
     @test typeof(deaprofitdollar) == ProfitDEAModel
 
@@ -19,17 +19,27 @@
     @test efficiency(deaprofitdollar, :Technical)  ≈ [0; 0; 0; 0; 0; 6; 12; 3] atol = 1e-3
     @test efficiency(deaprofitdollar, :Allocative) ≈ [2; 2; 0; 2; 2; 2; 0; 1] atol = 1e-3
 
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)) == efficiency(deaprofitdollar)
+
+    # Check directions checking technical efficiency
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Zeros, Gy = :Ones), :Technical) == efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Ones, rts = :VRS))
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Zeros), :Technical) == efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Zeros, rts = :VRS))
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Observed, Gy = :Observed), :Technical) == efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS))
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Mean, Gy = :Mean), :Technical) == efficiency(deaddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :VRS))
+
     # Print
     show(IOBuffer(), deaprofitdollar)
 
     # Test errors
-    @test_throws ErrorException deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], [1; 2 ; 3], [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6], [1; 2; 3], [4; 5; 6]) # Different number of observation in input prices
-    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6; 7], [1; 2; 3], [4; 5; 6]) # Different number of observation in output prices
-    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6]) # Different number of input prices and inputs
-    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6], [1; 2; 3], [4 4; 5 5; 6 6]) # Different number of oputput prices and outputs
-    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6]) # Different size of inputs direction
-    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+    @test_throws ErrorException deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
+    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in input prices
+    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6; 7], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in output prices
+    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6], Gx = [1 1; 2 2; 3 3], Gy = [4; 5; 6]) # Different number of input prices and inputs
+    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6], Gx = [1; 2; 3], Gy = [4 4; 5 5; 6 6]) # Different number of oputput prices and outputs
+    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
+    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+    @test_throws ErrorException deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Error, Gy = :Ones) # Invalid inuts direction
+    @test_throws ErrorException deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Ones, Gy = :Error) # Invalid outputs direction
 
     # ------------------
     # Test Vector and Matrix inputs and outputs
@@ -42,7 +52,7 @@
     W = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
     P = [1; 1; 1; 1; 1; 1; 1; 1]
 
-    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0; 0.1666666667; 0.1666666667; 0.375; 0.5454545455; 0.375; 0.375; 0.5283018868]
+    @test efficiency(deaprofit(X, Y, W, P, Gx = X, Gy = Y)) ≈ [0; 0.1666666667; 0.1666666667; 0.375; 0.5454545455; 0.375; 0.375; 0.5283018868]
 
     # Inputs is Vector, Output is Matrix
     X = [1; 1; 1; 1; 1; 1; 1; 1]
@@ -50,7 +60,7 @@
     W = [1; 1; 1; 1; 1; 1; 1; 1]
     P = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
 
-    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0; 0.1538461538; 0.1538461538; 0.6666666667; 1.142857143; 0.3636363636; 0.3636363636; 1]
+    @test efficiency(deaprofit(X, Y, W, P, Gx = X, Gy = Y)) ≈ [0; 0.1538461538; 0.1538461538; 0.6666666667; 1.142857143; 0.3636363636; 0.3636363636; 1]
 
     # Inputs is Vector, Output is Vector
     X = [2; 4; 8; 12; 6; 14; 14; 9.412]
@@ -58,6 +68,6 @@
     W = [1; 1; 1; 1; 1; 1; 1; 1]
     P = [1; 1; 1; 1; 1; 1; 1; 1]
 
-    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0.6666666667; 0; 0.0625; 0.1904761905; 0.4444444444; 0.3809523810; 0.2608695652; 0.6849978751]
+    @test efficiency(deaprofit(X, Y, W, P, Gx = X, Gy = Y)) ≈ [0.6666666667; 0; 0.0625; 0.1904761905; 0.4444444444; 0.3809523810; 0.2608695652; 0.6849978751]
 
 end

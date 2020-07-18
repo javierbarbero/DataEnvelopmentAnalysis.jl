@@ -7,7 +7,7 @@
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
     # Observed CRS
-    deaddfobs = deaddf(X, Y, X, Y, rts = :CRS)
+    deaddfobs = deaddf(X, Y, Gx = X, Gy = Y, rts = :CRS)
 
     @test typeof(deaddfobs) == DirectionalDEAModel
 
@@ -38,8 +38,10 @@
                                0.000000000   4]
     @test slacks(deaddfobs, :Y) ≈ zeros(11)
 
+    @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :CRS)) == efficiency(deaddfobs)
+
     # Observed VRS
-    deaddfobsvrs = deaddf(X, Y, X, Y, rts = :VRS)
+    deaddfobsvrs = deaddf(X, Y, Gx = X, Gy = Y, rts = :VRS)
 
     @test nobs(deaddfobsvrs) == 11
     @test ninputs(deaddfobsvrs) == 2
@@ -78,8 +80,10 @@
                              0.000000000;
                              0.000000000]
 
+    @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS)) == efficiency(deaddfobsvrs)
+
     # Ones CRS
-    deaddfones = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :CRS)
+    deaddfones = deaddf(X, Y, Gx = ones(size(X)), Gy = ones(size(Y)), rts = :CRS)
 
     @test nobs(deaddfones) == 11
     @test ninputs(deaddfones) == 2
@@ -108,8 +112,10 @@
                              0.000000000   4]
     @test slacks(deaddfones, :Y) ≈ zeros(11)
 
+    @test efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :CRS)) == efficiency(deaddfones)
+
     # Ones VRS
-    deaddfonesvrs = deaddf(X, Y, ones(size(X)), ones(size(Y)), rts = :VRS)
+    deaddfonesvrs = deaddf(X, Y, Gx = ones(size(X)), Gy = ones(size(Y)), rts = :VRS)
 
     @test nobs(deaddfonesvrs) == 11
     @test ninputs(deaddfonesvrs) == 2
@@ -138,8 +144,10 @@
                             0.000000000   4]
    @test slacks(deaddfonesvrs, :Y) ≈ zeros(11) atol = 1e-14
 
+   @test efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)) == efficiency(deaddfonesvrs)
+
     # Only X CRS
-    deaddfonlyX = deaddf(X, Y, X, zeros(size(Y)), rts = :CRS)
+    deaddfonlyX = deaddf(X, Y, Gx =  X, Gy = zeros(size(Y)), rts = :CRS)
 
     @test nobs(deaddfonlyX) == 11
     @test ninputs(deaddfonlyX) == 2
@@ -168,8 +176,10 @@
                             0.000000000   4]
     @test slacks(deaddfonlyX, :Y) ≈ zeros(11)
 
+    @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Zeros, rts = :CRS)) == efficiency(deaddfonlyX)
+
     # Only X VRS
-    deaddfonlyXvrs = deaddf(X, Y, X, zeros(size(Y)), rts = :VRS)
+    deaddfonlyXvrs = deaddf(X, Y, Gx = X, Gy = zeros(size(Y)), rts = :VRS)
 
     @test nobs(deaddfonlyXvrs) == 11
     @test ninputs(deaddfonlyXvrs) == 2
@@ -208,8 +218,10 @@
                             0.000000000;
                             0.000000000]
 
+    @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Zeros, rts = :VRS)) == efficiency(deaddfonlyXvrs)
+
     # Only Y CRS
-    deaddfonlyY = deaddf(X, Y, zeros(size(X)), Y, rts = :CRS)
+    deaddfonlyY = deaddf(X, Y, Gx = zeros(size(X)), Gy = Y, rts = :CRS)
 
     @test nobs(deaddfonlyY) == 11
     @test ninputs(deaddfonlyY) == 2
@@ -238,8 +250,10 @@
                             0.000000000   4]
     @test slacks(deaddfonlyY, :Y) ≈ zeros(11)
 
+    @test efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Observed, rts = :CRS)) == efficiency(deaddfonlyY)
+
     # Only Y VRS
-    deaddfonlyYvrs = deaddf(X, Y, zeros(size(X)), Y, rts = :VRS)
+    deaddfonlyYvrs = deaddf(X, Y, Gx = zeros(size(X)), Gy = Y, rts = :VRS)
 
     @test nobs(deaddfonlyYvrs) == 11
     @test ninputs(deaddfonlyYvrs) == 2
@@ -268,8 +282,20 @@
                             0.000000000   4]
     @test slacks(deaddfonlyYvrs, :Y) ≈ zeros(11) atol = 1e-14
 
+    @test efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Observed, rts = :VRS)) == efficiency(deaddfonlyYvrs)
+
+    # Mean CRS
+    deaddfmean = deaddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :CRS)
+
+    @test efficiency(deaddfmean) ≈ [0; 0.1713509018; 0.1082533683; 0; 0.3584401184; 0.1148158887; 0; 0.1934829069; 0.1084372282; 0.5444473258; 0]
+
+    # Mean VRS
+    deaddfmeanvrs = deaddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :VRS)
+
+    @test efficiency(deaddfmeanvrs) ≈ [0; 0.08056567388; 0; 0;0.23098350118; 0; 0; 0; 0; 0.24886877828; 0]
+
     # Test no slacks
-    deaddfnoslack = deaddf(X, Y, X, Y, slack = false)
+    deaddfnoslack = deaddf(X, Y, Gx = X, Gy = Y, slack = false)
     @test efficiency(deaddfnoslack) == efficiency(deaddfobs)
     @test isempty(slacks(deaddfnoslack, :X)) == 1
     @test isempty(slacks(deaddfnoslack, :Y)) == 1
@@ -298,12 +324,12 @@
         Gyeval = Gy[i:i,:]
         Gyeval = Gyeval[:,:]
 
-        deaddfobs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
+        deaddfobs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gx = Gxeval, Gy = Gyeval, rts = :CRS, Xref = Xref, Yref = Yref))[1]
 
-        deaddfobsvs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
+        deaddfobsvs_ref_eff[i] = efficiency(deaddf(Xeval, Yeval, Gx = Gxeval, Gy = Gyeval, rts = :VRS, Xref = Xref, Yref = Yref))[1]
 
-        deaddfvrs_ref_slackX[i,:] = slacks(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :X)
-        deaddfvrs_ref_slackY[i,:] = slacks(deaddf(Xeval, Yeval, Gxeval, Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :Y)
+        deaddfvrs_ref_slackX[i,:] = slacks(deaddf(Xeval, Yeval, Gx = Gxeval, Gy = Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :X)
+        deaddfvrs_ref_slackY[i,:] = slacks(deaddf(Xeval, Yeval, Gx = Gxeval, Gy = Gyeval, rts = :VRS, Xref = Xref, Yref = Yref), :Y)
     end
 
     @test deaddfobs_ref_eff ≈ efficiency(deaddfobs)
@@ -318,13 +344,15 @@
     show(IOBuffer(), deaddfnoslack)
 
     # Test errors
-    @test_throws ErrorException deaddf([1; 2 ; 3], [4 ; 5], [1; 2 ; 3], [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException deaddf([1; 2], [4 ; 5], [1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], [1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException deaddf([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaddf([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6]) # Different size of inputs direction
-    @test_throws ErrorException deaddf([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+    @test_throws ErrorException deaddf([1; 2 ; 3], [4 ; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
+    @test_throws ErrorException deaddf([1; 2], [4 ; 5], Gx = [1; 2], Gy = [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ErrorException deaddf([1; 2; 3], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException deaddf([1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
+    @test_throws ErrorException deaddf([1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+    @test_throws ErrorException deaddf([1; 2; 3], [1; 2; 3], Gx = :Error, Gy = :Ones) # Invalid inuts direction
+    @test_throws ErrorException deaddf([1; 2; 3], [1; 2; 3], Gx = :Ones, Gy = :Error) # Invalid outputs direction
 
     # ------------------
     # Test Vector and Matrix inputs and outputs
@@ -335,18 +363,18 @@
     X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
     Y = [1; 1; 1; 1; 1; 1; 1; 1]
 
-    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0; 0; 0; 0.25; 0.4285714286; 0; 0.2; 0.2307692308]
+    @test efficiency(deaddf(X, Y, Gx = X, Gy = Y)) ≈ [0; 0; 0; 0.25; 0.4285714286; 0; 0.2; 0.2307692308]
 
     # Inputs is Vector, Output is Matrix
     X = [1; 1; 1; 1; 1; 1; 1; 1]
     Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
 
-    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0; 0; 0; 0.2173913043; 0.4; 0; 0.12; 0.2307692308]
+    @test efficiency(deaddf(X, Y, Gx = X, Gy = Y)) ≈ [0; 0; 0; 0.2173913043; 0.4; 0; 0.12; 0.2307692308]
 
     # Inputs is Vector, Output is Vector
     X = [2; 4; 8; 12; 6; 14; 14; 9.412]
     Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
 
-    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0.4285714286; 0; 0.1111111111; 0.25; 0.4285714286; 0.4285714286; 0.3207547170; 0.6666666667]
+    @test efficiency(deaddf(X, Y, Gx = X, Gy = Y)) ≈ [0.4285714286; 0; 0.1111111111; 0.25; 0.4285714286; 0.4285714286; 0.3207547170; 0.6666666667]
 
 end

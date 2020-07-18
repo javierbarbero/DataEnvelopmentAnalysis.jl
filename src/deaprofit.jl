@@ -7,6 +7,8 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     n::Int64
     m::Int64
     s::Int64
+    Gx::Symbol
+    Gy::Symbol
     dmunames::Vector{String}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
@@ -16,9 +18,20 @@ end
 
 
 """
-    deaprofit(X, Y, W, P)
+    deaprofit(X, Y, W, P; Gx, Gy)
 Compute profit efficiency using data envelopment analysis model for
 inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
+
+# Direction specification:
+
+The directions `Gx` and `Gy` can be one of the following symbols.
+- `:Zeros`: use zeros.
+- `:Ones`: use ones.
+- `:Observed`: use observed values.
+- `:Mean`: use column means.
+- `:Monetary`: use direction so that profit inefficiency is expressed in monetary values.
+
+Alternatively, a vector or matrix with the desired directions can be supplied.
 
 # Optional Arguments
 - `names`: a vector of strings with the names of the decision making units.
@@ -33,13 +46,7 @@ julia> P = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
 
 julia> W = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
 
-julia> GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
-
-julia> Gx = repeat(GxGydollar, 1, 2);
-
-julia> Gy = repeat(GxGydollar, 1, 2);
-
-julia> deaprofit(X, Y, W, P, Gx, Gy)
+julia> deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)
 Profit DEA Model
 DMUs = 8; Inputs = 2; Outputs = 2
 Returns to Scale = VRS
@@ -57,7 +64,8 @@ Returns to Scale = VRS
 ─────────────────────────────────────
 ```
 """
-function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::Matrix;
+function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix;
+    Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Matrix},
     names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
 
     # Check parameters
@@ -82,6 +90,52 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     if sp != s
         error("number of output prices and outputs is different")
     end
+
+    # Build or get user directions
+    if typeof(Gx) == Symbol
+        Gxsym = Gx
+
+        if Gx == :Zeros
+            Gx = zeros(size(X))
+        elseif Gx == :Ones
+            Gx = ones(size(X))
+        elseif Gx == :Observed
+            Gx = X
+        elseif Gx == :Mean
+            Gx = repeat(mean(X, dims = 1), size(X, 1))
+        elseif Gx == :Monetary
+            GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
+            Gx = repeat(GxGydollar, 1, 2);
+        else
+            error("Invalid inputs direction")
+        end
+
+    else
+        Gxsym = :Custom
+    end
+
+    if typeof(Gy) == Symbol
+        Gysym = Gy
+
+        if Gy == :Zeros
+            Gy = zeros(size(Y))
+        elseif Gy == :Ones
+            Gy = ones(size(Y))
+        elseif Gy == :Observed
+            Gy = Y
+        elseif Gy == :Mean
+            Gy = repeat(mean(Y, dims = 1), size(Y, 1))
+        elseif Gy == :Monetary
+            GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
+            Gy = repeat(GxGydollar, 1, 2);
+        else
+            error("Invalid outputs direction")
+        end
+
+    else
+        Gysym = :Custom
+    end
+
     if size(Gx) != size(X)
         error("size of inputs should be equal to size of inputs direction")
     end
@@ -104,7 +158,7 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
-        
+
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, Yeff[1:s])
         @variable(deamodel, lambda[1:n] >= 0)
@@ -137,41 +191,52 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix, Gx::Matrix, Gy::M
     pefficiency_den = sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2)
     pefficiency = vec( pefficiency_num ./ pefficiency_den )
 
-    techefficiency = efficiency(deaddf(X, Y, Gx, Gy, rts = :VRS, slack = false))
+    techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false))
     allocefficiency = pefficiency - techefficiency
 
-    return ProfitDEAModel(n, m, s, names, pefficiency, plambdaeff, techefficiency, allocefficiency)
+    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency)
 
 end
 
-function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix, Gx::Vector, Gy::Matrix;
+function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix;
+    Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Matrix},
     names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
-    
+
     X = X[:,:]
     W = W[:,:]
-    Gx = Gx[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
+    if typeof(Gx) != Symbol
+        Gx = Gx[:,:]
+    end
+    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
 end
 
-function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector, Gx::Matrix, Gy::Vector;
+function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector;
+    Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Vector},
     names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
 
     Y = Y[:,:]
     P = P[:,:]
-    Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
+    if typeof(Gy) != Symbol
+        Gy = Gy[:,:]
+    end
+    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
 end
 
-function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector, Gx::Vector, Gy::Vector;
+function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector;
+    Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Vector},
     names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
 
     X = X[:,:]
     Y = Y[:,:]
     W = W[:,:]
     P = P[:,:]
-    Gx = Gx[:,:]
-    Gy = Gy[:,:]
-    return deaprofit(X, Y, W, P, Gx, Gy, names = names)
+    if typeof(Gx) != Symbol
+        Gx = Gx[:,:]
+    end
+    if typeof(Gy) != Symbol
+        Gy = Gy[:,:]
+    end
+    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
 end
 
 function Base.show(io::IO, x::ProfitDEAModel)
@@ -193,6 +258,8 @@ function Base.show(io::IO, x::ProfitDEAModel)
         print(io, "; Outputs = ", s)
         print(io, "\n")
         print(io, "Returns to Scale = VRS")
+        print(io, "\n")
+        print(io, "Gx = ", string(x.Gx), "; Gy = ", string(x.Gy))
         print(io, "\n")
         show(io, CoefTable(hcat(eff, techeff, alloceff), ["Profit", "Technical", "Allocative"], dmunames))
     end
