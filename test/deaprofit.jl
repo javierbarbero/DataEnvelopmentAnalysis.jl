@@ -31,4 +31,33 @@
     @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6]) # Different size of inputs direction
     @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
 
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+    # Tests against results in R
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+    W = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
+    P = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0; 0.1666666667; 0.1666666667; 0.375; 0.5454545455; 0.375; 0.375; 0.5283018868]
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+    P = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
+
+    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0; 0.1538461538; 0.1538461538; 0.6666666667; 1.142857143; 0.3636363636; 0.3636363636; 1]
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+    P = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaprofit(X, Y, W, P, X, Y)) ≈ [0.6666666667; 0; 0.0625; 0.1904761905; 0.4444444444; 0.3809523810; 0.2608695652; 0.6849978751]
+
 end

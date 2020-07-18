@@ -54,4 +54,32 @@
     @test_throws ErrorException deaprofitability([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different number of oputput prices and outputs
     @test_throws ErrorException efficiency(deaprofbl, :Error)
 
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+    W = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
+    P = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaprofitability(X, Y, W, P)) ≈ ( sum(Y .* P, dims = 2) ./ sum(X .* W, dims = 2) )  / 0.25 atol = 1e-5
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+    P = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
+
+    @test efficiency(deaprofitability(X, Y, W, P)) ≈ ( sum(Y .* P, dims = 2) ./ sum(X .* W, dims = 2) )  / 14 atol = 1e-5
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+    P = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaprofitability(X, Y, W, P)) ≈ ( sum(Y .* P, dims = 2) ./ sum(X .* W, dims = 2) )  / 1.25 atol = 1e-5
+
 end

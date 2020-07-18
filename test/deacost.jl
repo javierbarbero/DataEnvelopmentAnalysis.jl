@@ -17,7 +17,7 @@
 
 
     ## Test Cost DEA Model with Zofío and Prieto (2006) data.
-    # Test agains results with R
+    # Test agains results in R
     X = [5 3; 2 4; 4 2; 4 8; 7 9]
     Y = [7 4; 10 8; 8 10; 5 4; 3 6]
     W = [2 1; 2 1; 2 1; 2 1; 2 1.0]
@@ -70,6 +70,7 @@
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
+    @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
 
     # ------------------
     # Weak Disposability Tests
@@ -88,5 +89,31 @@
     @test efficiency(deacostWeak, :Economic) ≈ [1.0; 1.0; 1.0; 1.0; 0.5]
     @test efficiency(deacostWeak, :Technical) ≈ [1.0; 1.0; 1.0; 1.0; 0.5]
     @test efficiency(deacostWeak, :Allocative) ≈ [1.0; 1.0; 1.0; 1.0; 1.0]
+
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+    # Tests against results in R
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+    W = [1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1; 1 1]
+
+    @test efficiency(deacost(X, Y, W)) ≈ [1; 0.8; 0.8; 0.5714285714; 0.4; 0.5714285714; 0.5714285714; 0.4166666667]
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deacost(X, Y, W)) ≈ [1; 1; 1; 1; 1; 1; 1; 1]
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+    W = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deacost(X, Y, W)) ≈ [1; 1; 1; 1; 0.5; 0.4761904762; 0.8571428571; 0.2843710157]
 
 end

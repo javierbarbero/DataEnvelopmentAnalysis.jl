@@ -155,9 +155,8 @@ function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, 
                 # No contraint to add for constant returns to scale
             elseif rts == :VRS
                 @constraint(deamodel, sum(lambda) == 1)
-            else
-                error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
             end
+            # No need for else statement as RTS parameter already checked in first stage
 
             # Optimize and return results
             JuMP.optimize!(deamodel)
@@ -169,7 +168,7 @@ function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, 
 
             # Check termination status
             if termination_status(deamodel) != MOI.LOCALLY_SOLVED
-                @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+                @warn ("DMU $i Slacks termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
             end
 
         end

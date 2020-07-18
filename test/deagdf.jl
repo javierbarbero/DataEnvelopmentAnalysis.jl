@@ -92,4 +92,26 @@
     @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deagdf([1; 2; 3], [4; 5; 6], alpha = 0.5, rts = :Error) # Invalid returns to scale
 
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deagdf(X, Y, rts = :VRS, slack = false)) ≈ [1; 1; 1; 1; 1; 1; 1; 1] atol = 1e-5
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+
+    @test efficiency(deagdf(X, Y, rts = :VRS, slack = false)) ≈ [1; 1; 1; 1; 1; 1; 1; 1] atol = 1e-5
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+
+    @test efficiency(deagdf(X, Y, rts = :VRS)) ≈ [1; 1; 1; 1; 0.410097; 0.634489; 1; 0.20504] atol = 1e-5
+
 end

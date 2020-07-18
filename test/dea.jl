@@ -2,7 +2,7 @@
 @testset "RadialDEAModel" begin
 
     ## Test Radial DEA Models with FLS Book data
-    # Test against results with R
+    # Test against results in R
     X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17]
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
@@ -272,6 +272,16 @@
     @test slacks(deaooWeak, :X) ≈ [0; 0; 0; 0; 0] atol=1e-14
     @test slacks(deaooWeak, :Y) ≈ [0; 0; 0; 0; 0] atol=1e-14
 
+    # Test if weak disposability in inputs in the Input oriented model works
+    # In this example, same result as stron disposability
+    @test efficiency(dea(X, Y, orient = :Input, disposX = :Strong)) ==
+        efficiency(dea(X, Y, orient = :Input, disposX = :Weak))
+
+    # Test if weak disposability in outputs in the Output oriented model works
+    # In this example, same result as strong disposability
+    @test efficiency(dea(X, Y, orient = :Output, disposY = :Strong)) ==
+        efficiency(dea(X, Y, orient = :Output, disposY = :Weak))
+
     # ------------------
     # DMU names
     # ------------------
@@ -293,5 +303,28 @@
     end
     @test occursin("Length of names greater than number of observations", string(logs))
     @test value == ["A", "B", "C", "D", "E"]
+
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+    # Tests against results in R
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(dea(X, Y, orient = :Input)) ≈ [1; 1; 1; 0.6; 0.4; 1; 0.6666666667; 0.625]
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+
+    @test efficiency(dea(X, Y, orient = :Output)) ≈ [1; 1; 1; 1.555555556; 2.333333333; 1; 1.272727273; 1.6]
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+
+    @test efficiency(dea(X, Y, orient = :Input)) ≈ [0.4; 1; 0.8; 0.6; 0.4; 0.4; 0.5142857143; 0.2]
 
 end

@@ -2,7 +2,7 @@
 @testset "DirectionalDEAModel" begin
 
     ## Test Directional DF DEA Models with FLS Book data
-    # Test against results with R
+    # Test against results in R
     X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17]
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
@@ -325,5 +325,28 @@
     @test_throws ErrorException deaddf([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deaddf([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6]) # Different size of inputs direction
     @test_throws ErrorException deaddf([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+    # Tests against results in R
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0; 0; 0; 0.25; 0.4285714286; 0; 0.2; 0.2307692308]
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+
+    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0; 0; 0; 0.2173913043; 0.4; 0; 0.12; 0.2307692308]
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+
+    @test efficiency(deaddf(X, Y, X, Y)) ≈ [0.4285714286; 0; 0.1111111111; 0.25; 0.4285714286; 0.4285714286; 0.3207547170; 0.6666666667]
 
 end

@@ -2,7 +2,7 @@
 @testset "AdditiveDEAModel" begin
 
     ## Test Additive DEA Models with FLS Book data
-    # Test against results with R
+    # Test against results in R
     X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17]
     Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
 
@@ -464,14 +464,15 @@
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rts = :Error) # Invalid returns to scale
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Error) # Invalid model
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, orient = :Error) # Invalid orientation
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [1; 1; 1], orient = :Error) # Invalid orientation with custom weights
 
     @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5]) #  Different number of observations
     @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
     @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 2; 3; 4]) # Different size of weights
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoY = [4; 5; 6; 7]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 2; 3; 4], rhoY = [1; 1; 1]) # Different size of weights
+    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [4; 5; 6; 7]) # Different size of weights
 
     @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rhoX = [1; 1; 1]) # Weights not allowed if model != :Custom
 
@@ -524,5 +525,43 @@
     @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Input, disposX = :Weak)  # Weak input disposability not possible in input oriented model
 
     @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Output, disposY = :Weak)  # Weak output disposability not possible in output oriented model
+
+    # ------------------
+    # Test Vector and Matrix inputs and outputs
+    # ------------------
+    # Tests against results in R
+
+    # Inputs is Matrix, Outputs is Vector
+    X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6	8]
+    Y = [1; 1; 1; 1; 1; 1; 1; 1]
+
+    @test efficiency(deaadd(X, Y, :Ones)) ≈ [0.0; 0.0; 0.0; 3.0; 6.0; 2.0; 3.0; 5.2]
+
+    # Inputs is Vector, Output is Matrix
+    X = [1; 1; 1; 1; 1; 1; 1; 1]
+    Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5]
+
+    @test efficiency(deaadd(X, Y, :Ones)) ≈ [0.0; 0.0; 0.0; 6.0; 8.0; 2.0; 4.0; 7.5]
+
+    # Inputs is Vector, Output is Vector
+    X = [2; 4; 8; 12; 6; 14; 14; 9.412]
+    Y = [1; 5; 8; 9; 3; 7; 9; 2.353]
+
+    @test efficiency(deaadd(X, Y, :Ones)) ≈ [0; 0; 0; 0;4; 7.333333333; 2; 8.059]
+
+    # ------------------
+    # RAM and BAM with orientation
+    # ------------------
+
+    X = [1; 2; 3; 2; 4]
+    Y = [2; 3; 4; 1; 3]
+
+    @test efficiency(deaadd(X, Y, :RAM, orient = :Graph)) ≈ [0.0; 0.0; 0.0; 1/3; 1/3]
+    @test efficiency(deaadd(X, Y, :RAM, orient = :Input)) ≈ [0.0; 0.0; 0.0; 1/3; 2/3]
+    @test efficiency(deaadd(X, Y, :RAM, orient = :Output)) ≈ [0.0; 0.0; 0.0; 2/3; 1/3]
+
+    @test efficiency(deaadd(X, Y, :BAM, orient = :Graph)) ≈ [0.0; 0.0; 0.0; 2/3; 2/3]
+    @test efficiency(deaadd(X, Y, :BAM, orient = :Input)) ≈ [0.0; 0.0; 0.0; 1; 2/3]
+    @test efficiency(deaadd(X, Y, :BAM, orient = :Output)) ≈ [0.0; 0.0; 0.0; 2/3; 1]
 
 end

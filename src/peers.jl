@@ -80,10 +80,6 @@ struct DEAPeers <: AbstractDEAPeers
         dmunames = names(x)
         dmunamesref = String[]
 
-        if n != size(lambda,1)
-            error("Number of observation in the model and number of rows in peers matrix do not match")
-        end
-
         # Remove very small numbers
         droptol!(lambda, atol)
 

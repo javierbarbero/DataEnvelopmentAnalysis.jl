@@ -242,7 +242,7 @@ end
 
 function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    rho::Vector = Array{Float64}(undef, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
+    rhoX::Vector = Array{Float64}(undef, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
     Xref::Vector = X, Yref::Matrix = Y,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
     names::Vector{String} = Array{String}(undef, 0))::AdditiveDEAModel
@@ -291,7 +291,7 @@ function Base.show(io::IO, x::AdditiveDEAModel)
     disposX = x.disposX
     disposY = x.disposY
     dmunames = names(x)
-    
+
     eff = efficiency(x)
     slackX = slacks(x, :X)
     slackY = slacks(x, :Y)
