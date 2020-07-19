@@ -9,7 +9,7 @@ struct DirectionalDEAModel <: AbstractTechnicalDEAModel
     Gx::Symbol
     Gy::Symbol
     rts::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -66,15 +66,21 @@ Gx = Ones; Gy = Ones
 ─────────────────────────────────────────────────────
 ```
 """
-function deaddf(X::Matrix, Y::Matrix; Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Matrix}, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
-    names::Vector{String} = Array{String}(undef, 0))::DirectionalDEAModel
+function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
+    Gx::Union{Symbol, Matrix, Vector}, Gy::Union{Symbol, Matrix, Vector},
+    rts::Symbol = :CRS, slack = true,
+    Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
+    names::Union{Vector{String},Nothing} = nothing)::DirectionalDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
+    if Xref === nothing Xref = X end
+    if Yref === nothing Yref = Y end
+
+    nrefx, mref = size(Xref, 1), size(Xref, 2)
+    nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -128,8 +134,8 @@ function deaddf(X::Matrix, Y::Matrix; Gx::Union{Symbol, Matrix}, Gy::Union{Symbo
         Gysym = :Custom
     end
 
-    nGx, mGx = size(Gx)
-    nGy, sGy = size(Gy)
+    nGx, mGx = size(Gx, 1), size(Gx, 2)
+    nGy, sGy = size(Gy, 1), size(Gy, 2)
 
     if size(Gx) != size(X)
         error("size of inputs should be equal to size of inputs direction")
@@ -205,44 +211,6 @@ function deaddf(X::Matrix, Y::Matrix; Gx::Union{Symbol, Matrix}, Gy::Union{Symbo
 
     return DirectionalDEAModel(n, m, s, Gxsym, Gysym, rts, names, effi, slackX, slackY, lambdaeff)
 
-end
-
-function deaddf(X::Vector, Y::Matrix; Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Matrix}, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
-    names::Vector{String} = Array{String}(undef, 0))::DirectionalDEAModel
-
-    X = X[:,:]
-    Xref = Xref[:,:]
-    if typeof(Gx) != Symbol
-        Gx = Gx[:,:]
-    end
-    return deaddf(X, Y, Gx = Gx, Gy = Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
-end
-
-function deaddf(X::Matrix, Y::Vector; Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Vector}, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
-    names::Vector{String} = Array{String}(undef, 0))::DirectionalDEAModel
-
-    Y = Y[:,:]
-    Yref = Yref[:,:]
-    if typeof(Gy) != Symbol
-        Gy = Gy[:,:]
-    end
-    return deaddf(X, Y, Gx = Gx, Gy = Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
-end
-
-function deaddf(X::Vector, Y::Vector; Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Vector}, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
-    names::Vector{String} = Array{String}(undef, 0))::DirectionalDEAModel
-
-    X = X[:,:]
-    Xref = Xref[:,:]
-    if typeof(Gx) != Symbol
-        Gx = Gx[:,:]
-    end
-    Y = Y[:,:]
-    Yref = Yref[:,:]
-    if typeof(Gx) != Symbol
-        Gy = Gy[:,:]
-    end
-    return deaddf(X, Y, Gx = Gx, Gy = Gy, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
 function Base.show(io::IO, x::DirectionalDEAModel)

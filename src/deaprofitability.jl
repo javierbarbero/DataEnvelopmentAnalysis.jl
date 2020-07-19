@@ -8,7 +8,7 @@ struct ProfitabilityDEAModel <: AbstractProfitabilityDEAModel
     m::Int64
     s::Int64
     alpha::Float64
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     crseff::Vector
@@ -52,15 +52,17 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────────────────────────────────────────────────
 ```
 """
-function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Float64 = 0.5,
-    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
+function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
+    alpha::Float64 = 0.5,
+    names::Union{Vector{String},Nothing} = nothing)::ProfitabilityDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nw, mw = size(W)
-    np, sp = size(P)
+    nw, mw = size(W, 1), size(W, 2)
+    np, sp = size(P, 1), size(P, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -126,32 +128,6 @@ function deaprofitability(X::Matrix, Y::Matrix, W::Matrix, P::Matrix; alpha::Flo
 
     return ProfitabilityDEAModel(n, m, s, alpha, names, pefficiency, plambdaeff, crsefficiency, vrsefficiency, scalefficiency, allocefficiency)
 
-end
-
-function deaprofitability(X::Vector, Y::Matrix, W::Vector, P::Matrix; alpha::Float64 = 0.5,
-    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
-
-    X = X[:,:]
-    W = W[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
-end
-
-function deaprofitability(X::Matrix, Y::Vector, W::Matrix, P::Vector; alpha::Float64 = 0.5,
-    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
-
-    Y = Y[:,:]
-    P = P[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
-end
-
-function deaprofitability(X::Vector, Y::Vector, W::Vector, P::Vector; alpha::Float64 = 0.5,
-    names::Vector{String} = Array{String}(undef, 0))::ProfitabilityDEAModel
-
-    X = X[:,:]
-    W = W[:,:]
-    Y = Y[:,:]
-    P = P[:,:]
-    return deaprofitability(X, Y, W, P, alpha = alpha, names = names)
 end
 
 function Base.show(io::IO, x::ProfitabilityDEAModel)

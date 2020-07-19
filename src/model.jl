@@ -88,23 +88,25 @@ function Base.names(model::AbstractDEAModel)
 
     xnobs = nobs(model)
 
-    if isdefined(model, :dmunames)    
+    if isdefined(model, :dmunames)
 
-        xnameslength = length(model.dmunames)
-
-        if xnameslength == 0
+        if model.dmunames === nothing
             # If model have no names, return numeric sequence
-            retnames = ["$i" for i in 1:xnobs]      
-        elseif xnameslength == xnobs
-            retnames = model.dmunames  
-        elseif xnameslength < xnobs
-            # If length of names is lower than number of observations, append numbers to match 
-            @warn("Length of names lower than number of observations")
-            retnames = [model.dmunames; ["$i" for i in (xnameslength + 1):xnobs]]
-        elseif xnameslength > xnobs
-            # If length of names is greater than number of observations, split
-            @warn("Length of names greater than number of observations")
-            retnames = model.dmunames[1:xnobs]
+            retnames = ["$i" for i in 1:xnobs]
+        else
+            xnameslength = length(model.dmunames)
+
+            if xnameslength == xnobs
+                retnames = model.dmunames
+            elseif xnameslength < xnobs
+                # If length of names is lower than number of observations, append numbers to match
+                @warn("Length of names lower than number of observations")
+                retnames = [model.dmunames; ["$i" for i in (xnameslength + 1):xnobs]]
+            elseif xnameslength > xnobs
+                # If length of names is greater than number of observations, split
+                @warn("Length of names greater than number of observations")
+                retnames = model.dmunames[1:xnobs]
+            end
         end
     else
         # Return numeric sequence

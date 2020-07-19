@@ -10,7 +10,7 @@ struct MalmquistDEAModel <: AbstractProductivityDEAModel
     orient::Symbol
     rts::Symbol
     refperiod::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     Prod::Matrix
     EC::Matrix
     TC::Matrix
@@ -59,8 +59,9 @@ EC = Efficiency Change
 TC = Technological Change
 ```
 """
-function malmquist(X::Array{Float64,3}, Y::Array{Float64,3}; orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
-    names::Vector{String} = Array{String}(undef, 0))::MalmquistDEAModel
+function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
+    orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
+    names::Union{Vector{String},Nothing} = nothing)::MalmquistDEAModel
     # Check dimensions
     if ndims(X) != 3
         error("X should be a 3-dimensions array")

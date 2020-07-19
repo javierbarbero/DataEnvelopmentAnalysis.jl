@@ -9,7 +9,7 @@ struct GeneralizedDFDEAModel <: AbstractTechnicalDEAModel
     s::Int64
     alpha::Float64
     rts::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -50,15 +50,20 @@ alpha = 0.5; Returns to Scale = VRS
 ─────────────────────────────────────────────────────────────
 ```
 """
-function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Matrix = Y,
-    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
+function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
+    alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true,
+    Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
+    names::Union{Vector{String},Nothing} = nothing)::GeneralizedDFDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
+    if Xref === nothing Xref = X end
+    if Yref === nothing Yref = Y end
+
+    nrefx, mref = size(Xref, 1), size(Xref, 2)
+    nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -179,32 +184,6 @@ function deagdf(X::Matrix, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, 
 
     return GeneralizedDFDEAModel(n, m, s, alpha, rts, names, effi, slackX, slackY, lambdaeff)
 
-end
-
-function deagdf(X::Vector, Y::Matrix; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Matrix = Y,
-    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
-
-    X = X[:,:]
-    Xref = Xref[:,:]
-    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
-end
-
-function deagdf(X::Matrix, Y::Vector; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Matrix = X, Yref::Vector = Y,
-    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
-
-    Y = Y[:,:]
-    Yref = Yref[:,:]
-    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
-end
-
-function deagdf(X::Vector, Y::Vector; alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true, Xref::Vector = X, Yref::Vector = Y,
-    names::Vector{String} = Array{String}(undef, 0))::GeneralizedDFDEAModel
-
-    X = X[:,:]
-    Xref = Xref[:,:]
-    Y = Y[:,:]
-    Yref = Yref[:,:]
-    return deagdf(X, Y, alpha = alpha, rts = rts, slack = slack, Xref = Xref, Yref = Yref, names = names)
 end
 
 function Base.show(io::IO, x::GeneralizedDFDEAModel)

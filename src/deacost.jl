@@ -9,7 +9,7 @@ struct CostDEAModel <: AbstractCostDEAModel
     s::Int64
     rts::Symbol
     disposY::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -50,14 +50,15 @@ Orientation = Input; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::CostDEAModel
+function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    W::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Union{Vector{String},Nothing} = nothing)::CostDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nw, mw = size(W)
+    nw, mw = size(W, 1), size(W, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -87,7 +88,7 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, dispos::Sy
 
         # Create the optimization model
         deamodel = Model(GLPK.Optimizer)
-        
+
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, lambda[1:n] >= 0)
 
@@ -131,30 +132,6 @@ function deacost(X::Matrix, Y::Matrix, W::Matrix; rts::Symbol = :VRS, dispos::Sy
 
 end
 
-function deacost(X::Vector, Y::Matrix, W::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::CostDEAModel
-
-    X = X[:,:]
-    W = W[:,:]
-    return deacost(X, Y, W, rts = rts, dispos = dispos, names = names)
-end
-
-function deacost(X::Matrix, Y::Vector, W::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::CostDEAModel
-
-    Y = Y[:,:]
-    return deacost(X, Y, W, rts = rts, dispos = dispos, names = names)
-end
-
-function deacost(X::Vector, Y::Vector, W::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::CostDEAModel
-
-    X = X[:,:]
-    W = W[:,:]
-    Y = Y[:,:]
-    return deacost(X, Y, W, rts = rts, dispos = dispos, names = names)
-end
-
 function Base.show(io::IO, x::CostDEAModel)
     compact = get(io, :compact, false)
 
@@ -164,7 +141,7 @@ function Base.show(io::IO, x::CostDEAModel)
     disposY = x.disposY
     dmunames = names(x)
 
-    eff = efficiency(x)    
+    eff = efficiency(x)
     techeff = efficiency(x, :Technical)
     alloceff = efficiency(x, :Allocative)
 

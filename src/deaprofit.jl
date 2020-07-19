@@ -9,7 +9,7 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     s::Int64
     Gx::Symbol
     Gy::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -64,16 +64,17 @@ Returns to Scale = VRS
 ─────────────────────────────────────
 ```
 """
-function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix;
-    Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Matrix},
-    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
+function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
+    Gx::Union{Symbol,Matrix,Vector}, Gy::Union{Symbol,Matrix,Vector},
+    names::Union{Vector{String},Nothing} = nothing)::ProfitDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nw, mw = size(W)
-    np, sp = size(P)
+    nw, mw = size(W, 1), size(W, 2)
+    np, sp = size(P, 1), size(P, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -196,47 +197,6 @@ function deaprofit(X::Matrix, Y::Matrix, W::Matrix, P::Matrix;
 
     return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency)
 
-end
-
-function deaprofit(X::Vector, Y::Matrix, W::Vector, P::Matrix;
-    Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Matrix},
-    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
-
-    X = X[:,:]
-    W = W[:,:]
-    if typeof(Gx) != Symbol
-        Gx = Gx[:,:]
-    end
-    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
-end
-
-function deaprofit(X::Matrix, Y::Vector, W::Matrix, P::Vector;
-    Gx::Union{Symbol, Matrix}, Gy::Union{Symbol, Vector},
-    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
-
-    Y = Y[:,:]
-    P = P[:,:]
-    if typeof(Gy) != Symbol
-        Gy = Gy[:,:]
-    end
-    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
-end
-
-function deaprofit(X::Vector, Y::Vector, W::Vector, P::Vector;
-    Gx::Union{Symbol, Vector}, Gy::Union{Symbol, Vector},
-    names::Vector{String} = Array{String}(undef, 0))::ProfitDEAModel
-
-    X = X[:,:]
-    Y = Y[:,:]
-    W = W[:,:]
-    P = P[:,:]
-    if typeof(Gx) != Symbol
-        Gx = Gx[:,:]
-    end
-    if typeof(Gy) != Symbol
-        Gy = Gy[:,:]
-    end
-    return deaprofit(X, Y, W, P, Gx = Gx, Gy = Gy, names = names)
 end
 
 function Base.show(io::IO, x::ProfitDEAModel)

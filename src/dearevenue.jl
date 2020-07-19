@@ -9,7 +9,7 @@ struct RevenueDEAModel <: AbstractRevenueDEAModel
     s::Int64
     rts::Symbol
     disposX::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -50,14 +50,15 @@ Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────
 ```
 """
-function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
+function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    P::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,
+    names::Union{Vector{String},Nothing} = nothing)::RevenueDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    np, sp = size(P)
+    np, sp = size(P, 1), size(P, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -128,30 +129,6 @@ function dearevenue(X::Matrix, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos:
     allocefficiency = refficiency ./ techefficiency
     return RevenueDEAModel(n, m, s, rts, dispos, names, refficiency, rlambdaeff, techefficiency, allocefficiency)
 
-end
-
-function dearevenue(X::Vector, Y::Matrix, P::Matrix; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
-
-    X = X[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
-end
-
-function dearevenue(X::Matrix, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
-
-    Y = Y[:,:]
-    P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
-end
-
-function dearevenue(X::Vector, Y::Vector, P::Vector; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::RevenueDEAModel
-
-    X = X[:,:]
-    Y = Y[:,:]
-    P = P[:,:]
-    return dearevenue(X, Y, P, rts = rts, dispos = dispos, names = names)
 end
 
 function Base.show(io::IO, x::RevenueDEAModel)

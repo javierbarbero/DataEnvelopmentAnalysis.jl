@@ -12,7 +12,7 @@ struct AdditiveDEAModel <: AbstractTechnicalDEAModel
     rts::Symbol
     disposX::Symbol
     disposY::Symbol
-    dmunames::Vector{String}
+    dmunames::Union{Vector{String},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -71,19 +71,23 @@ Weights = MIP
 ─────────────────────────────────────────────────────
 ```
 """
-function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
+function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    model::Symbol = :Default; orient::Symbol = :Graph,
     rts::Symbol = :VRS,
-    rhoX::Matrix = Array{Float64}(undef, 0, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
-    Xref::Matrix = X, Yref::Matrix = Y,
+    rhoX::Union{Matrix,Vector,Nothing} = nothing, rhoY::Union{Matrix,Vector,Nothing} = nothing,
+    Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::AdditiveDEAModel
+    names::Union{Vector{String},Nothing} = nothing)::AdditiveDEAModel
 
     # Check parameters
-    nx, m = size(X)
-    ny, s = size(Y)
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    nrefx, mref = size(Xref)
-    nrefy, sref = size(Yref)
+    if Xref === nothing Xref = X end
+    if Yref === nothing Yref = Y end
+
+    nrefx, mref = size(Xref, 1), size(Xref, 2)
+    nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
         error("number of observations is different in inputs and outputs")
@@ -118,7 +122,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     # Default behaviour
     if model == :Default
         # If no weights are specified use :Ones
-        if length(rhoX) == 0 && length(rhoY) == 0
+        if rhoX == nothing && rhoY == nothing
             model = :Ones
         else
             model = :Custom
@@ -128,7 +132,7 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
     # Get weights based on the selected model
     if model != :Custom
         # Display error if both model and weights are specified
-        if length(rhoX) != 0 || length(rhoY) != 0
+        if rhoX != nothing || rhoY != nothing
             error("Weights not allowed if model != :Custom")
         end
 
@@ -240,48 +244,6 @@ function deaadd(X::Matrix, Y::Matrix, model::Symbol = :Default; orient::Symbol =
 
 end
 
-function deaadd(X::Vector, Y::Matrix, model::Symbol = :Default; orient::Symbol = :Graph,
-    rts::Symbol = :VRS,
-    rhoX::Vector = Array{Float64}(undef, 0), rhoY::Matrix = Array{Float64}(undef, 0, 0),
-    Xref::Vector = X, Yref::Matrix = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::AdditiveDEAModel
-
-    X = X[:,:]
-    rhoX = rhoX[:,:]
-    Xref = Xref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
-end
-
-function deaadd(X::Matrix, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
-    rts::Symbol = :VRS,
-    rhoX::Matrix = Array{Float64}(undef, 0, 0), rhoY::Vector = Array{Float64}(undef, 0),
-    Xref::Matrix = X, Yref::Vector = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::AdditiveDEAModel
-
-    Y = Y[:,:]
-    rhoY = rhoY[:,:]
-    Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
-end
-
-function deaadd(X::Vector, Y::Vector, model::Symbol = :Default; orient::Symbol = :Graph,
-    rts::Symbol = :VRS,
-    rhoX::Vector = Array{Float64}(undef, 0), rhoY::Vector = Array{Float64}(undef, 0),
-    Xref::Vector = X, Yref::Vector = Y,
-    disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Vector{String} = Array{String}(undef, 0))::AdditiveDEAModel
-
-    X = X[:,:]
-    rhoX = rhoX[:,:]
-    Xref = Xref[:,:]
-    Y = Y[:,:]
-    rhoY = rhoY[:,:]
-    Yref = Yref[:,:]
-    return deaadd(X, Y, model, orient = orient, rts = rts, rhoX = rhoX, rhoY = rhoY, Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, names = names)
-end
-
 function Base.show(io::IO, x::AdditiveDEAModel)
     compact = get(io, :compact, false)
 
@@ -331,7 +293,8 @@ Model specification:
 - `orient=:Graph`: choose between graph oriented `:Graph`, input oriented `:Input`, or output oriented model `:Output`.
 
 """
-function deaaddweights(X::Matrix, Y::Matrix, model::Symbol; orient::Symbol = :Graph)
+function deaaddweights(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
+    model::Symbol; orient::Symbol = :Graph)
 
     # Check orientation
     if orient != :Graph && orient != :Input && orient != :Output
