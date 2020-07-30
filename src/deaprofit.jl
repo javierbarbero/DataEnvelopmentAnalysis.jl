@@ -106,7 +106,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             Gx = repeat(mean(X, dims = 1), size(X, 1))
         elseif Gx == :Monetary
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
-            Gx = repeat(GxGydollar, 1, 2);
+            Gx = repeat(GxGydollar, 1, m);
         else
             error("Invalid inputs direction")
         end
@@ -128,7 +128,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             Gy = repeat(mean(Y, dims = 1), size(Y, 1))
         elseif Gy == :Monetary
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
-            Gy = repeat(GxGydollar, 1, 2);
+            Gy = repeat(GxGydollar, 1, s);
         else
             error("Invalid outputs direction")
         end
@@ -137,10 +137,10 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         Gysym = :Custom
     end
 
-    if size(Gx) != size(X)
+    if (size(Gx, 1) != size(X, 1)) | (size(Gx, 2) != size(X, 2))
         error("size of inputs should be equal to size of inputs direction")
     end
-    if size(Gy) != size(Y)
+    if (size(Gy, 1) != size(Y, 1)) | (size(Gy, 2) != size(Y, 2))
         error("size of outputs should be equal to size of outputs direction")
     end
 

@@ -137,10 +137,10 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nGx, mGx = size(Gx, 1), size(Gx, 2)
     nGy, sGy = size(Gy, 1), size(Gy, 2)
 
-    if size(Gx) != size(X)
+    if (size(Gx, 1) != size(X, 1)) | (size(Gx, 2) != size(X, 2))
         error("size of inputs should be equal to size of inputs direction")
     end
-    if size(Gy) != size(Y)
+    if (size(Gy, 1) != size(Y, 1)) | (size(Gy, 2) != size(Y, 2))
         error("size of outputs should be equal to size of outputs direction")
     end
 

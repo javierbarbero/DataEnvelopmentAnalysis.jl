@@ -122,7 +122,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Default behaviour
     if model == :Default
         # If no weights are specified use :Ones
-        if rhoX == nothing && rhoY == nothing
+        if rhoX === nothing && rhoY === nothing
             model = :Ones
         else
             model = :Custom
@@ -132,7 +132,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Get weights based on the selected model
     if model != :Custom
         # Display error if both model and weights are specified
-        if rhoX != nothing || rhoY != nothing
+        if rhoX !== nothing || rhoY !== nothing
             error("Weights not allowed if model != :Custom")
         end
 

@@ -96,7 +96,6 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         # Create the optimization model
         deamodel = Model(Ipopt.Optimizer)
         set_silent(deamodel)
-        set_optimizer_attribute(deamodel, "print_level", 0)
 
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:n] >= 0)
