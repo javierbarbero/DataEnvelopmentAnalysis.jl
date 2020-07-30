@@ -1,6 +1,6 @@
 using Documenter, DataEnvelopmentAnalysis
 
-makedocs(sitename = "DataEnvelopment\nAnalysis.jl",
+makedocs(sitename = "DataEnvelopmentAnalysis",
         authors = "Javier Barbero and José Luis Zofío.",
         pages = [
         "Home" => "index.md",
@@ -23,7 +23,7 @@ makedocs(sitename = "DataEnvelopment\nAnalysis.jl",
         ],
         format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true")
 )
-        
+
 deploydocs(
     repo = "github.com/javierbarbero/DataEnvelopmentAnalysis.jl.git",
 )
