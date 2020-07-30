@@ -13,16 +13,14 @@ end
  $ {\mathbf{x}} \geqslant X\mathbf{\lambda},\;{\mathbf{y}} \leqslant Y{\mathbf{\lambda },\;{\mathbf{\mathbf{e\lambda=1}, \lambda }} \geqslant {\mathbf{0}}} \Big\}$. Calculating maximum profit along with the optimal output and input quantities $\mathbf{y^{*}}$and $\mathbf{x^{*}}$ requires solving:
 
 ```math
-\begin{align}
-\label{eq:maxprofit}
-  & \underset{\mathbf{x,y,\lambda} }{\mathop{\max }}\,\quad \quad \quad \;\ \Pi\left(\mathbf{w},\mathbf{p}\right)=\mathbf{py^{*}-wx^{*}}  \\
- & \text{subject}\ \text{to} \nonumber \\
- & \quad \quad \quad \quad \quad \ {{\mathbf{x}}}\ge X\mathbf{\lambda=x } \nonumber \\
- & \quad \quad \quad \quad \quad  \; {{\mathbf{y}}}  \le Y\mathbf{\lambda =y} \nonumber\\
-& \quad \quad \quad \quad \quad \; \mathbf{e\lambda=1}
-\nonumber \\
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
-\end{align}
+\begin{aligned}
+ & \underset{\mathbf{x,y,\lambda} }{\mathop{\max }}\,\quad \quad \quad \;\ \Pi\left(\mathbf{w},\mathbf{p}\right)=\mathbf{py^{*}-wx^{*}}  \\
+ & \text{subject}\ \text{to} \\
+ & \quad \quad \quad \quad \quad \ {{\mathbf{x}}}\ge X\mathbf{\lambda=x } \\
+ & \quad \quad \quad \quad \quad  \; {{\mathbf{y}}}  \le Y\mathbf{\lambda =y} \\
+ & \quad \quad \quad \quad \quad \; \mathbf{e\lambda=1} \\
+ & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.  
+\end{aligned}
 ```
 
 *Profit efficiency* defines as the difference between maximum profit and observed profit. Following the duality results introduced by *Chambers, Chung and Färe (1998)* it is possible to decompose it into technical and allocative efficiencies under variable returns to scale. Profit efficiency can be then decomposed into the directional distance fucntion and the residual difference corresponding to the *allocative profit efficiency*. Allocative efficiency defines then as the difference between maximum profit and profit at the technically efficient projection on the frontier. The approach relies on the directional vector to normalize these components, thereby ensuring that their values can be compared across DMUs.

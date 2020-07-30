@@ -12,15 +12,14 @@ end
 The additive model measures technical efficiency based solely on input excesses and output shortfalls, and characterizes efficiency in terms of the input and output slacks: ``\mathbf{s}^-\mathbb{\in R}^m`` and ``\mathbf{s}^+$$\mathbb{\in R}^s``, respectively.
 . The package implements the weighted additive formulation of *Cooper and Pastor (1995)* and *Pastor, Lovell and Aparicio (2011)*, whose associated linear program is:
 ```math
-\begin{align}
-\label{eq:add}
+\begin{aligned}
   & \underset{\mathbf{\lambda },\,{{\mathbf{s}}^{-}},\,{{\mathbf{s}}^{+}}}{\mathop{\max }}\,\quad \quad \quad \quad \omega =\mathbf{\rho_{x}^{-}}{{\mathbf{s}}^{\mathbf{-}}}+\mathbf{\rho_{y}^{+}}{{\mathbf{s}}^{+}} \\
- & \text{subject}\ \text{to} \nonumber\\
- & \quad \quad \quad \quad \quad \quad X\mathbf{\lambda }+{{\mathbf{s}}^{\mathbf{-}}}= \ {{\mathbf{x}}_{o}} \nonumber\\
- & \quad \quad \quad \quad \quad \quad Y\mathbf{\lambda }-{{\mathbf{s}}^{+}}=\ {{\mathbf{y}}_{o}} \nonumber\\
- & \quad \quad \quad \quad \quad \quad \mathbf{e\lambda=1} \nonumber\\
- & \quad \quad \quad \quad \quad \quad \mathbf{\lambda }\ge \mathbf{0},\ {{\mathbf{s}}^{\mathbf{-}}}\ge 0,{{\mathbf{s}}^{+}}\ge 0, \nonumber
-\end{align}
+ & \text{subject}\ \text{to} \\
+ & \quad \quad \quad \quad \quad \quad X\mathbf{\lambda }+{{\mathbf{s}}^{\mathbf{-}}}= \ {{\mathbf{x}}_{o}} \\
+ & \quad \quad \quad \quad \quad \quad Y\mathbf{\lambda }-{{\mathbf{s}}^{+}}=\ {{\mathbf{y}}_{o}} \\
+ & \quad \quad \quad \quad \quad \quad \mathbf{e\lambda=1} \\
+ & \quad \quad \quad \quad \quad \quad \mathbf{\lambda }\ge \mathbf{0},\ {{\mathbf{s}}^{\mathbf{-}}}\ge 0,{{\mathbf{s}}^{+}}\ge 0, 
+\end{aligned}
 ```
 
 where ``(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}}) \mathbb{\in R}^m_{+}\times \mathbb{R}_+^{s}`` are the inputs and outputs weight vectors whose elements can vary across DMUs.

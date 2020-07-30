@@ -12,14 +12,13 @@ end
 Let us denote by $R\left(\mathbf{x},\mathbf{p}\right)$ the maximum feasible revenue using inputs' levels $\mathbf{x}$ and given the outputs' prices $\mathbf{p}$: $R\left(\mathbf{x},\mathbf{p}\right)=\max \left\{ \sum\limits_{i=1}^{s}{{{p}_{i}}{{y}_{i}}} | {\mathbf{x}_{o}} \geqslant X\mathbf{\lambda},\;{\mathbf{y}} \leqslant Y{\mathbf{\lambda },\;{\mathbf{\lambda }} \geqslant {\mathbf{0}}} \right\}$; i.e.,  considering the output possibility set producible with $\mathbf{x}_{o}$. In this case, we calculate maximum revenue along with the optimal output quantities $\mathbf{y^{*}}$  by solving the following program:
 
 ```math
-\begin{align}
-\label{eq:maxrev}
-  & \underset{\mathbf{y} ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \;\ R\left(\mathbf{x}_{o},\mathbf{p}\right)=\mathbf{py^{*}}  \\ 
- & \text{subject}\ \text{to} \nonumber \\ 
- & \quad \quad \quad \quad \quad \ {{\mathbf{x}_o}}\ge X\mathbf{\lambda } \nonumber \\ 
- & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}}  \nonumber\\ 
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
-\end{align}
+\begin{aligned}
+ & \underset{\mathbf{y} ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \;\ R\left(\mathbf{x}_{o},\mathbf{p}\right)=\mathbf{py^{*}}  \\ 
+ & \text{subject}\ \text{to} \\ 
+ & \quad \quad \quad \quad \quad \ {{\mathbf{x}_o}}\ge X\mathbf{\lambda } \\ 
+ & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}} \\ 
+ & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. 
+\end{aligned}
 ```
 
 The measurement of revenue efficiency assuming variable returns to scale, **VRS**, adds the following condition:

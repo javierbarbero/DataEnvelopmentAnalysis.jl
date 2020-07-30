@@ -13,14 +13,13 @@ end
 in a pre-assigned  direction  $\mathbf{g}= {\left({-{\mathbf{g_{x}^-},\mathbf{g^{+}_y}}} \right)\neq\mathbf{0}_{m+s}}$, $\mathbf{g^{-}_{x}}\mathbb{\in R}^m$ and  $\mathbf{g^{+}_{y}}\mathbb{\in R}^s$, in a proportion $\beta$. The associated linear program is:
 
 ```math
-\begin{align}
-\label{eq:ddf}
-  & \underset{\beta ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \beta  \\
- & \text{subject}\ \text{to} \nonumber\\
- & \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} -\beta{{\mathbf{g^-_x}}} \nonumber\\
- & \quad \quad \quad \quad \quad \  Y\mathbf{\lambda }\ge\ {{\mathbf{y}}_{o}}+\beta {{\mathbf{g^+_y}}}   \nonumber\\
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\nonumber\\  & \quad \nonumber
-\end{align}
+\begin{aligned}
+ & \underset{\beta ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \beta  \\
+ & \text{subject}\ \text{to} \\
+ & \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} -\beta{{\mathbf{g^-_x}}} \\
+ & \quad \quad \quad \quad \quad \  Y\mathbf{\lambda }\ge\ {{\mathbf{y}}_{o}}+\beta {{\mathbf{g^+_y}}}  \\
+ & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\\  & \quad 
+\end{aligned}
 ```
 
 The measurement of technical efficiency assuming variable returns to scale, **VRS**, adds the following condition:

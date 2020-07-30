@@ -11,15 +11,15 @@ end
 
 Based on the data  matrix $(X,Y)$, we calculate the input oriented efficiency of each observation *o* by solving $n$ times the following linear programming problem -- known as the Charnes, Cooper, and Rhodes (1978), **CCR**, model:
 ```math
-\begin{align}
-\label{eq:rim}
+\begin{aligned}
   & \underset{\theta ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ \theta  \\
- & \text{subject}\ \text{to} \nonumber \\
- & \quad \quad \quad \quad \quad \ X\mathbf{\lambda } \le \theta {{\mathbf{x}}_{o}} \nonumber \\
- & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \nonumber\\
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber
-\end{align}
+  & \text{subject}\ \text{to}  \\
+  & \quad \quad \quad \quad \quad \ X\mathbf{\lambda } \le \theta {{\mathbf{x}}_{o}} \\
+  & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \\
+  & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. 
+\end{aligned}
 ```
+
 The measurement of technical efficiency assuming variable returns to scale, **VRS**, as introduced by *Banker, Charnes and Cooper (1984)* -- known as the Banker, Charnes and Cooper, **BCC**, model -- adds the following condition:
 ```math
 \sum\nolimits_{j=1}^{n}\lambda_j=1
@@ -106,14 +106,13 @@ peers(deaiovrs)
 
 It is possible to calculate the output oriented technical efficiency of each observation by solving the following linear program:
 ```math
-\begin{align}
-\label{eq:rom}
-  & \underset{\phi ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \phi  \\
- & \text{subject}\ \text{to} \nonumber\\
- & \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} \nonumber\\
- & \quad \quad \quad \quad \quad \ Y\mathbf{\lambda }\ \ge \phi {{\mathbf{y}}_{o}}  \nonumber\\
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\nonumber\\  & \quad \nonumber
-\end{align}
+\begin{aligned}
+ & \underset{\phi ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \phi  \\
+ & \text{subject}\ \text{to} \\
+ & \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} \\
+ & \quad \quad \quad \quad \quad \ Y\mathbf{\lambda }\ \ge \phi {{\mathbf{y}}_{o}} \\
+ & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}.\  & \quad 
+\end{aligned}
 ```
 
 with the following condition when assuming variable returns to scale:

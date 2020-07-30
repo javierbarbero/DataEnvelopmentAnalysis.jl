@@ -1,4 +1,4 @@
-# DataEnvelopmentAnalysis Documentation
+# DataEnvelopmentAnalysis.jl
 
 DataEnvelopmentAnalysis.jl is a Julia package that provides functions for efficiency and productivity measurement using Data Envelopment Analysis (DEA). Particularly, it implements a variety of technical efficiency models, economic efficiency models and productivity change models.
 

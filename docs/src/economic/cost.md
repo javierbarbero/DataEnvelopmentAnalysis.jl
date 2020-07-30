@@ -12,14 +12,13 @@ end
 Let us denote by $C\left(\mathbf{y},\mathbf{w}\right)$ the minimum cost of producing the output level $\mathbf{y}$ given the input price vector $\mathbf{w}$: $C\left(\mathbf{y},\mathbf{w}\right)=\min \left\{ \sum\limits_{i=1}^{m}{{{w}_{i}}{{x}_{i}}} | {\mathbf{x}} \geqslant X\mathbf{\lambda} {\mathbf{y}_{o}} \leqslant Y{\mathbf{\lambda },\;{\mathbf{\lambda }} \geqslant {\mathbf{0}}} \right\}$, which considers the input possibility set capable of producing $\mathbf{y}_{o}$. For the observed outputs levels we can calculate minimum cost and the associated optimal quantities of inputs $\mathbf{x^{*}}$ consistent with the production technology by solving the following program:
 
 ```math
-\begin{align}
-\label{eq:mincost}
-  & \underset{\mathbf{x} ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ C\left(\mathbf{y}_{},\mathbf{w}\right)=\mathbf{wx^{*}}  \\ 
- & \text{subject}\ \text{to} \nonumber \\ 
- & \quad \quad \quad \quad \quad \ {{\mathbf{x}}}\ge X\mathbf{\lambda } \nonumber \\ 
- & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \nonumber\\ 
- & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. \nonumber  
-\end{align}
+\begin{aligned}
+ & \underset{\mathbf{x} ,\mathbf{\lambda }}{\mathop{\min }}\,\quad \quad \quad \;\ C\left(\mathbf{y}_{},\mathbf{w}\right)=\mathbf{wx^{*}}  \\ 
+ & \text{subject}\ \text{to} \\ 
+ & \quad \quad \quad \quad \quad \ {{\mathbf{x}}}\ge X\mathbf{\lambda } \\ 
+ & \quad \quad \quad \quad \quad  \;Y\mathbf{\lambda }\ \ge {{\mathbf{y}}_{o}}  \\ 
+ & \quad \quad \quad \quad \quad \ \mathbf{\lambda }\ge \mathbf{0}. 
+\end{aligned}
 ```
 
 The measurement of cost efficiency assuming variable returns to scale, **VRS**, adds the following condition:
