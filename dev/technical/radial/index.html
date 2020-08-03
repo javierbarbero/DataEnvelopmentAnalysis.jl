@@ -61,7 +61,19 @@ julia&gt; efficiency(deaiovrs)
  0.9999999999999999
  1.0
  0.4931209268645909
- 1.0</code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>SparseArrays.SparseMatrixCSC{Float64,Int64}</code> object:</p><pre><code class="language-julia">peers(deaiovrs)</code></pre><h2 id="Radial-Output-Oriented-Model"><a class="docs-heading-anchor" href="#Radial-Output-Oriented-Model">Radial Output Oriented Model</a><a id="Radial-Output-Oriented-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Radial-Output-Oriented-Model" title="Permalink"></a></h2><p>It is possible to calculate the output oriented technical efficiency of each observation by solving the following linear program:</p><div>\[\begin{aligned}
+ 1.0</code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>DEAPeers</code> object:</p><pre><code class="language-julia-repl">julia&gt; peers(deaiovrs)
+DEA Peers
+1: 1 ( 1.0 ) 
+2: 1 ( 0.5255878284923927 ) 6 ( 0.2842323651452281 ) 7 ( 0.1901798063623792 ) 
+3: 3 ( 1.0000000000000002 ) 
+4: 4 ( 1.0 ) 
+5: 1 ( 0.5661375661375662 ) 6 ( 0.4338624338624339 ) 
+6: 6 ( 1.0 ) 
+7: 7 ( 1.0 ) 
+8: 8 ( 0.9999999999999999 ) 
+9: 9 ( 1.0 ) 
+10: 1 ( 0.03711078928312814 ) 4 ( 0.4433381607530775 ) 7 ( 0.5195510499637944 ) 
+11: 11 ( 1.0 ) </code></pre><h2 id="Radial-Output-Oriented-Model"><a class="docs-heading-anchor" href="#Radial-Output-Oriented-Model">Radial Output Oriented Model</a><a id="Radial-Output-Oriented-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Radial-Output-Oriented-Model" title="Permalink"></a></h2><p>It is possible to calculate the output oriented technical efficiency of each observation by solving the following linear program:</p><div>\[\begin{aligned}
  &amp; \underset{\phi ,\mathbf{\lambda }}{\mathop{\max }}\,\quad \quad \quad \quad \phi  \\
  &amp; \text{subject}\ \text{to} \\
  &amp; \quad \quad \quad \quad \quad \ X\lambda\le {{\mathbf{x}}_{o}} \\
@@ -107,4 +119,4 @@ Orientation = Input; Returns to Scale = CRS
 9     0.820106   1.64021      0.0              0.0
 10    0.490566   9.68683e-15  0.0              0.0
 11    1.0        0.0          4.0              0.0
-──────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/e401936b7f1ac0dab113361ec19bae69def3cf5c/src/dea.jl#L27-L67">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 3 August 2020 09:50">Monday 3 August 2020</span>. Using Julia version 1.5.0-rc2.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+──────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/edfb0ea047439e8001b4908cb944f2ff7aadd8e9/src/dea.jl#L27-L67">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 3 August 2020 14:27">Monday 3 August 2020</span>. Using Julia version 1.5.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
