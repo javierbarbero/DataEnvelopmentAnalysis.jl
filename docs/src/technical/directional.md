@@ -100,9 +100,21 @@ julia> efficiency(deaddfvrs)
   0.0     
 ```
 
-The optimal peers, ``λ``, are returned with the `peers` function and are returned as a `SparseArrays.SparseMatrixCSC{Float64,Int64}` object:
+The optimal peers, ``λ``, are returned with the `peers` function and are returned as a `DEAPeers` object:
 ```julia
-peers(deaddfvrs)
+julia> peers(deaddfvrs)
+DEA Peers
+1: 1 ( 1.0 ) 
+2: 1 ( 0.4981132075471699 ) 6 ( 0.22830188679245278 ) 7 ( 0.2735849056603774 ) 
+3: 3 ( 1.0 ) 
+4: 4 ( 1.0 ) 
+5: 1 ( 0.5132075471698113 ) 6 ( 0.4018867924528304 ) 7 ( 0.08490566037735842 ) 
+6: 6 ( 1.0 ) 
+7: 7 ( 1.0 ) 
+8: 8 ( 1.0 ) 
+9: 9 ( 1.0 ) 
+10: 9 ( 1.0000000000000002 ) 
+11: 1 ( 1.0 ) 
 ```
 ### deaddf Function Documentation
 
