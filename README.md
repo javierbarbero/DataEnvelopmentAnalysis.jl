@@ -3,7 +3,7 @@ A Julia package for efficiency and productivity measurement using Data Envelopme
 
 | Documentation | Build Status      | Coverage    |
 |:-------------:|:-----------------:|:-----------:|
-| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] |  [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] | [![][coveralls-img]][coveralls-url] [![][codecov-img]][codecov-url] |
+| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] |  [![][travis-img]][travis-url] [![][appveyor-img]][appveyor-url] | [![][codecov-img]][codecov-url] |
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: https://javierbarbero.github.io/DataEnvelopmentAnalysis.jl/stable
@@ -16,9 +16,6 @@ A Julia package for efficiency and productivity measurement using Data Envelopme
 
 [appveyor-img]: https://ci.appveyor.com/api/projects/status/ql1ynl90hcixdka7?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/javierbarbero/dataenvelopmentanalysis-jl
-
-[coveralls-img]: https://coveralls.io/repos/github/javierbarbero/DataEnvelopmentAnalysis.jl/badge.svg?branch=master
-[coveralls-url]: https://coveralls.io/github/javierbarbero/DataEnvelopmentAnalysis.jl?branch=master
 
 [codecov-img]: https://codecov.io/gh/javierbarbero/DataEnvelopmentAnalysis.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/javierbarbero/DataEnvelopmentAnalysis.jl
