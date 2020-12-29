@@ -1,4 +1,9 @@
 # Tests for DEAPeers and DEAPeersDMU
+struct wrongDEAmodel <: AbstractDEAModel
+    n::Int64
+    eff::Vector
+end
+
 @testset "DEAPeers" begin
 
     # Test agains results in R
@@ -117,11 +122,6 @@
     @test_throws BoundsError ispeer(P2, 0) # BoundsErrror
 
     # Test struct defaults and errors
-    struct wrongDEAmodel <: AbstractDEAModel
-        n::Int64
-        eff::Vector
-    end
-
     @test names(wrongDEAmodel(3, [1; 2; 3])) == ["1"; "2"; "3"] # Default names if dmunames not in struct
     @test_throws ErrorException peers(wrongDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
 
