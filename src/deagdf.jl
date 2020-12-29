@@ -14,6 +14,8 @@ struct GeneralizedDFDEAModel <: AbstractTechnicalDEAModel
     slackX::Matrix
     slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 """
@@ -124,9 +126,9 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     end
 
-    # Get first-stage efficient X and Y
-    Xeff = X .* effi .^(1-alpha)
-    Yeff = Y ./ ( effi .^alpha )
+    # Get first-stage X and Y targets
+    Xtarget = X .* effi .^(1-alpha)
+    Ytarget = Y ./ ( effi .^alpha )
 
     # Compute slacks
     if slack == true
@@ -137,8 +139,8 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
         for i=1:n
             # Value of inputs and outputs to evaluate
-            x0 = Xeff[i,:]
-            y0 = Yeff[i,:]
+            x0 = Xtarget[i,:]
+            y0 = Ytarget[i,:]
 
             # Create the optimization model
             deamodel = Model(Ipopt.Optimizer)
@@ -150,8 +152,8 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
             @objective(deamodel, Max, sum(sX[j] for j in 1:m) + sum(sY[j] for j in 1:s) )
 
-            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
-            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
+            @constraint(deamodel, [j in 1:m], sum(Xtarget[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
+            @constraint(deamodel, [j in 1:s], sum(Ytarget[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
 
             # Add return to scale constraints
             if rts == :CRS
@@ -175,12 +177,19 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             end
 
         end
+
+        # Get second-stage X and Y targets
+        Xtarget = Xtarget - slackX
+        Ytarget = Ytarget + slackY
     else
+        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
+        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
+
         slackX = Array{Float64}(undef, 0, 0)
         slackY = Array{Float64}(undef, 0, 0)
     end
 
-    return GeneralizedDFDEAModel(n, m, s, alpha, rts, names, effi, slackX, slackY, lambdaeff)
+    return GeneralizedDFDEAModel(n, m, s, alpha, rts, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
 
 end
 

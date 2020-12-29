@@ -15,7 +15,6 @@
     @test efficiency(dearevenuecooper, :Technical)  ≈ [0.9; 1; 0.6  ] atol = 1e-3
     @test efficiency(dearevenuecooper, :Allocative) ≈ [1; 1; 1] atol = 1e-3
 
-
     ## Test Revenue DEA Model with Zofío and Prieto (2006) data.
     # Test agains results in R
     X = [5 3; 2 4; 4 2; 4 8; 7 9]
@@ -40,6 +39,8 @@
                                 1.000;
                                 0.6652892562]
 
+    @test efficiency(dearevenue(targets(dearevenuecrs, :X), targets(dearevenuecrs, :Y), P, rts = :CRS)) ≈ ones(5)
+
     # Revenue VRS
     dearevenuevrs = dearevenue(X, Y, P, rts = :VRS)
     @test efficiency(dearevenuevrs) ≈ [0.6444444444 ;
@@ -57,6 +58,8 @@
                                 1.000;
                                 1.000;
                                 0.7608695652]
+
+    @test efficiency(dearevenue(targets(dearevenuevrs, :X), targets(dearevenuevrs, :Y), P, rts = :VRS)) ≈ ones(5)
 
     # Check defaults
     @test efficiency(dearevenue(X, Y, P)) == efficiency(dearevenuevrs)

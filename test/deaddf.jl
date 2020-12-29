@@ -40,6 +40,9 @@
 
     @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :CRS)) == efficiency(deaddfobs)
 
+    @test efficiency(deaddf(targets(deaddfobs, :X), targets(deaddfobs, :Y), Gx = :Observed, Gy = :Observed, rts = :CRS, slack = false)) ≈ zeros(11) atol=1e-15
+    @test efficiency(deaadd(targets(deaddfobs, :X), targets(deaddfobs, :Y))) ≈ zeros(11) atol=1e-13
+
     # Observed VRS
     deaddfobsvrs = deaddf(X, Y, Gx = X, Gy = Y, rts = :VRS)
 
@@ -81,6 +84,9 @@
                              0.000000000]
 
     @test efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS)) == efficiency(deaddfobsvrs)
+
+    @test efficiency(deaddf(targets(deaddfobsvrs, :X), targets(deaddfobsvrs, :Y), Gx = :Observed, Gy = :Observed, rts = :VRS, slack = false)) ≈ zeros(11) atol=1e-15
+    @test efficiency(deaadd(targets(deaddfobsvrs, :X), targets(deaddfobsvrs, :Y))) ≈ zeros(11) atol=1e-12
 
     # Ones CRS
     deaddfones = deaddf(X, Y, Gx = ones(size(X)), Gy = ones(size(Y)), rts = :CRS)
@@ -142,9 +148,9 @@
                             0   0;
                             0.000000000   6;
                             0.000000000   4]
-   @test slacks(deaddfonesvrs, :Y) ≈ zeros(11) atol = 1e-14
+    @test slacks(deaddfonesvrs, :Y) ≈ zeros(11) atol = 1e-14
 
-   @test efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)) == efficiency(deaddfonesvrs)
+    @test efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)) == efficiency(deaddfonesvrs)
 
     # Only X CRS
     deaddfonlyX = deaddf(X, Y, Gx =  X, Gy = zeros(size(Y)), rts = :CRS)
@@ -299,6 +305,9 @@
     @test efficiency(deaddfnoslack) == efficiency(deaddfobs)
     @test isempty(slacks(deaddfnoslack, :X)) == 1
     @test isempty(slacks(deaddfnoslack, :Y)) == 1
+
+    @test efficiency(dea(targets(deaddfnoslack, :X), targets(deaddfnoslack, :Y), slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaddfnoslack, :X), targets(deaddfnoslack, :Y))) != zeros(11) # Different as there is no slacks in first model
 
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
     deaddfobs_ref_eff = zeros(size(X, 1))

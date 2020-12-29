@@ -83,3 +83,54 @@ function slacks(model::AbstractTechnicalDEAModel, slack::Symbol)::Matrix
     end
 
 end
+
+"""
+    targets(model::AbstractTechnicalDEAModel, target::Symbol)
+Return targets of a technical DEA model.
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> deaio = dea(X, Y);
+
+julia> targets(deaio, :X)
+11×2 Array{Float64,2}:
+  5.0      13.0
+  9.95663   7.46748
+ 13.1177   21.3163
+ 17.0      15.0
+  5.58668   4.34519
+  8.33333   3.33333
+ 25.0      10.0
+ 20.4571   16.6687
+ 28.7037   11.4815
+ 20.6038   12.2642
+  5.0      13.0
+
+julia> targets(deaio, :Y)
+11×1 Array{Float64,2}:
+ 12.0
+ 14.0
+ 25.0
+ 26.0
+  8.0
+  9.0
+ 27.0
+ 30.0
+ 31.0
+ 26.0
+ 12.0
+
+```
+"""
+function targets(model::AbstractTechnicalDEAModel, target::Symbol)::Matrix
+
+    if target == :X
+        return model.Xtarget
+    elseif target == :Y
+        return model.Ytarget
+    end
+
+end

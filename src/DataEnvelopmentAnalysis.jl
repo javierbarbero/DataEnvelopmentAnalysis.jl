@@ -42,6 +42,8 @@ module DataEnvelopmentAnalysis
     efficiency, slacks,
     # Economic models
     deacost, dearevenue, deaprofit, deaprofitability,
+    # Common technical and economic models
+    targets,
     # Productivity models
     malmquist,
     nperiods, prodchange

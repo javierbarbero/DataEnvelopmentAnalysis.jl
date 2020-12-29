@@ -15,6 +15,8 @@ struct ProfitabilityDEAModel <: AbstractProfitabilityDEAModel
     vrseff::Vector
     scaleff::Vector
     alloceff::Vector
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 
@@ -83,6 +85,8 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Compute efficiency for each DMU
     n = nx
 
+    Xtarget = zeros(n,m)
+    Ytarget = zeros(n,s)
     pefficiency = zeros(n)
     plambdaeff = spzeros(n, n)
 
@@ -111,6 +115,8 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
         pefficiency[i]  = JuMP.objective_value(deamodel)
         plambdaeff[i,:] = JuMP.value.(lambda)
+        Xtarget[i,:] = X[i,:] .* pefficiency[i] ^(1-alpha)
+        Ytarget[i,:] = Y[i,:] ./ ( pefficiency[i] ^alpha )
 
         # Check termination status
         if termination_status(deamodel) != MOI.LOCALLY_SOLVED
@@ -125,7 +131,7 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     scalefficiency = crsefficiency ./ vrsefficiency
     allocefficiency = pefficiency ./ crsefficiency
 
-    return ProfitabilityDEAModel(n, m, s, alpha, names, pefficiency, plambdaeff, crsefficiency, vrsefficiency, scalefficiency, allocefficiency)
+    return ProfitabilityDEAModel(n, m, s, alpha, names, pefficiency, plambdaeff, crsefficiency, vrsefficiency, scalefficiency, allocefficiency, Xtarget, Ytarget)
 
 end
 

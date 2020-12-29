@@ -14,6 +14,8 @@ struct DirectionalDEAModel <: AbstractTechnicalDEAModel
     slackX::Matrix
     slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 """
@@ -193,23 +195,29 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     end
 
+    # Get first-stage X and Y targets
+    Xtarget = X .- effi .* Gx
+    Ytarget = Y .+ effi .* Gy
+
     # Compute slacks
     if slack == true
-
-        # Get first-stage efficient X and Y
-        Xeff = X .- effi .* Gx
-        Yeff = Y .+ effi .* Gy
-
         # Use additive model with radial efficient X and Y to get slacks
-        slacksmodel = deaadd(Xeff, Yeff, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        slacksmodel = deaadd(Xtarget, Ytarget, :Ones, rts = rts, Xref = Xref, Yref = Yref)
         slackX = slacks(slacksmodel, :X)
         slackY = slacks(slacksmodel, :Y)
+
+        # Get second-stage X and Y targets
+        Xtarget = Xtarget - slackX
+        Ytarget = Ytarget + slackY
     else
+        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
+        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
+
         slackX = Array{Float64}(undef, 0, 0)
         slackY = Array{Float64}(undef, 0, 0)
     end
 
-    return DirectionalDEAModel(n, m, s, Gxsym, Gysym, rts, names, effi, slackX, slackY, lambdaeff)
+    return DirectionalDEAModel(n, m, s, Gxsym, Gysym, rts, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
 
 end
 

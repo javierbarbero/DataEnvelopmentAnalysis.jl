@@ -38,6 +38,8 @@
                                 1.000;
                                 0.609] atol = 1e-3
 
+    @test efficiency(deaprofitability(targets(deaprofbl, :X), targets(deaprofbl, :Y), W, P)) ≈ ones(5) atol=1e-7
+
     # Check defaults
     @test efficiency(deaprofitability(X, Y, W, P, alpha = 0.5)) == efficiency(deaprofbl)
     @test efficiency(deaprofbl, :Economic) == efficiency(deaprofbl)

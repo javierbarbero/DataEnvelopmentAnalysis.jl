@@ -15,7 +15,6 @@
     @test efficiency(deacostcooper, :Technical)  ≈ [0.9  ; 1; 0.6  ] atol = 1e-3
     @test efficiency(deacostcooper, :Allocative) ≈ [0.417; 1; 0.714] atol = 1e-3
 
-
     ## Test Cost DEA Model with Zofío and Prieto (2006) data.
     # Test agains results in R
     X = [5 3; 2 4; 4 2; 4 8; 7 9]
@@ -40,6 +39,8 @@
                                 1.000;
                                 1.000]
 
+    @test efficiency(deacost(targets(deacostcrs, :X), targets(deacostcrs, :Y), W, rts = :CRS)) ≈ ones(5)
+
     # Cost VRS
     deacostvrs = deacost(X, Y, W, rts = :VRS)
     @test efficiency(deacostvrs) ≈ [0.6153846154;
@@ -57,6 +58,8 @@
                                 1.000;
                                 1.000;
                                 0.9275362319]
+
+    @test efficiency(deacost(targets(deacostvrs, :X), targets(deacostvrs, :Y), W, rts = :VRS)) ≈ ones(5)
 
     # Check defaults
     @test efficiency(deacost(X, Y, W)) == efficiency(deacostvrs)

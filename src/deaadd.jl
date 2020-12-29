@@ -17,7 +17,8 @@ struct AdditiveDEAModel <: AbstractTechnicalDEAModel
     slackX::Matrix
     slackY::Matrix
     lambda::SparseMatrixCSC{Float64, Int64}
-
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 """
@@ -240,7 +241,11 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     end
 
-    return AdditiveDEAModel(n, m, s, model, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff)
+    # Get X and Y targets
+    Xtarget = X - slackX
+    Ytarget = Y + slackY
+
+    return AdditiveDEAModel(n, m, s, model, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
 
 end
 

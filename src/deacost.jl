@@ -14,6 +14,8 @@ struct CostDEAModel <: AbstractCostDEAModel
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
     alloceff::Vector
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 
@@ -77,7 +79,8 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Compute efficiency for each DMU
     n = nx
 
-    Xefficient = zeros(n,m)
+    Xtarget = zeros(n,m)
+    Ytarget = Y[:,:]
     cefficiency = zeros(n)
     clambdaeff = spzeros(n, n)
 
@@ -114,7 +117,7 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
-        Xefficient[i,:]  = JuMP.value.(Xeff)
+        Xtarget[i,:]  = JuMP.value.(Xeff)
         clambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
@@ -125,10 +128,11 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     end
 
     # Cost, technical and allocative efficiency
-    cefficiency  = vec( sum(W .* Xefficient, dims = 2) ./ sum(W .* X, dims = 2) )
+    cefficiency  = vec( sum(W .* Xtarget, dims = 2) ./ sum(W .* X, dims = 2) )
     techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false, disposY = dispos))
     allocefficiency = cefficiency ./ techefficiency
-    return CostDEAModel(n, m, s, rts, dispos, names, cefficiency, clambdaeff, techefficiency, allocefficiency)
+
+    return CostDEAModel(n, m, s, rts, dispos, names, cefficiency, clambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)
 
 end
 

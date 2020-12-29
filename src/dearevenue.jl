@@ -14,6 +14,8 @@ struct RevenueDEAModel <: AbstractRevenueDEAModel
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
     alloceff::Vector
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 
@@ -77,7 +79,8 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Compute efficiency for each DMU
     n = nx
 
-    Yefficient = zeros(n,s)
+    Xtarget = X[:,:]
+    Ytarget = zeros(n,s)
     refficiency = zeros(n)
     rlambdaeff = spzeros(n, n)
 
@@ -113,7 +116,7 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
-        Yefficient[i,:]  = JuMP.value.(Yeff)
+        Ytarget[i,:]  = JuMP.value.(Yeff)
         rlambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
@@ -124,10 +127,10 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     end
 
     # Revenue, technical and allocative efficiency
-    refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Yefficient, dims = 2) )
+    refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Ytarget, dims = 2) )
     techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false, disposX = dispos))
     allocefficiency = refficiency ./ techefficiency
-    return RevenueDEAModel(n, m, s, rts, dispos, names, refficiency, rlambdaeff, techefficiency, allocefficiency)
+    return RevenueDEAModel(n, m, s, rts, dispos, names, refficiency, rlambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)
 
 end
 

@@ -1,4 +1,4 @@
-# This file contains types and structures for economic DEA model
+# This file contains types and structures for economic DEA models
 """
     AbstractEconomicDEAlModel
 An abstract type representing an economic DEA model.
@@ -105,5 +105,42 @@ function efficiency(model::AbstractEconomicDEAModel, type::Symbol = :Economic)::
 
     error(typeof(model), " has no efficiency type ", string(type))
 
+end
+
+"""
+    targets(model::AbstractEconomicDEAModel, target::Symbol)
+Return targets of an economic DEA model.
+# Examples
+```jldoctest
+julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+julia> profitbl = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
+julia> targets(profitbl, :X)
+5×2 Array{Float64,2}:
+ 2.0  4.0
+ 2.0  4.0
+ 2.0  4.0
+ 2.0  4.0
+ 2.0  4.0
+
+julia> targets(profitbl, :Y)
+5×2 Array{Float64,2}:
+ 10.0  8.0
+ 10.0  8.0
+ 10.0  8.0
+ 10.0  8.0
+ 10.0  8.0
+
+```
+"""
+function targets(model::AbstractEconomicDEAModel, target::Symbol)::Matrix
+
+    if target == :X
+        return model.Xtarget
+    elseif target == :Y
+        return model.Ytarget
+    end
 
 end

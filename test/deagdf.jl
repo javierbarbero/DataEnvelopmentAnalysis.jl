@@ -17,6 +17,9 @@
     @test ninputs(deagdf05crs) == 2
     @test noutputs(deagdf05crs) == 2
 
+    @test efficiency(deagdf(targets(deagdf05crs, :X), targets(deagdf05crs, :Y), alpha = 0.5, rts = :CRS, slack = false)) ≈ ones(5)
+    @test efficiency(deaadd(targets(deagdf05crs, :X), targets(deagdf05crs, :Y))) ≈ zeros(5) atol=1e-11
+
     # alphpa = 0.5 VRS
     deagdf05vrs = deagdf(X, Y, alpha = 0.5, rts = :VRS)
 
@@ -40,13 +43,19 @@
                                      0 0;
                                      3.0 0] atol = 1e-5
 
+    @test efficiency(deagdf(targets(deagdf05vrs, :X), targets(deagdf05vrs, :Y), alpha = 0.5, rts = :CRS, slack = false)) ≈ ones(5)
+    @test efficiency(deaadd(targets(deagdf05vrs, :X), targets(deagdf05vrs, :Y))) ≈ zeros(5) atol=1e-6
+
     # Test no slacks
     deagdfnoslack = deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
     @test efficiency(deagdfnoslack) == efficiency(deagdf05vrs)
     @test isempty(slacks(deagdfnoslack, :X)) == 1
     @test isempty(slacks(deagdfnoslack, :Y)) == 1
 
-    # Test default alpha is 0.4
+    @test efficiency(deagdf(targets(deagdfnoslack, :X), targets(deagdfnoslack, :Y), alpha = 0.5, rts = :VRS, slack = false)) ≈ ones(5)
+    @test efficiency(deaadd(targets(deagdfnoslack, :X), targets(deagdfnoslack, :Y))) != zeros(5) # Different as there is no slacks in first model
+
+    # Test default alpha is 0.5
     @test efficiency(deagdf(X, Y, rts = :CRS)) == efficiency(deagdf(X, Y, alpha = 0.5, rts = :CRS))
 
     ## Test if one-by-one DEA using evaluation and reference sets match initial results

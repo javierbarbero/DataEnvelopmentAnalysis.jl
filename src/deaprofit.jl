@@ -14,6 +14,8 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
     alloceff::Vector
+    Xtarget::Matrix
+    Ytarget::Matrix
 end
 
 
@@ -147,8 +149,8 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Compute efficiency for each DMU
     n = nx
 
-    Xefficient = zeros(n,m)
-    Yefficient = zeros(n,s)
+    Xtarget = zeros(n,m)
+    Ytarget = zeros(n,s)
     pefficiency = zeros(n)
     plambdaeff = spzeros(n, n)
 
@@ -174,8 +176,8 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         # Optimize and return results
         JuMP.optimize!(deamodel)
 
-        Xefficient[i,:]  = JuMP.value.(Xeff)
-        Yefficient[i,:]  = JuMP.value.(Yeff)
+        Xtarget[i,:]  = JuMP.value.(Xeff)
+        Ytarget[i,:]  = JuMP.value.(Yeff)
         plambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
@@ -186,7 +188,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     end
 
     # Profit, technical and allocative efficiency
-    maxprofit = sum(P .* Yefficient, dims = 2) .- sum(W .* Xefficient, dims = 2)
+    maxprofit = sum(P .* Ytarget, dims = 2) .- sum(W .* Xtarget, dims = 2)
 
     pefficiency_num  = maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2))
     pefficiency_den = sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2)
@@ -195,7 +197,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false))
     allocefficiency = pefficiency - techefficiency
 
-    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency)
+    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)
 
 end
 

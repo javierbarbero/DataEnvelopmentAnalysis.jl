@@ -21,6 +21,8 @@
 
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)) == efficiency(deaprofitdollar)
 
+    @test efficiency(deaprofit(targets(deaprofitdollar, :X), targets(deaprofitdollar, :Y), W, P, Gx = :Monetary, Gy = :Monetary)) ≈ zeros(8)
+
     # Check directions checking technical efficiency
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Zeros, Gy = :Ones), :Technical) == efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Ones, rts = :VRS))
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Zeros), :Technical) == efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Zeros, rts = :VRS))

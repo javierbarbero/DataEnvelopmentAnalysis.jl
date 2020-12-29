@@ -50,6 +50,9 @@
                                 0.000000000   4]
     @test slacks(deaio, :Y) ≈ zeros(11)
 
+    @test efficiency(dea(targets(deaio, :X), targets(deaio, :Y), orient = :Input, rts = :CRS, slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaio, :X), targets(deaio, :Y))) ≈ zeros(11) atol=1e-14
+
     # Otuput oriented CRS
     deaoo = dea(X, Y, orient = :Output, rts = :CRS)
 
@@ -91,6 +94,9 @@
                                 0.000000000   0;
                                 0.000000000   4]
     @test slacks(deaoo, :Y) ≈ zeros(11)
+
+    @test efficiency(dea(targets(deaoo, :X), targets(deaoo, :Y), orient = :Output, rts = :CRS, slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaoo, :X), targets(deaoo, :Y))) ≈ zeros(11) atol=1e-14
 
     # Input oriented VRS
     deaiovrs = dea(X, Y, orient = :Input, rts = :VRS)
@@ -144,6 +150,9 @@
                                   0.000000000;
                                   0.000000000]
 
+    @test efficiency(dea(targets(deaiovrs, :X), targets(deaiovrs, :Y), orient = :Input, rts = :VRS, slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaiovrs, :X), targets(deaiovrs, :Y))) ≈ zeros(11) atol=1e-12
+
     # Output oriented VRS
     deaoovrs = dea(X, Y, orient = :Output, rts = :VRS)
 
@@ -186,11 +195,17 @@
                                 0.000000000   4]
     @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-15
 
+    @test efficiency(dea(targets(deaoovrs, :X), targets(deaoovrs, :Y), orient = :Output, rts = :VRS, slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaoovrs, :X), targets(deaoovrs, :Y))) ≈ zeros(11) atol=1e-12
+
     # Test no slacks
     deaionoslack = dea(X, Y, slack = false)
     @test efficiency(deaionoslack) == efficiency(deaio)
     @test isempty(slacks(deaionoslack, :X)) == 1
     @test isempty(slacks(deaionoslack, :Y)) == 1
+
+    @test efficiency(dea(targets(deaionoslack, :X), targets(deaionoslack, :Y), slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deaionoslack, :X), targets(deaionoslack, :Y))) != zeros(11) # Different as there is no slacks in first model
 
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
     deaio_ref_eff = zeros(size(X, 1))
