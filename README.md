@@ -1,4 +1,6 @@
 # DataEnvelopmentAnalysis.jl
+![DataEnvelopmentAnalysis logo](docs/src/assets/wordmark.svg "DataEnvelopmentAnalysis logo")
+
 A Julia package for efficiency and productivity measurement using Data Envelopment Analysis (DEA)
 
 | Documentation | Build Status      | Coverage    |
