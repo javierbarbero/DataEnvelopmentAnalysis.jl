@@ -92,6 +92,11 @@
 
     @test sum(peers(dea(X, Y, rts = :VRS)), dims = 2) ≈ ones(11, 1)
 
+    # Test references names
+    Pnamesref = peers(dea(X, Y), namesref =["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"])
+    @test Pnamesref.dmunamesref == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+    @test Pnamesref[11][1][1][2] == "K"
+
     # Test conversions
     @test typeof(convert(Matrix, P)) == Array{Float64,2}
     @test typeof(convert(SparseMatrixCSC, P)) == SparseMatrixCSC{Float64,Int64}
@@ -110,5 +115,14 @@
     @test_throws ErrorException ispeer(Prepeated, "A", "C") # Second name does not exists
 
     @test_throws BoundsError ispeer(P2, 0) # BoundsErrror
+
+    # Test struct defaults and errors
+    struct wrongDEAmodel <: AbstractDEAModel
+        n::Int64
+        eff::Vector
+    end
+
+    @test names(wrongDEAmodel(3, [1; 2; 3])) == ["1"; "2"; "3"] # Default names if dmunames not in struct
+    @test_throws ErrorException peers(wrongDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
 
 end

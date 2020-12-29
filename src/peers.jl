@@ -69,7 +69,7 @@ struct DEAPeers <: AbstractDEAPeers
     dmunames::Vector{String}
     dmunamesref::Vector{String}
 
-    function DEAPeers(x::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Vector{String} = Array{String}(undef, 0))
+    function DEAPeers(x::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing)
         if ! isdefined(x, :lambda)
             error("Model does not have info on peers.")
         end
@@ -84,7 +84,7 @@ struct DEAPeers <: AbstractDEAPeers
         droptol!(lambda, atol)
 
         # If peers matrix is square
-        if length(namesref) == 0
+        if namesref === nothing
             if n == nref
                 dmunamesref = dmunames
             else
@@ -180,7 +180,7 @@ DEA Peers
 11: 11 ( 1.0 )
 ```
 """
-peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Vector{String} = Array{String}(undef, 0)) = DEAPeers(model, atol = atol, namesref = namesref) ;
+peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing) = DEAPeers(model, atol = atol, namesref = namesref) ;
 
 
 """

@@ -62,13 +62,6 @@ TC = Technological Change
 function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
     names::Union{Vector{String},Nothing} = nothing)::MalmquistDEAModel
-    # Check dimensions
-    if ndims(X) != 3
-        error("X should be a 3-dimensions array")
-    end
-    if ndims(Y) != 3
-        error("Y should be a 3-dimensions array")
-    end
 
     # Check parameters
     nx, m, Tx = size(X)
