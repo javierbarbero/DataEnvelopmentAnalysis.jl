@@ -53,6 +53,8 @@
     @test efficiency(dea(targets(deaio, :X), targets(deaio, :Y), orient = :Input, rts = :CRS, slack = false)) ≈ ones(11)
     @test efficiency(deaadd(targets(deaio, :X), targets(deaio, :Y))) ≈ zeros(11) atol=1e-14
 
+    @test peersmatrix(deaio) == deaio.lambda
+
     # Otuput oriented CRS
     deaoo = dea(X, Y, orient = :Output, rts = :CRS)
 

@@ -182,6 +182,35 @@ DEA Peers
 """
 peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing) = DEAPeers(model, atol = atol, namesref = namesref) ;
 
+"""
+    peersmatrix(model::AbstractDEAModel)
+Return peers matrix of a DEA model.
+
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> deaio = dea(X, Y);
+
+julia> peersmatrix(deaio)
+11×11 SparseMatrixCSC{Float64,Int64} with 17 stored entries:
+  [1 ,  1]  =  1.0
+  [3 ,  1]  =  1.13432
+  [2 ,  4]  =  0.424978
+  [3 ,  4]  =  0.438005
+  [4 ,  4]  =  1.0
+  ⋮
+  [6 ,  7]  =  0.333333
+  [7 ,  7]  =  1.0
+  [8 ,  7]  =  0.114574
+  [9 ,  7]  =  1.14815
+  [10,  7]  =  0.490566
+  [11, 11]  =  1.0
+```
+"""
+peersmatrix(model::AbstractDEAModel) = model.lambda ;
 
 """
     ispeer(P::DEAPeers, i::Int64, j::Int64)

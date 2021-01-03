@@ -25,6 +25,8 @@
 
     @test normfactor(deaprofitdollar) == ones(8);
 
+    @test peersmatrix(deaprofitdollar) == deaprofitdollar.lambda
+
     # Check directions checking technical efficiency
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Zeros, Gy = :Ones), :Technical) == efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Ones, rts = :VRS))
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Zeros), :Technical) == efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Zeros, rts = :VRS))

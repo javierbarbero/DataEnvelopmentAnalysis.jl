@@ -16,5 +16,6 @@ efficiency(::AbstractTechnicalDEAModel)
 slacks
 targets(::AbstractTechnicalDEAModel, ::Symbol)
 peers
+peersmatrix
 ispeer
 ```

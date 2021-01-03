@@ -36,7 +36,7 @@ module DataEnvelopmentAnalysis
     # All models
     nobs, ninputs, noutputs,
     # Peers
-    peers, ispeer,
+    peers, peersmatrix, ispeer,
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf,
     efficiency, slacks,
