@@ -75,7 +75,7 @@ struct DEAPeers <: AbstractDEAPeers
         end
 
         n = nobs(x)
-        lambda = x.lambda
+        lambda = deepcopy(x.lambda)
         nref = size(lambda, 2)
         dmunames = names(x)
         dmunamesref = String[]
