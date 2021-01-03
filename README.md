@@ -3,9 +3,9 @@
 
 A Julia package for efficiency and productivity measurement using Data Envelopment Analysis (DEA)
 
-| Documentation | Build Status      | Coverage    |
-|:-------------:|:-----------------:|:-----------:|
-| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] |  [![][githubci-img]][githubci-url] | [![][codecov-img]][codecov-url] |
+| Documentation | Build Status      | Coverage    | Zenodo      |
+|:-------------:|:-----------------:|:-----------:|:-----------:|
+| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] |  [![][githubci-img]][githubci-url] | [![][codecov-img]][codecov-url] | [![][zenodo-img]][zenodo-url] |
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: https://javierbarbero.github.io/DataEnvelopmentAnalysis.jl/stable
@@ -18,6 +18,9 @@ A Julia package for efficiency and productivity measurement using Data Envelopme
 
 [codecov-img]: https://codecov.io/gh/javierbarbero/DataEnvelopmentAnalysis.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/javierbarbero/DataEnvelopmentAnalysis.jl
+
+[zenodo-img]: https://zenodo.org/badge/190873651.svg
+[zenodo-url]: https://zenodo.org/badge/latestdoi/190873651
 
 DataEnvelopmentAnalysis.jl is a Julia package that provides functions for efficiency and productivity measurement using Data Envelopment Analysis (DEA). Particularly, it implements a variety of technical efficiency models, economic efficiency models and productivity change models.
 
