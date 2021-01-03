@@ -18,12 +18,12 @@ julia&gt; efficiency(profitbl, :Allocative)
  0.9999999387832732
  0.765217344390068
  0.9999999256504388
- 0.6086956149040872</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/3ee7dc4cc5662e3763e647f13ed14d9cc60f1500/src/economic.jl#L32-L72">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.targets-Tuple{AbstractEconomicDEAModel,Symbol}" href="#DataEnvelopmentAnalysis.targets-Tuple{AbstractEconomicDEAModel,Symbol}"><code>DataEnvelopmentAnalysis.targets</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia">targets(model::AbstractEconomicDEAModel, target::Symbol)</code></pre><p>Return targets of an economic DEA model.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+ 0.6086956149040872</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/f0da138661ab4144ce5a96045b84bb05be18d996/src/economic.jl#L32-L72">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.targets-Tuple{AbstractEconomicDEAModel,Symbol}" href="#DataEnvelopmentAnalysis.targets-Tuple{AbstractEconomicDEAModel,Symbol}"><code>DataEnvelopmentAnalysis.targets</code></a> — <span class="docstring-category">Method</span></header><section><div><pre><code class="language-julia">targets(model::AbstractEconomicDEAModel, target::Symbol)</code></pre><p>Return targets of an economic DEA model.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
-julia&gt; profitbl = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
-julia&gt; targets(profitbl, :X)
+julia&gt; profit = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
+julia&gt; targets(profit, :X)
 5×2 Array{Float64,2}:
  2.0  4.0
  2.0  4.0
@@ -31,11 +31,22 @@ julia&gt; targets(profitbl, :X)
  2.0  4.0
  2.0  4.0
 
-julia&gt; targets(profitbl, :Y)
+julia&gt; targets(profit, :Y)
 5×2 Array{Float64,2}:
  10.0  8.0
  10.0  8.0
  10.0  8.0
  10.0  8.0
  10.0  8.0
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/3ee7dc4cc5662e3763e647f13ed14d9cc60f1500/src/economic.jl#L113-L140">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../profitability/">« Profitability Models</a><a class="docs-footer-nextpage" href="../../productivity/malmquist/">Malmquist Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 3 January 2021 12:03">Sunday 3 January 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/f0da138661ab4144ce5a96045b84bb05be18d996/src/economic.jl#L113-L140">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.normfactor" href="#DataEnvelopmentAnalysis.normfactor"><code>DataEnvelopmentAnalysis.normfactor</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">normfactor(model::AbstractEconomicDEAModel)</code></pre><p>Return the normalization factor of an economic DEA model.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+julia&gt; Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+julia&gt; W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+julia&gt; P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+julia&gt; profit = deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones)
+julia&gt; normfactor(profit)
+5-element Array{Float64,1}:
+ 8.0
+ 8.0
+ 8.0
+ 8.0
+ 8.0</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/f0da138661ab4144ce5a96045b84bb05be18d996/src/economic.jl#L151-L170">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../profitability/">« Profitability Models</a><a class="docs-footer-nextpage" href="../../productivity/malmquist/">Malmquist Index »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 3 January 2021 12:31">Sunday 3 January 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
