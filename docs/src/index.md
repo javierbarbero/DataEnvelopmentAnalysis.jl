@@ -4,7 +4,12 @@ DataEnvelopmentAnalysis.jl is a Julia package that provides functions for effici
 
 The package is being developed for Julia `1.0` and above on Linux, macOS, and Windows.
 
-The packes uses internally the [JuMP](https://github.com/JuliaOpt/JuMP.jl) modelling language for mathematicall optimization with solvers [GLPK](http://www.gnu.org/software/glpk/) and [Ipopt](https://coin-or.github.io/Ipopt/).
+The packes uses internally the [JuMP](https://github.com/JuliaOpt/JuMP.jl) modelling language for mathematicall optimization with solvers [GLPK](https://github.com/jump-dev/GLPK.jl) and [Ipopt](https://github.com/jump-dev/Ipopt.jl).
+
+
+## Tutorial
+
+For a tutorial on how to use the package, check the documentation on the [Radial Input Oriented Model](@ref).
 
 ## Installation
 

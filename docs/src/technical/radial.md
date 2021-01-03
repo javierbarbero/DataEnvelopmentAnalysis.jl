@@ -113,6 +113,36 @@ DEA Peers
 11: 11 ( 1.0 ) 
 ```
 
+Input and output optimal targets are returned with the `targets` function:
+```jldoctest 1
+julia> targets(deaiovrs, :X)
+11×2 Array{Float64,2}:
+  5.0     13.0
+ 13.9198  10.4398
+ 16.0     26.0
+ 17.0     15.0
+ 12.8095   9.96296
+ 23.0      6.0
+ 25.0     10.0
+ 27.0     22.0
+ 37.0     14.0
+ 20.7111  12.328
+  5.0     13.0
+
+julia> targets(deaiovrs, :Y)
+11×1 Array{Float64,2}:
+ 12.0
+ 14.0
+ 25.0
+ 26.0
+ 10.698412698412692
+  9.0
+ 27.0
+ 30.0
+ 31.0
+ 26.0
+ 12.0
+```
 
 ## Radial Output Oriented Model
 

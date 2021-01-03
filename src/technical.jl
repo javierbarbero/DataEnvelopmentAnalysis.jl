@@ -36,7 +36,7 @@ efficiency(model::AbstractTechnicalDEAModel) = model.eff
 
 """
     slacks(model::AbstractTechnicalDEAModel, slack::Symbol)
-Return slacks a technical DEA model.
+Return slacks of a technical DEA model.
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];

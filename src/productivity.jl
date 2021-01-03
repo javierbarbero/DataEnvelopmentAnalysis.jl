@@ -6,41 +6,26 @@ An abstract type representing a productivity DEA model.
 abstract type AbstractProductivityDEAModel <: AbstractDEAModel end
 
 """
-    nbos(model::AbstractProductivityDEAModel)
-Return number of observations of a productivity DEA model.
-# Examples
-```jldoctest
-
-```
-"""
-nobs(model::AbstractProductivityDEAModel) = model.n
-
-"""
-    ninputs(model::AbstractProductivityDEAModel)
-Return number of inputs of a productivity DEA model.
-## Examples
-```jldoctest
-
-```
-"""
-ninputs(model::AbstractProductivityDEAModel) = model.m
-
-"""
-    noutputs(model::AbstractProductivityDEAModel)
-Return number of outputs of a productivity DEA model.
-# Examples
-```jldoctest
-
-```
-"""
-noutputs(model::AbstractProductivityDEAModel) = model.s
-
-"""
     nperiods(model::AbstractProductivityDEAModel)
 Return number of time periods of a productivity DEA model.
 # Examples
 ```jldoctest
+julia> X = Array{Float64,3}(undef, 5, 1, 2);
 
+julia> X[:, :, 1] = [2; 3; 5; 4; 4];
+
+julia> X[:, :, 2] = [1; 2; 4; 3; 4];
+
+julia> Y = Array{Float64,3}(undef, 5, 1, 2);
+
+julia> Y[:, :, 1] = [1; 4; 6; 3; 5];
+
+julia> Y[:, :, 2] = [1; 4; 6; 3; 3];
+
+julia> mprod = malmquist(X, Y);
+
+julia> nperiods(mprod)
+2
 ```
 """
 nperiods(model::AbstractProductivityDEAModel) = model.periods
