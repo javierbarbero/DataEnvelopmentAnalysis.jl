@@ -119,8 +119,8 @@ julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
-julia> profitbl = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
-julia> targets(profitbl, :X)
+julia> profit = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
+julia> targets(profit, :X)
 5×2 Array{Float64,2}:
  2.0  4.0
  2.0  4.0
@@ -128,7 +128,7 @@ julia> targets(profitbl, :X)
  2.0  4.0
  2.0  4.0
 
-julia> targets(profitbl, :Y)
+julia> targets(profit, :Y)
 5×2 Array{Float64,2}:
  10.0  8.0
  10.0  8.0
@@ -146,4 +146,32 @@ function targets(model::AbstractEconomicDEAModel, target::Symbol)::Matrix
         return model.Ytarget
     end
 
+end
+
+"""
+    normfactor(model::AbstractEconomicDEAModel)
+Return the normalization factor of an economic DEA model.
+
+# Examples
+```jldoctest
+julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+julia> profit = deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones)
+julia> normfactor(profit)
+5-element Array{Float64,1}:
+ 8.0
+ 8.0
+ 8.0
+ 8.0
+ 8.0
+```
+"""
+function normfactor(model::AbstractEconomicDEAModel)::Vector
+    if isdefined(model, :normalization)
+        return model.normalization
+    else
+        error(typeof(model), " has no normalization factor")
+    end
 end

@@ -23,6 +23,8 @@
 
     @test efficiency(deaprofit(targets(deaprofitdollar, :X), targets(deaprofitdollar, :Y), W, P, Gx = :Monetary, Gy = :Monetary)) ≈ zeros(8)
 
+    @test normfactor(deaprofitdollar) == ones(8);
+
     # Check directions checking technical efficiency
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Zeros, Gy = :Ones), :Technical) == efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Ones, rts = :VRS))
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Zeros), :Technical) == efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Zeros, rts = :VRS))
@@ -31,6 +33,9 @@
 
     # Print
     show(IOBuffer(), deaprofitdollar)
+
+    # Check normalization factor with different direction
+    @test normfactor(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones)) == vec(sum(P .* ones(size(Y)), dims = 2) .+ sum(W .* ones(size(X)), dims = 2))
 
     # Test errors
     @test_throws ErrorException deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations

@@ -14,6 +14,7 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
     alloceff::Vector
+    normalization::Vector
     Xtarget::Matrix
     Ytarget::Matrix
 end
@@ -190,14 +191,14 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Profit, technical and allocative efficiency
     maxprofit = sum(P .* Ytarget, dims = 2) .- sum(W .* Xtarget, dims = 2)
 
-    pefficiency_num  = maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2))
-    pefficiency_den = sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2)
-    pefficiency = vec( pefficiency_num ./ pefficiency_den )
+    pefficiency  = maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2))
+    normalization = vec(sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2))
+    pefficiency = vec( pefficiency ./ normalization )
 
     techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false))
     allocefficiency = pefficiency - techefficiency
 
-    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)
+    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency, normalization, Xtarget, Ytarget)
 
 end
 

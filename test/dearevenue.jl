@@ -74,6 +74,7 @@
     @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException dearevenue([1; 2; 3], [4 4; 5 5; 6 6], [4 4 4; 5 5 5; 6 6 6]) # Different number of output prices and outputs
     @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
+    @test_throws ErrorException normfactor(dearevenue(X, Y, P)) # ERROR: RevenueDEAModel has no normalization factor
 
     # ------------------
     # Weak Disposability Tests

@@ -41,7 +41,8 @@ module DataEnvelopmentAnalysis
     dea, deaadd, deaaddweights, deaddf, deagdf,
     efficiency, slacks,
     # Economic models
-    deacost, dearevenue, deaprofit, deaprofitability,
+    deacost, dearevenue, deaprofit, deaprofitability, 
+    normfactor,
     # Common technical and economic models
     targets,
     # Productivity models

@@ -74,6 +74,7 @@
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
     @test_throws ErrorException deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
     @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
+    @test_throws ErrorException normfactor(deacost(X, Y, W)) # CostDEAModel has no normalization factor
 
     # ------------------
     # Weak Disposability Tests

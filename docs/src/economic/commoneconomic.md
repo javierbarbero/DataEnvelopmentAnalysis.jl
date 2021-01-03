@@ -10,4 +10,5 @@ end
 ```@docs
 efficiency(::AbstractEconomicDEAModel, ::Symbol)
 targets(::AbstractEconomicDEAModel, ::Symbol)
+normfactor
 ```
