@@ -156,7 +156,7 @@ function Base.show(io::IO, x::RevenueDEAModel)
         print(io, "Orientation = Output")
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        if disposX == :Weak println("Weak disposability of inputs") end
+        if disposX == :Weak print(io, "Weak disposability of inputs \n") end
 
         show(io, CoefTable(hcat(eff, techeff, alloceff), ["Revenue", "Technical", "Allocative"], dmunames))
     end

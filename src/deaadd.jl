@@ -275,8 +275,8 @@ function Base.show(io::IO, x::AdditiveDEAModel)
         print(io, "Weights = ", string(x.weights))
         print(io, "\n")
 
-        if disposX == :Weak println("Weak disposability of inputs") end
-        if disposY == :Weak println("Weak disposability of outputs") end
+        if disposX == :Weak print(io, "Weak disposability of inputs \n") end
+        if disposY == :Weak print(io, "Weak disposability of outputs \n") end
 
         show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
     end

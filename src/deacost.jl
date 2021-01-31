@@ -158,7 +158,7 @@ function Base.show(io::IO, x::CostDEAModel)
         print(io, "Orientation = Input")
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        if disposY == :Weak println("Weak disposability of outputs") end
+        if disposY == :Weak print(io, "Weak disposability of outputs \n") end
 
         show(io, CoefTable(hcat(eff, techeff, alloceff), ["Cost", "Technical", "Allocative"], dmunames))
     end
