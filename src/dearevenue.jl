@@ -134,6 +134,8 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
 end
 
+ismonetary(model::RevenueDEAModel)::Bool = false;
+
 function Base.show(io::IO, x::RevenueDEAModel)
     compact = get(io, :compact, false)
 

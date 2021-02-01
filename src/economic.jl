@@ -175,3 +175,26 @@ function normfactor(model::AbstractEconomicDEAModel)::Vector
         error(typeof(model), " has no normalization factor")
     end
 end
+
+"""
+    ismonetary(model::AbstractEconomicDEAModel)
+Indicate whether inefficiency is in monetary units.
+
+# Examples
+```jldoctest
+julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+julia> profit = deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones, monetary = true);
+julia> ismonetary(profit)
+true
+```
+"""
+function ismonetary(model::AbstractEconomicDEAModel)::Bool
+    if isdefined(model, :monetary)
+        return model.monetary
+    else
+        error(typeof(model), " has no monetary identifier")
+    end
+end

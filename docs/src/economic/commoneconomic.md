@@ -11,4 +11,5 @@ end
 efficiency(::AbstractEconomicDEAModel, ::Symbol)
 targets(::AbstractEconomicDEAModel, ::Symbol)
 normfactor
+ismonetary(::AbstractEconomicDEAModel)
 ```

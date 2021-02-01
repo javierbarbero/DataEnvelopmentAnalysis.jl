@@ -42,7 +42,7 @@ module DataEnvelopmentAnalysis
     efficiency, slacks,
     # Economic models
     deacost, dearevenue, deaprofit, deaprofitability, 
-    normfactor,
+    normfactor, ismonetary,
     # Common technical and economic models
     targets,
     # Productivity models

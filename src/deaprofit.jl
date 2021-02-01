@@ -9,6 +9,7 @@ struct ProfitDEAModel <: AbstractProfitDEAModel
     s::Int64
     Gx::Symbol
     Gy::Symbol
+    monetary::Bool
     dmunames::Union{Vector{String},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
@@ -70,6 +71,7 @@ Returns to Scale = VRS
 function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
     Gx::Union{Symbol,Matrix,Vector}, Gy::Union{Symbol,Matrix,Vector},
+    monetary::Bool = false,
     names::Union{Vector{String},Nothing} = nothing)::ProfitDEAModel
 
     # Check parameters
@@ -191,14 +193,19 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Profit, technical and allocative efficiency
     maxprofit = sum(P .* Ytarget, dims = 2) .- sum(W .* Xtarget, dims = 2)
 
-    pefficiency  = maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2))
+    pefficiency  = vec(maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2)))
     normalization = vec(sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2))
-    pefficiency = vec( pefficiency ./ normalization )
-
     techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false))
+
+    if monetary
+        techefficiency = techefficiency .* normalization
+    else
+        pefficiency = pefficiency ./ normalization
+    end
+
     allocefficiency = pefficiency - techefficiency
 
-    return ProfitDEAModel(n, m, s, Gxsym, Gysym, names, pefficiency, plambdaeff, techefficiency, allocefficiency, normalization, Xtarget, Ytarget)
+    return ProfitDEAModel(n, m, s, Gxsym, Gysym, monetary, names, pefficiency, plambdaeff, techefficiency, allocefficiency, normalization, Xtarget, Ytarget)
 
 end
 

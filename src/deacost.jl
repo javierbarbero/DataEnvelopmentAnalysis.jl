@@ -136,6 +136,8 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
 end
 
+ismonetary(model::CostDEAModel)::Bool = false;
+
 function Base.show(io::IO, x::CostDEAModel)
     compact = get(io, :compact, false)
 
@@ -164,3 +166,4 @@ function Base.show(io::IO, x::CostDEAModel)
     end
 
 end
+

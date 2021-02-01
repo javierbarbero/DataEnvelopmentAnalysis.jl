@@ -10,6 +10,7 @@
     dearevenuecooper = dearevenue(X, Y, P, rts = :CRS)
 
     @test typeof(dearevenuecooper) == RevenueDEAModel
+    @test ismonetary(dearevenuecooper) == false
 
     @test efficiency(dearevenuecooper, :Economic)   ≈ [0.9; 1; 0.6] atol = 1e-3
     @test efficiency(dearevenuecooper, :Technical)  ≈ [0.9; 1; 0.6  ] atol = 1e-3

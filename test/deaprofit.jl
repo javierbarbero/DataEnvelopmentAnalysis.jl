@@ -39,6 +39,15 @@
     # Check normalization factor with different direction
     @test normfactor(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones)) == vec(sum(P .* ones(size(Y)), dims = 2) .+ sum(W .* ones(size(X)), dims = 2))
 
+    # Check monetary option
+    @test deaprofitdollar.monetary == false
+
+    deaprofitmonetary = deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones, monetary = true)
+    @test efficiency(deaprofitmonetary, :Economic)   ≈ [2; 2; 0; 2; 2; 8; 12; 4] atol = 1e-3
+    @test efficiency(deaprofitmonetary, :Technical)  ≈ [0; 0; 0; 0; 0; 6; 12; 3] atol = 1e-3
+    @test efficiency(deaprofitmonetary, :Allocative) ≈ [2; 2; 0; 2; 2; 2; 0; 1] atol = 1e-3
+    @test deaprofitmonetary.monetary == true
+
     # Test errors
     @test_throws ErrorException deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
     @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in input prices
