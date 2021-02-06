@@ -61,7 +61,8 @@ TC = Technological Change
 """
 function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
-    names::Union{Vector{String},Nothing} = nothing)::MalmquistDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::MalmquistDEAModel
 
     # Check parameters
     nx, m, Tx = size(X)
@@ -72,6 +73,11 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     end
     if Tx != Ty
         error("number of time periods is different in intputs and outputs")
+    end
+
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
     end
 
     # Compute efficiency for each DMU
@@ -86,18 +92,20 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     for t = 1:T - 1
 
         # Compute efficiency in t
-        efft = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false))
+        efft = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false, optimizer = optimizer))
 
         # Compute efficiency in t + 1
-        efft1 = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts, slack = false))
+        efft1 = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts, slack = false, optimizer = optimizer))
 
         # Compute efficiency in t +1, with reference t
         efft1_reft = efficiency(dea(X[:, :, t + 1], Y[:, :, t + 1], orient = orient, rts = rts, slack = false,
-                                    Xref = X[:, :, t], Yref = Y[:, :, t]))
+                                    Xref = X[:, :, t], Yref = Y[:, :, t], 
+                                    optimizer = optimizer))
 
         # Compute efficiency in t, with reference t + 1
         efft_reft1 = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false,
-                                    Xref = X[:, :, t + 1], Yref = Y[:, :, t + 1]))
+                                    Xref = X[:, :, t + 1], Yref = Y[:, :, t + 1], 
+                                    optimizer = optimizer))
 
         # Inver if output oriented
         if orient == :Output

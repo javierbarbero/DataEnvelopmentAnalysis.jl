@@ -68,10 +68,11 @@ Orientation = Input; Returns to Scale = CRS
 ```
 """
 function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
-    orient::Symbol = :Input, rts::Symbol = :CRS, slack = true,
+    orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing)::RadialDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::RadialDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -104,6 +105,11 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         error("Invalid outputs disposability $disposY. Disposability should be :Strong or :Weak")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
     nref = nrefx
@@ -117,7 +123,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         y0 = Y[i,:]
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
@@ -176,7 +182,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         lambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -207,7 +213,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             rhoY = zeros(size(Y))
         end
 
-        slacksmodel = deaadd(Xtarget, Ytarget, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = Xref, Yref = Yref)
+        slacksmodel = deaadd(Xtarget, Ytarget, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = Xref, Yref = Yref, optimizer = optimizer)
         slackX = slacks(slacksmodel, :X)
         slackY = slacks(slacksmodel, :Y)
 

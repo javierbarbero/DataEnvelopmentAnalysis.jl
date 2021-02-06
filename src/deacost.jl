@@ -54,7 +54,8 @@ Orientation = Input; Returns to Scale = VRS
 """
 function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing)::CostDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::CostDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -76,6 +77,11 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         error("Invalued disposability $dispos. Disposability should be :Strong or :Weak")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
 
@@ -90,7 +96,7 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         w0 = W[i,:]
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, lambda[1:n] >= 0)
@@ -121,7 +127,7 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         clambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -129,7 +135,7 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     # Cost, technical and allocative efficiency
     cefficiency  = vec( sum(W .* Xtarget, dims = 2) ./ sum(W .* X, dims = 2) )
-    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false, disposY = dispos))
+    techefficiency = efficiency(dea(X, Y, orient = :Input, rts = rts, slack = false, disposY = dispos, optimizer = optimizer))
     allocefficiency = cefficiency ./ techefficiency
 
     return CostDEAModel(n, m, s, rts, dispos, names, cefficiency, clambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)

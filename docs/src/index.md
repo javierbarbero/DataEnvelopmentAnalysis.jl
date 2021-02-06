@@ -6,17 +6,16 @@ The package is being developed for Julia `1.0` and above on Linux, macOS, and Wi
 
 The packes uses internally the [JuMP](https://github.com/JuliaOpt/JuMP.jl) modelling language for mathematicall optimization with solvers [GLPK](https://github.com/jump-dev/GLPK.jl) and [Ipopt](https://github.com/jump-dev/Ipopt.jl).
 
-
-## Tutorial
-
-For a tutorial on how to use the package, check the documentation on the [Radial Input Oriented Model](@ref).
-
 ## Installation
 
 The package can be installed with the Julia package manager:
 ```julia
 julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 ```
+
+## Tutorial
+
+For a tutorial on how to use the package, check the documentation on the [Radial Input Oriented Model](@ref).
 
 ## Available models
 

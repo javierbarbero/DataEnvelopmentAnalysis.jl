@@ -78,7 +78,8 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     rhoX::Union{Matrix,Vector,Nothing} = nothing, rhoY::Union{Matrix,Vector,Nothing} = nothing,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing)::AdditiveDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::AdditiveDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -152,6 +153,11 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     minXref = minimum(X, dims = 1)
     maxYref = maximum(Y, dims = 1)
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
     nref = nrefx
@@ -180,7 +186,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         end
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, sX[1:m] >= 0)
         @variable(deamodel, sY[1:s] >= 0)
@@ -235,7 +241,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         slackY[i,:] = JuMP.value.(sY)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 

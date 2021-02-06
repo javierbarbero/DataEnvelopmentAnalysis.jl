@@ -20,6 +20,10 @@ module DataEnvelopmentAnalysis
 
 
     export
+    # optimizer
+    DEAOptimizer, 
+    newdeamodel,
+
     # Types
     AbstractDEAModel,
     DEAModel,
@@ -50,6 +54,8 @@ module DataEnvelopmentAnalysis
     nperiods, prodchange
 
     # Include code of functions
+    include("optimizer.jl")
+
     include("model.jl")
     include("peers.jl")
 

@@ -57,7 +57,8 @@ alpha = 0.5; Returns to Scale = VRS
 function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
     alpha::Float64 = 0.5,
-    names::Union{Vector{String},Nothing} = nothing)::ProfitabilityDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::ProfitabilityDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -82,6 +83,11 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         error("number of output prices and otuputs is different")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(Ipopt.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
 
@@ -98,8 +104,7 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         p0 = P[i,:]
 
         # Create the optimization model
-        deamodel = Model(Ipopt.Optimizer)
-        set_silent(deamodel)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:n] >= 0)
@@ -119,15 +124,15 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         Ytarget[i,:] = Y[i,:] ./ ( pefficiency[i] ^alpha )
 
         # Check termination status
-        if termination_status(deamodel) != MOI.LOCALLY_SOLVED
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
     end
 
     # Technical, scale and allocative efficiency
-    crsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :CRS, slack = false))
-    vrsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :VRS, slack = false))
+    crsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :CRS, slack = false, optimizer = optimizer))
+    vrsefficiency = efficiency(deagdf(X, Y, alpha = alpha, rts = :VRS, slack = false, optimizer = optimizer))
     scalefficiency = crsefficiency ./ vrsefficiency
     allocefficiency = pefficiency ./ crsefficiency
 

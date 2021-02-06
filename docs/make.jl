@@ -22,6 +22,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Malmquist Index" => "productivity/malmquist.md"
                 "Common functions for productivity change models" => "productivity/commonproductivity.md"
                 ],
+        "Configuring Optimizer" => "optimizer.md",
         "Bibliography" => "bibliography.md"
         ],
         format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true")

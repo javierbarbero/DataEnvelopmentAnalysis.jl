@@ -72,7 +72,8 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
     Gx::Union{Symbol,Matrix,Vector}, Gy::Union{Symbol,Matrix,Vector},
     monetary::Bool = false,
-    names::Union{Vector{String},Nothing} = nothing)::ProfitDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::ProfitDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -149,6 +150,11 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         error("size of outputs should be equal to size of outputs direction")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end   
+
     # Compute efficiency for each DMU
     n = nx
 
@@ -163,7 +169,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         p0 = P[i,:]
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, Xeff[1:m])
         @variable(deamodel, Yeff[1:s])
@@ -184,7 +190,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         plambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -195,7 +201,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     pefficiency  = vec(maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2)))
     normalization = vec(sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2))
-    techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false))
+    techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false, optimizer = optimizer))
 
     if monetary
         techefficiency = techefficiency .* normalization

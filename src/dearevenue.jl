@@ -54,7 +54,8 @@ Orientation = Output; Returns to Scale = VRS
 """
 function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     P::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing)::RevenueDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::RevenueDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -76,6 +77,11 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         error("Invalued disposability $dispos. Disposability should be :Strong or :Weak")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end    
+
     # Compute efficiency for each DMU
     n = nx
 
@@ -90,7 +96,8 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         p0 = P[i,:]
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
+
         @variable(deamodel, Yeff[1:s])
         @variable(deamodel, lambda[1:n] >= 0)
 
@@ -120,7 +127,7 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         rlambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -128,7 +135,7 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     # Revenue, technical and allocative efficiency
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Ytarget, dims = 2) )
-    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false, disposX = dispos))
+    techefficiency = 1 ./ efficiency(dea(X, Y, orient = :Output, rts = rts, slack = false, disposX = dispos, optimizer = optimizer))
     allocefficiency = refficiency ./ techefficiency
     return RevenueDEAModel(n, m, s, rts, dispos, names, refficiency, rlambdaeff, techefficiency, allocefficiency, Xtarget, Ytarget)
 

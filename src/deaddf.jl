@@ -70,9 +70,10 @@ Gx = Ones; Gy = Ones
 """
 function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Gx::Union{Symbol, Matrix, Vector}, Gy::Union{Symbol, Matrix, Vector},
-    rts::Symbol = :CRS, slack = true,
+    rts::Symbol = :CRS, slack::Bool = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing)::DirectionalDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::DirectionalDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -146,6 +147,11 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         error("size of outputs should be equal to size of outputs direction")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
     nref = nrefx
@@ -163,7 +169,7 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         Gy0 = Gy[i,:]
 
         # Create the optimization model
-        deamodel = Model(GLPK.Optimizer)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, eff)
         @variable(deamodel, lambda[1:nref] >= 0)
@@ -189,7 +195,7 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         lambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.OPTIMAL
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -201,8 +207,8 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Compute slacks
     if slack == true
-        # Use additive model with radial efficient X and Y to get slacks
-        slacksmodel = deaadd(Xtarget, Ytarget, :Ones, rts = rts, Xref = Xref, Yref = Yref)
+        # Use additive model with X and Y targets to get slacks
+        slacksmodel = deaadd(Xtarget, Ytarget, :Ones, rts = rts, Xref = Xref, Yref = Yref, optimizer = optimizer)
         slackX = slacks(slacksmodel, :X)
         slackY = slacks(slacksmodel, :Y)
 

@@ -53,9 +53,10 @@ alpha = 0.5; Returns to Scale = VRS
 ```
 """
 function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
-    alpha::Float64 = 0.5, rts::Symbol = :CRS, slack = true,
+    alpha::Float64 = 0.5, rts::Symbol = :CRS, slack::Bool = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing)::GeneralizedDFDEAModel
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::GeneralizedDFDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -80,6 +81,11 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         error("number of outputs in evaluation set and reference set is different")
     end
 
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(Ipopt.Optimizer)
+    end
+
     # Compute efficiency for each DMU
     n = nx
     nref = nrefx
@@ -93,8 +99,7 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         y0 = Y[i,:]
 
         # Create the optimization model
-        deamodel = Model(Ipopt.Optimizer)
-        set_silent(deamodel)
+        deamodel = newdeamodel(optimizer)
 
         @variable(deamodel, eff, start = 1.0)
         @variable(deamodel, lambda[1:nref] >= 0)
@@ -120,7 +125,7 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         lambdaeff[i,:] = JuMP.value.(lambda)
 
         # Check termination status
-        if termination_status(deamodel) != MOI.LOCALLY_SOLVED
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
@@ -132,51 +137,10 @@ function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Compute slacks
     if slack == true
-
-        slackX = zeros(n, m)
-        slackY = zeros(n, s)
-        lambdaeff = spzeros(n, nref)
-
-        for i=1:n
-            # Value of inputs and outputs to evaluate
-            x0 = Xtarget[i,:]
-            y0 = Ytarget[i,:]
-
-            # Create the optimization model
-            deamodel = Model(Ipopt.Optimizer)
-            set_silent(deamodel)
-
-            @variable(deamodel, sX[1:m] >= 0)
-            @variable(deamodel, sY[1:s] >= 0)
-            @variable(deamodel, lambda[1:nref] >= 0)
-
-            @objective(deamodel, Max, sum(sX[j] for j in 1:m) + sum(sY[j] for j in 1:s) )
-
-            @constraint(deamodel, [j in 1:m], sum(Xtarget[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
-            @constraint(deamodel, [j in 1:s], sum(Ytarget[t,j] * lambda[t] for t in 1:nref) == y0[j] + sY[j])
-
-            # Add return to scale constraints
-            if rts == :CRS
-                # No contraint to add for constant returns to scale
-            elseif rts == :VRS
-                @constraint(deamodel, sum(lambda) == 1)
-            end
-            # No need for else statement as RTS parameter already checked in first stage
-
-            # Optimize and return results
-            JuMP.optimize!(deamodel)
-
-            lambdaeff[i,:] = JuMP.value.(lambda)
-
-            slackX[i,:] = JuMP.value.(sX)
-            slackY[i,:] = JuMP.value.(sY)
-
-            # Check termination status
-            if termination_status(deamodel) != MOI.LOCALLY_SOLVED
-                @warn ("DMU $i Slacks termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
-            end
-
-        end
+        # Use additive model with X and Y targets to get slacks
+        slacksmodel = deaadd(Xtarget, Ytarget, :Ones, rts = rts, Xref = Xref, Yref = Yref, optimizer = optimizer)
+        slackX = slacks(slacksmodel, :X)
+        slackY = slacks(slacksmodel, :Y)
 
         # Get second-stage X and Y targets
         Xtarget = Xtarget - slackX
