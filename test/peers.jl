@@ -1,4 +1,6 @@
 # Tests for DEAPeers and DEAPeersDMU
+
+# Struct for testing DEA model extension without names and peers information
 struct wrongDEAmodel <: AbstractDEAModel
     n::Int64
     eff::Vector
