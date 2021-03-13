@@ -10,6 +10,7 @@ using Test
     include("deaddf.jl")
     include("deagdf.jl")
 
+    include("econoptim.jl")
     include("deacost.jl")
     include("dearevenue.jl")
     include("deaprofit.jl")
