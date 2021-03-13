@@ -155,46 +155,10 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         optimizer = DEAOptimizer(GLPK.Optimizer)
     end   
 
-    # Compute efficiency for each DMU
+    # Get maximum profit targets and lambdas
     n = nx
 
-    Xtarget = zeros(n,m)
-    Ytarget = zeros(n,s)
-    pefficiency = zeros(n)
-    plambdaeff = spzeros(n, n)
-
-    for i=1:n
-        # Value of inputs and outputs to evaluate
-        w0 = W[i,:]
-        p0 = P[i,:]
-
-        # Create the optimization model
-        deamodel = newdeamodel(optimizer)
-
-        @variable(deamodel, Xeff[1:m])
-        @variable(deamodel, Yeff[1:s])
-        @variable(deamodel, lambda[1:n] >= 0)
-
-        @objective(deamodel, Max, (sum(p0[j] .* Yeff[j] for j in 1:s)) - (sum(w0[j] .* Xeff[j] for j in 1:m)))
-
-        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
-        @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
-
-        @constraint(deamodel, sum(lambda) == 1)
-
-        # Optimize and return results
-        JuMP.optimize!(deamodel)
-
-        Xtarget[i,:]  = JuMP.value.(Xeff)
-        Ytarget[i,:]  = JuMP.value.(Yeff)
-        plambdaeff[i,:] = JuMP.value.(lambda)
-
-        # Check termination status
-        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
-        end
-
-    end
+    Xtarget, Ytarget, plambdaeff = deamaxprofit(X, Y, W, P, optimizer = optimizer)
 
     # Profit, technical and allocative efficiency
     maxprofit = sum(P .* Ytarget, dims = 2) .- sum(W .* Xtarget, dims = 2)

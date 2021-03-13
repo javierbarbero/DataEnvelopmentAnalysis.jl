@@ -45,6 +45,7 @@ module DataEnvelopmentAnalysis
     dea, deaadd, deaaddweights, deaddf, deagdf,
     efficiency, slacks,
     # Economic models
+    deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 
     normfactor, ismonetary,
     # Common technical and economic models
@@ -66,6 +67,7 @@ module DataEnvelopmentAnalysis
     include("deagdf.jl")
 
     include("economic.jl")
+    include("econoptim.jl")
     include("deacost.jl")
     include("dearevenue.jl")
     include("deaprofit.jl")

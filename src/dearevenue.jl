@@ -82,56 +82,11 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         optimizer = DEAOptimizer(GLPK.Optimizer)
     end    
 
-    # Compute efficiency for each DMU
+    # Get maximum revenue targets and lambdas
     n = nx
 
     Xtarget = X[:,:]
-    Ytarget = zeros(n,s)
-    refficiency = zeros(n)
-    rlambdaeff = spzeros(n, n)
-
-    for i=1:n
-        # Value of inputs and outputs to evaluate
-        x0 = X[i,:]
-        p0 = P[i,:]
-
-        # Create the optimization model
-        deamodel = newdeamodel(optimizer)
-
-        @variable(deamodel, Yeff[1:s])
-        @variable(deamodel, lambda[1:n] >= 0)
-
-        @objective(deamodel, Max, sum(p0[j] .* Yeff[j] for j in 1:s))
-
-        if dispos == :Strong
-            @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= x0[j])
-        elseif dispos == :Weak
-            @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) == x0[j])
-        end
-
-        @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
-
-        # Add return to scale constraints
-        if rts == :CRS
-            # No contraint to add for constant returns to scale
-        elseif rts == :VRS
-            @constraint(deamodel, sum(lambda) == 1)
-        else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
-        end
-
-        # Optimize and return results
-        JuMP.optimize!(deamodel)
-
-        Ytarget[i,:]  = JuMP.value.(Yeff)
-        rlambdaeff[i,:] = JuMP.value.(lambda)
-
-        # Check termination status
-        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
-        end
-
-    end
+    Ytarget, rlambdaeff = deamaxrevenue(X, Y, P, rts = rts, dispos = dispos, optimizer = optimizer)
 
     # Revenue, technical and allocative efficiency
     refficiency  = vec( sum(P .* Y, dims = 2) ./ sum(P .* Ytarget, dims = 2) )

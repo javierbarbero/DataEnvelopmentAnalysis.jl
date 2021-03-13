@@ -82,56 +82,11 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         optimizer = DEAOptimizer(GLPK.Optimizer)
     end
 
-    # Compute efficiency for each DMU
+    # Get minimum cost targets and lambdas
     n = nx
 
-    Xtarget = zeros(n,m)
+    Xtarget, clambdaeff = deamincost(X, Y, W, rts = rts, dispos = dispos, optimizer = optimizer)
     Ytarget = Y[:,:]
-    cefficiency = zeros(n)
-    clambdaeff = spzeros(n, n)
-
-    for i=1:n
-        # Value of inputs and outputs to evaluate
-        y0 = Y[i,:]
-        w0 = W[i,:]
-
-        # Create the optimization model
-        deamodel = newdeamodel(optimizer)
-
-        @variable(deamodel, Xeff[1:m])
-        @variable(deamodel, lambda[1:n] >= 0)
-
-        @objective(deamodel, Min, sum(w0[j] .* Xeff[j] for j in 1:m))
-
-        @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
-
-        if dispos == :Strong
-            @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= y0[j])
-        elseif dispos == :Weak
-            @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) == y0[j])
-        end
-
-        # Add return to scale constraints
-        if rts == :CRS
-            # No contraint to add for constant returns to scale
-        elseif rts == :VRS
-            @constraint(deamodel, sum(lambda) == 1)
-        else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
-        end
-
-        # Optimize and return results
-        JuMP.optimize!(deamodel)
-
-        Xtarget[i,:]  = JuMP.value.(Xeff)
-        clambdaeff[i,:] = JuMP.value.(lambda)
-
-        # Check termination status
-        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
-        end
-
-    end
 
     # Cost, technical and allocative efficiency
     cefficiency  = vec( sum(W .* Xtarget, dims = 2) ./ sum(W .* X, dims = 2) )
