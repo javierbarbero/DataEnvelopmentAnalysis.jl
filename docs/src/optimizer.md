@@ -17,6 +17,7 @@ DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA mode
 | `deagdf`       |         | NLP          | Ipopt             |
 | `dearussell`   | `:Input` or `:Output`        | LP           | GLPK              |
 | `dearussell`   | `:Graph`        | NLP     | Ipopt      |
+| `deaerg`       |         | LP           | GLPK              |
 | `deacost`      |         | LP           | GLPK              |
 | `dearevenue`   |         | LP           | GLPK              |
 | `deaprofit`    |         | LP           | GLPK              |

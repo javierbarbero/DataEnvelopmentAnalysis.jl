@@ -16,10 +16,10 @@ Based on the data  matrix $(X,Y)$, we calculate the Russell measure of input eff
 \begin{aligned}
   & \underset{\theta_i ,\lambda_j }{\mathop{\min }}\,\quad \quad \quad \;\ \frac{1}{m} \sum_{i=1}^{m}{\theta_i}  \\
   & \text{subject}\ \text{to}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge {y}_{ro}  \\
-  & \quad \quad \quad \quad \quad \ \theta_i \le 1  \\
-  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0. 
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io} \qquad i = 1,...,m  \\
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge {y}_{ro} \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ \theta_i \le 1 \qquad i = 1,...,m  \\
+  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
 \end{aligned}
 ```
 
@@ -91,10 +91,10 @@ It is possible to calculate the Russell measure of output efficiency of each obs
 \begin{aligned}
   & \underset{\phi_r ,\lambda_j }{\mathop{\max }}\,\quad \quad \quad \;\ \frac{1}{s} \sum_{r=1}^{s}{\phi_r}  \\
   & \text{subject}\ \text{to}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le {x}_{io}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro}  \\
-  & \quad \quad \quad \quad \quad \ \phi_r \ge 1  \\
-  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0. 
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le {x}_{io} \qquad i = 1,...,m  \\
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro} \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ \phi_r \ge 1 \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
 \end{aligned}
 ```
 
@@ -160,11 +160,11 @@ It is possible to calculate the Russell graph measure of technical efficiency of
 \begin{aligned}
   & \underset{\theta_i, \phi_r ,\lambda_j }{\mathop{\min }}\,\quad \quad \quad \;\ \frac{1}{m + s} (\sum_{i=1}^{m}{\theta_i} +  \sum_{r=1}^{s}{\frac{1}{\phi_r}})  \\
   & \text{subject}\ \text{to}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io}  \\
-  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro}  \\
-  & \quad \quad \quad \quad \quad \ \theta_i \le 1  \\
-  & \quad \quad \quad \quad \quad \ \phi_r \ge 1  \\
-  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0. 
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io}  \qquad i = 1,...,m  \\
+  & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro} \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ \theta_i \le 1 \qquad i = 1,...,m  \\
+  & \quad \quad \quad \quad \quad \ \phi_r \ge 1 \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
 \end{aligned}
 ```
 

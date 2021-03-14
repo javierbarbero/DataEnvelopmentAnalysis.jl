@@ -1,0 +1,191 @@
+# This file contains functions for the Enhanced Russell Graph Slack Based Measure DEA model
+"""
+    EnhanceRussellGraphDEAModel
+An data structure representing an Enhanced Russell Graph Slack Based Measure DEA model.
+"""
+struct EnhancedRussellGraphDEAModel <: AbstractTechnicalDEAModel
+    n::Int64
+    m::Int64
+    s::Int64
+    rts::Symbol
+    dmunames::Union{Vector{String},Nothing}
+    eff::Vector
+    beta::Vector
+    tX::Matrix
+    tY::Matrix
+    slackX::Matrix
+    slackY::Matrix
+    lambda::SparseMatrixCSC{Float64, Int64}
+    Xtarget::Matrix
+    Ytarget::Matrix
+end
+
+"""
+    deaerg(X, Y)
+Compute data envelopment analysis Enhanced Russell Graph Slack Based Measure for inputs `X` and outputs `Y`.
+
+# Optional Arguments
+- `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
+- `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
+- `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
+- `names`: a vector of strings with the names of the decision making units.
+
+# Examples
+```jldoctest
+julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+
+julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353] ;
+
+julia> deaerg(X, Y, rts = :VRS)
+Enhanced Russell Graph Slack Based Measure DEA Model 
+DMUs = 8; Inputs = 1; Outputs = 1
+Orientation = Graph; Returns to Scale = VRS
+───────────────────────────────────────
+   efficiency    beta  slackX1  slackY1
+───────────────────────────────────────
+1    1.0       1.0     0.0        0.0
+2    1.0       1.0     0.0        0.0
+3    1.0       1.0     0.0        0.0
+4    1.0       1.0     0.0        0.0
+5    0.4       0.6     2.0        2.0
+6    0.47619   1.0     7.33333    0.0
+7    0.857143  1.0     2.0        0.0
+8    0.2       0.4706  5.412      2.647
+───────────────────────────────────────
+```
+"""
+function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}; 
+    rts::Symbol = :CRS, slack::Bool = true, 
+    Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
+    names::Union{Vector{String},Nothing} = nothing,
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::EnhancedRussellGraphDEAModel
+
+    # Check parameters
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
+
+    if Xref === nothing Xref = X end
+    if Yref === nothing Yref = Y end
+
+    nrefx, mref = size(Xref, 1), size(Xref, 2)
+    nrefy, sref = size(Yref, 1), size(Yref, 2)
+
+    if nx != ny
+        error("number of observations is different in inputs and outputs")
+    end
+    if nrefx != nrefy
+        error("number of observations is different in inputs reference set and ouputs reference set")
+    end
+    if m != mref
+        error("number of inputs in evaluation set and reference set is different")
+    end
+    if s != sref
+        error("number of outputs in evaluation set and reference set is different")
+    end
+
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(GLPK.Optimizer)
+    end
+
+    # Compute efficiency for each DMU
+    n = nx
+    nref = nrefx
+
+    effi = zeros(n)
+    betai = zeros(n)
+    tXi = zeros(n, m)
+    tYi = zeros(n, s)
+    mui = spzeros(n, nref)
+
+    for i=1:n
+        # Value of inputs and outputs to evaluate
+        x0 = X[i,:]
+        y0 = Y[i,:]
+
+        # Create the optimization model
+        deamodel = newdeamodel(optimizer)
+        
+        @variable(deamodel, beta >= 0)
+        @variable(deamodel, tX[1:m] >= 0)
+        @variable(deamodel, tY[1:s] >= 0)
+        @variable(deamodel, mu[1:nref] >= 0)
+
+        @objective(deamodel, Min, beta - 1 / m * sum(tX[t] / x0[t] for t in 1:m))
+
+        @constraint(deamodel, beta + 1 / s * sum(tY[t] / y0[t] for t in 1:s) == 1)
+        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * mu[t] for t in 1:nref) == beta * x0[j] - tX[j])
+        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * mu[t] for t in 1:nref) == beta * y0[j] + tY[j])
+
+        # Add return to scale constraints
+        if rts == :CRS
+            # No contraint to add for constant returns to scale
+        elseif rts == :VRS
+            @constraint(deamodel, sum(mu) == beta)
+        else
+            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+        end
+
+        # Optimize and return results
+        JuMP.optimize!(deamodel)
+
+        effi[i]  = JuMP.objective_value(deamodel)
+        betai[i] = JuMP.value(beta)
+        tXi[i,:] = JuMP.value.(tX)
+        tYi[i,:] = JuMP.value.(tY)
+        mui[i,:] = JuMP.value.(mu)
+
+        # Check termination status
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
+    end
+
+    slackX = tXi ./ betai
+    slackY = tYi ./ betai
+    lambdaeff = mui ./ betai
+
+    # Get X and Y targets
+    Xtarget = X - slackX
+    Ytarget = Y + slackY
+
+    return EnhancedRussellGraphDEAModel(n, m, s, rts, names, effi, betai, tXi, tYi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
+
+end
+
+function Base.show(io::IO, x::EnhancedRussellGraphDEAModel)
+    compact = get(io, :compact, false)
+
+    n = nobs(x)
+    m = ninputs(x)
+    s = noutputs(x)
+    dmunames = names(x)
+
+    eff = efficiency(x)
+    beta = x.beta
+    slackX = slacks(x, :X)
+    slackY = slacks(x, :Y)
+    hasslacks = ! isempty(slackX)
+
+    if !compact
+        print(io, "Enhanced Russell Graph Slack Based Measure DEA Model \n")
+        print(io, "DMUs = ", n)
+        print(io, "; Inputs = ", m)
+        print(io, "; Outputs = ", s)
+        print(io, "\n")
+        print(io, "Orientation = Graph")
+        print(io, "; Returns to Scale = ", string(x.rts))
+        print(io, "\n")
+        show(io, CoefTable(hcat(eff, beta, slackX, slackY), ["efficiency"; "beta"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
+    end
+
+end
+
+function efficiency(model::EnhancedRussellGraphDEAModel, type::Symbol)::Vector
+
+    if type == :beta return model.beta end
+
+    error(typeof(model), " has no efficiency type ", string(type))
+
+end

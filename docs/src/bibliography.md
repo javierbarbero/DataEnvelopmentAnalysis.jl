@@ -22,6 +22,8 @@ end
 - Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" American Economic Review, 84(1), 66–83.
 - Farrell, M. J. (1957). "**The Measurement of Productive Efficiency of Production.**" Journal of the Royal Statistical Society, Series A, 120(III), 253-281.
 - Lovell, C. A. K., and Pastor, J. T. (1995). "**Units Invariant and Translation Invariant DEA Models.**" *Operations Research Letters*, 18, 147–151.
+- Pastor, J. T., Ruiz, J. L., and Sirvent, I. (1999). "**An enhanced DEA Russell graph efficiency measure**." *European Journal of Operational Research*, 115(3), 596-607.
 - Pastor, J.T., Lovell, C.A.K., and Aparicio, J. (2012). "**Families of linear efficiency programs based on Debreu’s loss function.**" *Journal of Productivity Analysis* 38(2), 109-120.
 - Shephard, R.W. (1953). *Cost and production functions.* Princeton University Press, Princeton, New Jersey.
+- Tone, K. (2001). "**A slacks-based measure of efficiency in data envelopment analysis**." *European Journal of Operational Research*, 130(3), 498-509.
 - Zofío, J.L. and Prieto, A.M. (2006). "**Return to Dollar, Generalized Distance Function and the Fisher Productivity Index**" *Spanish Economic Review*, 8(2), 113-138.

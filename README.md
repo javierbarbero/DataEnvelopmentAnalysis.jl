@@ -44,6 +44,7 @@ julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 * Additive models: weighted additive model, measure of inefficiency proportions (MIP), normalized weighted additive model, range adjusted measure (RAM), bounded adjusted measure (BAM).
 * Generalized distance function model.
 * Russell graph and oriented model.
+* Enhanced Russell Graph Slack Based Measure.
 
 **Economic efficiency DEA models**
 
