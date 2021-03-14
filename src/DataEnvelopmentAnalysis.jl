@@ -42,7 +42,7 @@ module DataEnvelopmentAnalysis
     # Peers
     peers, peersmatrix, ispeer,
     # Technical models
-    dea, deaadd, deaaddweights, deaddf, deagdf,
+    dea, deaadd, deaaddweights, deaddf, deagdf, dearussell,
     efficiency, slacks,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
@@ -65,6 +65,7 @@ module DataEnvelopmentAnalysis
     include("deaadd.jl")
     include("deaddf.jl")
     include("deagdf.jl")
+    include("dearussell.jl")
 
     include("economic.jl")
     include("econoptim.jl")

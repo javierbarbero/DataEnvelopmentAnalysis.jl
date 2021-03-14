@@ -17,8 +17,10 @@ end
 - Cooper, W.W., Park, K.S. and Pastor, J.T. (1999). "**RAM: A Range Adjusted Measure of Inefficiency for Use with Additive Models, and Relations to Other Models and Measures in DEA**" *Journal of Productivity Analysis* 11(1), 5-42. 
 - Cooper, W.W., and Pastor, J.T. (1995). "**Global Efficiency Measurement in DEA.**” Working Paper, Depto Est e Inv. Oper. Universidad Alicante, Alicante, Spain.
 - Cooper, W.W., Pastor, J.T., Borras, F., Aparicio, J. and Pastor, D. (2011). "**BAM: a bounded adjusted measure of efficiency for use with bounded additive models.**" Journal of Productivity Analysis, 35(2), 85-94.
+- Fare, R., and Lovell, C. K. (1978). "**Measuring the technical efficiency of production**." *Journal of Economic theory*, 19(1), 150-162.
+- Fare, R., Grosskopf, S., and Lovell,C.A.K., (1985). *The Measurement of Efficiency of Production*. Kluwer Nijhof Publishing.
 - Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" American Economic Review, 84(1), 66–83.
-- Farrell, M. J. (1957). ""**The Measurement of Productive Efficiency of Production.**" Journal of the Royal Statistical Society, Series A, 120(III), 253-281.
+- Farrell, M. J. (1957). "**The Measurement of Productive Efficiency of Production.**" Journal of the Royal Statistical Society, Series A, 120(III), 253-281.
 - Lovell, C. A. K., and Pastor, J. T. (1995). "**Units Invariant and Translation Invariant DEA Models.**" *Operations Research Letters*, 18, 147–151.
 - Pastor, J.T., Lovell, C.A.K., and Aparicio, J. (2012). "**Families of linear efficiency programs based on Debreu’s loss function.**" *Journal of Productivity Analysis* 38(2), 109-120.
 - Shephard, R.W. (1953). *Cost and production functions.* Princeton University Press, Princeton, New Jersey.

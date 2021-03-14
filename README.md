@@ -43,6 +43,7 @@ julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 * Directional distance function model.
 * Additive models: weighted additive model, measure of inefficiency proportions (MIP), normalized weighted additive model, range adjusted measure (RAM), bounded adjusted measure (BAM).
 * Generalized distance function model.
+* Russell graph and oriented model.
 
 **Economic efficiency DEA models**
 

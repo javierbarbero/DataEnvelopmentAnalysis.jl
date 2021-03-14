@@ -9,23 +9,26 @@ end
 
 DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA model, as shown in the next table.
 
-| Function       | Problem type | Default Optimizer |
-| ---------------| ------------:|------------------:| 
-| `dea`          | LP           | GLPK              |
-| `deaddf`       | LP           | GLPK              |
-| `deaadd`       | LP           | GLPK              |
-| `deagdf`       | NLP          | Ipopt             |
-| `deacost`      | LP           | GLPK              |
-| `dearevenue`   | LP           | GLPK              |
-| `deaprofit`    | LP           | GLPK              |
-| `deaprofitability` | NLP          | Ipopt         |
-| `malmquist`    | LP           | GLPK              |
+| Function       | Specific Options | Problem type | Default Optimizer |
+| ---------------|--------:|------------:|------------------:| 
+| `dea`          |         | LP           | GLPK              |
+| `deaddf`       |         | LP           | GLPK              |
+| `deaadd`       |         | LP           | GLPK              |
+| `deagdf`       |         | NLP          | Ipopt             |
+| `dearussell`   | `:Input` or `:Output`        | LP           | GLPK              |
+| `dearussell`   | `:Graph`        | NLP     | Ipopt      |
+| `deacost`      |         | LP           | GLPK              |
+| `dearevenue`   |         | LP           | GLPK              |
+| `deaprofit`    |         | LP           | GLPK              |
+| `deaprofitability` |         | NLP          | Ipopt         |
+| `malmquist`    |          |LP           | GLPK              |
+
 
 Where:
 - LP = Linear programming.
 - NLP = Nonlinear programming.
 
-Models can be solved using a different optimizer by passing a `DEAOptimizer` object to the `optimizer` optional argument. See [JuMP documentation](https://jump.dev/JuMP.jl/v0.21.6/installation/#Installing-a-solver) for a list of all solvers available.
+Models can be solved using a different optimizer by passing a `DEAOptimizer` object to the `optimizer` optional argument. See [JuMP documentation](https://jump.dev/JuMP.jl/v0.21.6/installation/#Installing-a-solver) for a list of all available solvers.
 
 !!! warning "Choose a valid optimizer"
     The optimizer must support the problem type of the DEA model.

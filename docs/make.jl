@@ -9,6 +9,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Directional Distance Function Models" => "technical/directional.md",
                 "Additive Models" => "technical/additive.md",
                 "Generalized Distance Function Models" => "technical/generalizeddf.md",
+                "Russell Models" => "technical/russell.md",
                 "Common functions for technical models" => "technical/commontechnical.md"
                 ],
         "Economic Efficiency Models" => Any[
