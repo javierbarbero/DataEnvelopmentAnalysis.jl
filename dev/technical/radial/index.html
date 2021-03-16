@@ -73,7 +73,33 @@ DEA Peers
 8: 8 ( 0.9999999999999999 ) 
 9: 9 ( 1.0 ) 
 10: 1 ( 0.03711078928312814 ) 4 ( 0.4433381607530775 ) 7 ( 0.5195510499637944 ) 
-11: 11 ( 1.0 ) </code></pre><p>Input and output optimal targets are returned with the <code>targets</code> function:</p><pre><code class="language-julia-repl">julia&gt; targets(deaiovrs, :X)
+11: 11 ( 1.0 ) </code></pre><p>Input and output slacks are returned with the <code>slacks</code> function:</p><pre><code class="language-julia-repl">julia&gt; slacks(deaiovrs, :X)
+11×2 Array{Float64,2}:
+  0.0           0.0
+  0.0           0.0
+  0.0           2.56789e-13
+ -8.03397e-16   0.0
+  0.0           0.0
+  2.70127e-16   0.0
+  0.0           0.0
+  0.0          -1.27018e-14
+  0.0           0.0
+  3.90444e-15   0.0
+  0.0           4.0
+
+julia&gt; slacks(deaiovrs, :Y)
+11×1 Array{Float64,2}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 2.6984126984126924
+ 3.7817815923971297e-16
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 4.788485288453362e-16</code></pre><p>Input and output optimal targets are returned with the <code>targets</code> function:</p><pre><code class="language-julia-repl">julia&gt; targets(deaiovrs, :X)
 11×2 Array{Float64,2}:
   5.0     13.0
  13.9198  10.4398
@@ -145,4 +171,4 @@ Orientation = Input; Returns to Scale = CRS
 9     0.820106   1.64021      0.0              0.0
 10    0.490566   9.68683e-15  0.0              0.0
 11    1.0        0.0          4.0              0.0
-──────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/84eaa2811b2e537030b6a02c4bf2c0faf49d7466/src/dea.jl#L29-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Sunday 14 March 2021 22:40">Sunday 14 March 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+──────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/fd1d4837535678cb5e91d33e55e2a7d0cdb14c14/src/dea.jl#L29-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 16 March 2021 16:25">Tuesday 16 March 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
