@@ -11,8 +11,6 @@ end
 
 # Generalized Distance Function Models
 
-## Generalized Distance Function Model
-
 *Chavas and Cox (1999)* introduced a generalized distance function efficiency measure that reescales both inputs and outputs toward the frontier technology.
 
 ```math

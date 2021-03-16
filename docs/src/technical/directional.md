@@ -7,8 +7,6 @@ end
 
 # Directional Distance Function Models
 
-## Directional Distance Function Model
-
 *Chambers, Chung and Fare (1996)* introduced a measure of efficiency that projects observation $\left( {{\mathbf{x}_o,\mathbf{y}_{o}}} \right)$
 in a pre-assigned  direction  $\mathbf{g}= {\left({-{\mathbf{g_{x}^-},\mathbf{g^{+}_y}}} \right)\neq\mathbf{0}_{m+s}}$, $\mathbf{g^{-}_{x}}\mathbb{\in R}^m$ and  $\mathbf{g^{+}_{y}}\mathbb{\in R}^s$, in a proportion $\beta$. The associated linear program is:
 

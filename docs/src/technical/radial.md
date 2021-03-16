@@ -113,6 +113,37 @@ DEA Peers
 11: 11 ( 1.0 ) 
 ```
 
+Input and output slacks are returned with the `slacks` function:
+```jldoctest 1
+julia> slacks(deaiovrs, :X)
+11×2 Array{Float64,2}:
+  0.0           0.0
+  0.0           0.0
+  0.0           2.56789e-13
+ -8.03397e-16   0.0
+  0.0           0.0
+  2.70127e-16   0.0
+  0.0           0.0
+  0.0          -1.27018e-14
+  0.0           0.0
+  3.90444e-15   0.0
+  0.0           4.0
+
+julia> slacks(deaiovrs, :Y)
+11×1 Array{Float64,2}:
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 2.6984126984126924
+ 3.7817815923971297e-16
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 4.788485288453362e-16
+```
+
 Input and output optimal targets are returned with the `targets` function:
 ```jldoctest 1
 julia> targets(deaiovrs, :X)
