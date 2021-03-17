@@ -90,7 +90,7 @@ julia> efficiency(deaergvrs, :beta)
  0.4706000000000001
 ```
 
-### dearussell Function Documentation
+### deaerg Function Documentation
 
 ```@docs
 deaerg

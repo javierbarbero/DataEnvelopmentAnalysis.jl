@@ -45,6 +45,7 @@ julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 * Generalized distance function model.
 * Russell graph and oriented model.
 * Enhanced Russell Graph Slack Based Measure.
+* Modified Directional Distance Function.
 
 **Economic efficiency DEA models**
 

@@ -11,6 +11,7 @@ using Test
     include("deagdf.jl")
     include("dearussell.jl")
     include("deaerg.jl")
+    include("deamddf.jl")
 
     include("econoptim.jl")
     include("deacost.jl")
