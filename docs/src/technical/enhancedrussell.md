@@ -17,8 +17,8 @@ Based on the data  matrix $(X,Y)$, we calculate the Enhanced Russell Graph Measu
   & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\mu_j x_{ij} }\ = \beta {x}_{io} - t_i^- \qquad i = 1,...,m \\
   & \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\mu_j y_{rj} }\ = \beta {y}_{ro} + t_r^+ \qquad r = 1,...,s \\
   & \quad \quad \quad \quad \quad \ \beta \ge 0  \\
-  & \quad \quad \quad \quad \quad \ t_i^- \ge 1 \qquad i = 1,...,m \\
-  & \quad \quad \quad \quad \quad \ t_r^+ \ge 1 \qquad r = 1,...,s \\
+  & \quad \quad \quad \quad \quad \ t_i^- \ge 0 \qquad i = 1,...,m \\
+  & \quad \quad \quad \quad \quad \ t_r^+ \ge 0 \qquad r = 1,...,s \\
   & \quad \quad \quad \quad \quad \ \mu_j \ge 0 \qquad j = 1,...,n. 
 \end{aligned}
 ```
