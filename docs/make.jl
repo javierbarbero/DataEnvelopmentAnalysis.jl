@@ -11,6 +11,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Generalized Distance Function Models" => "technical/generalizeddf.md",
                 "Russell Models" => "technical/russell.md",
                 "Enhanced Russell Graph Slack Based Measure" => "technical/enhancedrussell.md",
+                "Modified Directional Distance Function" => "technical/modifiedddf.md",
                 "Common functions for technical models" => "technical/commontechnical.md"
                 ],
         "Economic Efficiency Models" => Any[
