@@ -1,6 +1,15 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.3.0 (March 18, 2021)
+----------------------------
+
+- Add Russell input, output, and graph models.
+- Add Enhanced Russell Graph Slack Based Measure model.
+- Add Modified Directional Distance Function model.
+- Add an option to solve models using an optimizer specified by the user.
+- Add an option to report economic efficiency in monetary terms.
+
 Version 0.2.0 (January 3, 2021)
 ----------------------------
 
