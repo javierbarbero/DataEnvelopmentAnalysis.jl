@@ -10,6 +10,10 @@
     deacostcooper = deacost(X, Y, W, rts = :CRS)
 
     @test typeof(deacostcooper) == CostDEAModel
+
+    @test nobs(deacostcooper) == 3
+    @test ninputs(deacostcooper) == 2
+    @test noutputs(deacostcooper) == 1
     @test ismonetary(deacostcooper) == false
 
     @test efficiency(deacostcooper, :Economic)   ≈ [0.375; 1; 0.429] atol = 1e-3

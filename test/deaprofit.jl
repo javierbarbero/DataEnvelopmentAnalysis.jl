@@ -21,7 +21,10 @@ end
     deaprofitdollar = deaprofit(X, Y, W, P, Gx = GxGydollar, Gy = GxGydollar)
 
     @test typeof(deaprofitdollar) == ProfitDEAModel
-
+    
+    @test nobs(deaprofitdollar) == 8
+    @test ninputs(deaprofitdollar) == 2
+    @test noutputs(deaprofitdollar) == 2
     @test efficiency(deaprofitdollar, :Economic)   ≈ [2; 2; 0; 2; 2; 8; 12; 4] atol = 1e-3
     @test efficiency(deaprofitdollar, :Technical)  ≈ [0; 0; 0; 0; 0; 6; 12; 3] atol = 1e-3
     @test efficiency(deaprofitdollar, :Allocative) ≈ [2; 2; 0; 2; 2; 2; 0; 1] atol = 1e-3

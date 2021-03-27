@@ -8,6 +8,11 @@
     # Modified DDF CRS Ones
     deamddfcrs = deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :CRS)
 
+    @test typeof(deamddfcrs) == ModifiedDDFDEAModel
+
+    @test nobs(deamddfcrs) == 8
+    @test ninputs(deamddfcrs) == 1
+    @test noutputs(deamddfcrs) == 1
     @test efficiency(deamddfcrs) ≈ [1.5; 0; 2; 6; 4.5; 10.5; 8.5; 9.412] atol = 1e-5
     @test efficiency(deamddfcrs, :X) ≈ zeros(8, 1) atol = 1e-5
     @test efficiency(deamddfcrs, :Y) ≈ [1.5; 0; 2; 6; 4.5; 10.5; 8.5; 9.412] atol = 1e-5

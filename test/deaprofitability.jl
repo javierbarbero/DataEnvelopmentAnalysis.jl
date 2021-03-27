@@ -11,6 +11,10 @@
     deaprofbl = deaprofitability(X, Y, W, P)
 
     @test typeof(deaprofbl) == ProfitabilityDEAModel
+    
+    @test nobs(deaprofbl) == 5
+    @test ninputs(deaprofbl) == 2
+    @test noutputs(deaprofbl) == 2
 
     @test efficiency(deaprofbl) ≈ [0.388;
                                    1.000;

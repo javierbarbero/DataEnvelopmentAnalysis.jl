@@ -11,11 +11,10 @@
 
     @test typeof(deagdf05crs) == GeneralizedDFDEAModel
 
-    @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
-
     @test nobs(deagdf05crs) == 5
     @test ninputs(deagdf05crs) == 2
     @test noutputs(deagdf05crs) == 2
+    @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
 
     @test efficiency(deagdf(targets(deagdf05crs, :X), targets(deagdf05crs, :Y), alpha = 0.5, rts = :CRS, slack = false)) ≈ ones(5)
     @test efficiency(deaadd(targets(deagdf05crs, :X), targets(deagdf05crs, :Y))) ≈ zeros(5) atol=1e-8

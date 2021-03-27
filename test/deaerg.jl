@@ -8,6 +8,11 @@
     # Enhanced Russell Graph CRS
     deaergcrs = deaerg(X, Y, rts = :CRS)
 
+    @test typeof(deaergcrs) == EnhancedRussellGraphDEAModel
+
+    @test nobs(deaergcrs) == 8
+    @test ninputs(deaergcrs) == 1
+    @test noutputs(deaergcrs) == 1
     @test efficiency(deaergcrs) ≈ [0.4; 1.0; 0.8; 0.6; 0.4; 0.4; 0.514285714285650175; 0.2]
     @test efficiency(deaergcrs, :beta) ≈ [0.4; 1.0; 1.0; 0.6; 0.4; 0.4; 0.514285714285650175; 0.2]
     @test convert(Matrix, peers(deaergcrs)) ≈ [

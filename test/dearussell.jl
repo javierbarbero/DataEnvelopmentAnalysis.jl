@@ -10,6 +10,11 @@
     # Input oriented CRS
     dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS)
 
+    @test typeof(dearussellio) == RussellDEAModel
+
+    @test nobs(dearussellio) == 8
+    @test ninputs(dearussellio) == 2
+    @test noutputs(dearussellio) == 1
     @test efficiency(dearussellio, :X) ≈ [1 1; 1 1; 1 1; 0.5 2/3; 0.4 0.4; 2/3 1; 0.5 0.8; 0.625 0.5]
     @test_throws ArgumentError efficiency(dearussellio, :Y) # No output efficiency in input oriented model 
     @test efficiency(dearussellio) ≈ [1; 1; 1; 0.5833333333333334; 0.4; 0.8333333333333334; 0.65; 0.5625]
@@ -77,6 +82,9 @@
     # Output oriented CRS
     dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS)
 
+    @test nobs(dearusselloo) == 8
+    @test ninputs(dearusselloo) == 1
+    @test noutputs(dearusselloo) == 2
     @test efficiency(dearusselloo, :Y) ≈ [1 1; 1 1; 1 1; 7/3 1.4; 7/3 7/3; 1 2; 7/6 7/4; 46/9 1]
     @test_throws ArgumentError efficiency(dearusselloo, :X) # No input efficiency in input oriented model 
     @test efficiency(dearusselloo) ≈ [1.0; 1.0; 1.0; 1.8666666666666665; 2.333333333333333; 1.5; 1.4583333333333335; 3.0555555555555554]
@@ -141,6 +149,9 @@
     # Graph CRS
     dearussellgr = dearussell(X, Y, orient = :Graph, rts = :CRS)
 
+    @test nobs(dearussellgr) == 8
+    @test ninputs(dearussellgr) == 1
+    @test noutputs(dearussellgr) == 1
     @test efficiency(dearussellgr, :X) ≈ [ 0.632455;
         1.0;
         0.894427;
