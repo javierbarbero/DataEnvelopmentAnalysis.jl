@@ -17,7 +17,7 @@
     @test efficiency(deaio) ≈ efficiency(deagdf05crs) atol = 1e-7
 
     @test efficiency(deagdf(targets(deagdf05crs, :X), targets(deagdf05crs, :Y), alpha = 0.5, rts = :CRS, slack = false)) ≈ ones(5)
-    @test efficiency(deaadd(targets(deagdf05crs, :X), targets(deagdf05crs, :Y))) ≈ zeros(5) atol=1e-8
+    @test efficiency(deaadd(targets(deagdf05crs, :X), targets(deagdf05crs, :Y))) ≈ zeros(5) atol=1e-5
 
     # alphpa = 0.5 VRS
     deagdf05vrs = deagdf(X, Y, alpha = 0.5, rts = :VRS)
@@ -43,7 +43,7 @@
                                      3.0 0] atol = 1e-5
 
     @test efficiency(deagdf(targets(deagdf05vrs, :X), targets(deagdf05vrs, :Y), alpha = 0.5, rts = :CRS, slack = false)) ≈ ones(5)
-    @test efficiency(deaadd(targets(deagdf05vrs, :X), targets(deagdf05vrs, :Y))) ≈ zeros(5) atol=1e-6
+    @test efficiency(deaadd(targets(deagdf05vrs, :X), targets(deagdf05vrs, :Y))) ≈ zeros(5) atol=1e-5
 
     # Test no slacks
     deagdfnoslack = deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
