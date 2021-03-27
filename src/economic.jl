@@ -106,7 +106,7 @@ function efficiency(model::AbstractEconomicDEAModel, type::Symbol = :Economic)::
         end
     end
 
-    error(typeof(model), " has no efficiency type ", string(type))
+    throw(ArgumentError("$(typeof(model)) has no efficiency $(type)"));
 
 end
 
@@ -146,6 +146,8 @@ function targets(model::AbstractEconomicDEAModel, target::Symbol)::Matrix
         return model.Ytarget
     end
 
+    throw(ArgumentError("`target` must be :X or :Y"));
+
 end
 
 """
@@ -172,7 +174,7 @@ function normfactor(model::AbstractEconomicDEAModel)::Vector
     if isdefined(model, :normalization)
         return model.normalization
     else
-        error(typeof(model), " has no normalization factor")
+        throw(ArgumentError("$(typeof(model)) has no normalization factor"));
     end
 end
 
@@ -195,6 +197,6 @@ function ismonetary(model::AbstractEconomicDEAModel)::Bool
     if isdefined(model, :monetary)
         return model.monetary
     else
-        error(typeof(model), " has no monetary identifier")
+        throw(ArgumentError("$(typeof(model)) has no monetary identifier"));
     end
 end

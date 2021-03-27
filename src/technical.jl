@@ -82,6 +82,8 @@ function slacks(model::AbstractTechnicalDEAModel, slack::Symbol)::Matrix
         return model.slackY
     end
 
+    throw(ArgumentError("`slack` must be :X or :Y"));
+
 end
 
 """
@@ -132,5 +134,7 @@ function targets(model::AbstractTechnicalDEAModel, target::Symbol)::Matrix
     elseif target == :Y
         return model.Ytarget
     end
+
+    throw(ArgumentError("`target` must be :X or :Y"));
 
 end

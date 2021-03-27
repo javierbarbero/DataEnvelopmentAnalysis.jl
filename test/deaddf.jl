@@ -353,15 +353,15 @@
     show(IOBuffer(), deaddfnoslack)
 
     # Test errors
-    @test_throws ErrorException deaddf([1; 2 ; 3], [4 ; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException deaddf([1; 2], [4 ; 5], Gx = [1; 2], Gy = [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException deaddf([1; 2; 3], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaddf([1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
-    @test_throws ErrorException deaddf([1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
-    @test_throws ErrorException deaddf([1; 2; 3], [1; 2; 3], Gx = :Error, Gy = :Ones) # Invalid inuts direction
-    @test_throws ErrorException deaddf([1; 2; 3], [1; 2; 3], Gx = :Ones, Gy = :Error) # Invalid outputs direction
+    @test_throws DimensionMismatch deaddf([1; 2 ; 3], [4 ; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch deaddf([1; 2], [4 ; 5], Gx = [1; 2], Gy = [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch deaddf([1 1; 2 2], [4 4; 5 5], Gx = [1 1; 2 2], Gy = [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError deaddf([1; 2; 3], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws DimensionMismatch deaddf([1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
+    @test_throws DimensionMismatch deaddf([1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of inputs direction
+    @test_throws ArgumentError deaddf([1; 2; 3], [1; 2; 3], Gx = :Error, Gy = :Ones) # Invalid inuts direction
+    @test_throws ArgumentError deaddf([1; 2; 3], [1; 2; 3], Gx = :Ones, Gy = :Error) # Invalid outputs direction
 
     # ------------------
     # Test Vector and Matrix inputs and outputs

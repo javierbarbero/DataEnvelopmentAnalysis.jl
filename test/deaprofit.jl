@@ -56,18 +56,19 @@ end
     @test ismonetary(deaprofitmonetary) == true
 
     # Test errors
-    @test_throws ErrorException deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in input prices
-    @test_throws ErrorException deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6; 7], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in output prices
-    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6], Gx = [1 1; 2 2; 3 3], Gy = [4; 5; 6]) # Different number of input prices and inputs
-    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6], Gx = [1; 2; 3], Gy = [4 4; 5 5; 6 6]) # Different number of oputput prices and outputs
-    @test_throws ErrorException deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
-    @test_throws ErrorException deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of outputs direction
-    @test_throws ErrorException deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Error, Gy = :Ones) # Invalid inputs direction
-    @test_throws ErrorException deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Ones, Gy = :Error) # Invalid outputs direction
+    @test_throws DimensionMismatch deaprofit([1; 2 ; 3], [4 ; 5], [1; 1; 1], [4; 5], Gx = [1; 2 ; 3], Gy = [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3; 4], [4; 5; 6], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in input prices
+    @test_throws DimensionMismatch deaprofit([1; 2; 3], [4; 5; 6], [1; 2; 3], [4; 5; 6; 7], Gx = [1; 2; 3], Gy = [4; 5; 6]) # Different number of observation in output prices
+    @test_throws DimensionMismatch deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3], [4; 5; 6], Gx = [1 1; 2 2; 3 3], Gy = [4; 5; 6]) # Different number of input prices and inputs
+    @test_throws DimensionMismatch deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4 4; 5 5 5; 6 6 6], Gx = [1; 2; 3], Gy = [4 4; 5 5; 6 6]) # Different number of oputput prices and outputs
+    @test_throws DimensionMismatch deaprofit([1 1; 2 2; 3 3], [4; 5; 6], [1 1; 2 2; 3 3], [4; 5; 6], Gx = [1 1 1; 2 2 2; 3 3 3], Gy = [4; 5; 6]) # Different size of inputs direction
+    @test_throws DimensionMismatch deaprofit([1; 2; 3], [4 4; 5 5; 6 6], [1; 2; 3], [4 4; 5 5; 6 6], Gx = [1; 2; 3], Gy = [4 4 4; 5 5 5; 6 6 6]) # Different size of outputs direction
+    @test_throws ArgumentError deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Error, Gy = :Ones) # Invalid inputs direction
+    @test_throws ArgumentError deaprofit([1; 2; 3], [1; 2; 3], [1; 1; 1], [1; 1; 1], Gx = :Ones, Gy = :Error) # Invalid outputs direction
+    @test_throws ArgumentError targets(deaprofitdollar, :error) # Invalid target
 
     # Test struct defaults and errors
-    @test_throws ErrorException ismonetary(wrongProfitDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
+    @test_throws ArgumentError ismonetary(wrongProfitDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
     
     # ------------------
     # Test Vector and Matrix inputs and outputs

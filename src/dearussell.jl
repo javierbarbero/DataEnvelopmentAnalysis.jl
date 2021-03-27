@@ -76,16 +76,16 @@ function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
+        throw(DimensionMismatch("number of rows in Xref and Yref ($nrefx, $nrefy) are not equal"));
     end
     if m != mref
-        error("number of inputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in X and Xref ($m, $mref) are not equal"));
     end
     if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in Y and Yref ($s, $sref) are not equal"));
     end
 
     # Default optimizer
@@ -153,7 +153,7 @@ function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == theta[j] * x0[j])
             @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == phi[j] * y0[j])
         else
-            error("Invalid orientation $orient. Orientation should be :Input, :Output or :Graph")
+            throw(ArgumentError("`orient` must be :Input, :Output or :Graph"));
         end
 
         # Add return to scale constraints
@@ -162,7 +162,7 @@ function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
         # Optimize and return results
@@ -278,6 +278,6 @@ function efficiency(model::RussellDEAModel, type::Symbol)::Matrix
     if (type == :X && (model.orient == :Input  || model.orient == :Graph)) return model.thetaX end
     if (type == :Y && (model.orient == :Output || model.orient == :Graph)) return model.thetaY end
         
-    error(typeof(model), " with orientation ", string(model.orient), " has no efficiency type ", string(type))
+    throw(ArgumentError("$(typeof(model)) with orienation $(model.orient) has no efficiency $(type)"));
 
 end

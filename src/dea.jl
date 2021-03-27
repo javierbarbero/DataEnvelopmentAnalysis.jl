@@ -85,24 +85,24 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
+        throw(DimensionMismatch("number of rows in Xref and Yref ($nrefx, $nrefy) are not equal"));
     end
     if m != mref
-        error("number of inputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in X and Xref ($m, $mref) are not equal"));
     end
     if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in Y and Yref ($s, $sref) are not equal"));
     end
 
     if disposX != :Strong && disposX != :Weak
-        error("Invalued inputs disposability $disposX. Disposability should be :Strong or :Weak")
+        throw(ArgumentError("`disposX` must be :Strong or :Weak"));
     end
 
     if disposY != :Strong && disposY != :Weak
-        error("Invalid outputs disposability $disposY. Disposability should be :Strong or :Weak")
+        throw(ArgumentError("`disposY` must be :Strong or :Weak"));
     end
 
     # Default optimizer
@@ -163,7 +163,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             end
 
         else
-            error("Invalid orientation $orient. Orientation should be :Input or :Output")
+            throw(ArgumentError("`orient` must be :Input or :Output"));
         end
 
         # Add return to scale constraints
@@ -172,7 +172,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
         # Optimize and return results

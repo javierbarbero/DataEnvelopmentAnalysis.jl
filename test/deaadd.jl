@@ -461,24 +461,24 @@
     show(IOBuffer(), deaaddcrs1)
 
     # Test errors
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5], :Ones) #  Different number of observations
-    @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4], :Ones) # Different number of observations in reference sets
-    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2], :Ones) # Different number of inputs
-    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5], :Ones) # Different number of inputs
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Error) # Invalid model
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, orient = :Error) # Invalid orientation
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [1; 1; 1], orient = :Error) # Invalid orientation with custom weights
+    @test_throws DimensionMismatch deaadd([1; 2 ; 3], [4 ; 5], :Ones) #  Different number of observations
+    @test_throws DimensionMismatch deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4], :Ones) # Different number of observations in reference sets
+    @test_throws DimensionMismatch deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2], :Ones) # Different number of inputs
+    @test_throws DimensionMismatch deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5], :Ones) # Different number of inputs
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], :Ones, rts = :Error) # Invalid returns to scale
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], :Error) # Invalid model
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], :Ones, orient = :Error) # Invalid orientation
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [1; 1; 1], orient = :Error) # Invalid orientation with custom weights
 
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 2; 3; 4], rhoY = [1; 1; 1]) # Different size of weights
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [4; 5; 6; 7]) # Different size of weights
+    @test_throws DimensionMismatch deaadd([1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch deaadd([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch deaadd([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch deaadd([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws DimensionMismatch deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 2; 3; 4], rhoY = [1; 1; 1]) # Different size of weights
+    @test_throws DimensionMismatch deaadd([1; 2; 3], [4; 5; 6], :Custom, rhoX = [1; 1; 1], rhoY = [4; 5; 6; 7]) # Different size of weights
 
-    @test_throws ErrorException deaadd([1; 2; 3], [4; 5; 6], :Ones, rhoX = [1; 1; 1]) # Weights not allowed if model != :Custom
+    @test_throws ArgumentError deaadd([1; 2; 3], [4; 5; 6], :Ones, rhoX = [1; 1; 1]) # Weights not allowed if model != :Custom
 
     # ------------------
     # Orientation Tests
@@ -521,14 +521,14 @@
     @test slacks(deaaddoutputweak, :Y) ≈ [0; 0; 0; 2.0; 0.0]
 
     # Test errors with orientation and disposability
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Error)  # Invalid inputs disposability
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposY = :Error)  # Invalid output disposability
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Weak)  # Weak disposability not possible in graph oriented model
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Weak)  # Weak disposability not possible in graph oriented model
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Error)  # Invalid inputs disposability
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposY = :Error)  # Invalid output disposability
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Weak)  # Weak disposability not possible in graph oriented model
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Graph, disposX = :Weak)  # Weak disposability not possible in graph oriented model
 
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Input, disposX = :Weak)  # Weak input disposability not possible in input oriented model
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Input, disposX = :Weak)  # Weak input disposability not possible in input oriented model
 
-    @test_throws ErrorException deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Output, disposY = :Weak)  # Weak output disposability not possible in output oriented model
+    @test_throws ArgumentError deaadd([1; 2 ; 3], [4 ; 5; 6], orient = :Output, disposY = :Weak)  # Weak output disposability not possible in output oriented model
 
     # ------------------
     # Test Vector and Matrix inputs and outputs

@@ -92,33 +92,33 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
+        throw(DimensionMismatch("number of rows in Xref and Yref ($nrefx, $nrefy) are not equal"));
     end
     if m != mref
-        error("number of inputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in X and Xref ($m, $mref) are not equal"));
     end
     if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in Y and Yref ($s, $sref) are not equal"));
     end
 
     if disposX != :Strong && disposX != :Weak
-        error("Invalid inputs disposability $disposX. Disposability should be :Strong or :Weak")
+        throw(ArgumentError("`disposX` must be :Strong or :Weak"));
     end
     if disposY != :Strong && disposY != :Weak
-        error("Invalid outputs disposability $disposY. Disposability should be :Strong or :Weak")
+        throw(ArgumentError("`disposY` must be :Strong or :Weak"));
     end
 
     if orient == :Input && disposX == :Weak
-        error("Weak input disposability not possible in input oriented model")
+        throw(ArgumentError("`disposX` must be :Strong if `orient` is :Input"));
     end
     if orient == :Output && disposY == :Weak
-        error("Weak output disposability not possible in output oriented model")
+        throw(ArgumentError("`disposY` must be :Strong if `orient` is :Output"));
     end
     if orient == :Graph && (disposX == :Weak || disposY == :Weak)
-        error("Weak disposability not possible in graph oriented model")
+        throw(ArgumentError("`disposX` and `disposY` must be :Strong if `orient` is :Graph"));
     end
 
     # Default behaviour
@@ -135,7 +135,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     if model != :Custom
         # Display error if both model and weights are specified
         if rhoX !== nothing || rhoY !== nothing
-            error("Weights not allowed if model != :Custom")
+            throw(ArgumentError("`rhoX` and `rhoY` not allowed if model != :Custom"));
         end
 
         # Get weights for selected model
@@ -143,10 +143,10 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     end
 
     if size(rhoX) != size(X)
-        error("size of weights matrix for inputs should be equal to size of inputs")
+        throw(DimensionMismatch("size of rhoX and X ($(size(rhoX)), $(size(X))) are not equal"));
     end
     if size(rhoY) != size(Y)
-        error("size of weights matrix for outputs should be qual to size of outputs")
+        throw(DimensionMismatch("size of rhoY and Y ($(size(rhoY)), $(size(Y))) are not equal"));
     end
 
     # Parameters for additional condition in BAM model
@@ -199,7 +199,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         elseif orient == :Output
             @objective(deamodel, Max, sum(rhoY0[j] * sY[j] for j in 1:s) )
         else
-            error("Invalid orientation $orient. Orientation should be :Graph, :Input or :Output")
+            throw(ArgumentError("`orient` must be :Input, :Output or :Graph"));
         end
 
         @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j] - sX[j])
@@ -215,7 +215,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
         # Fix values of slacks when weight are zero
@@ -309,7 +309,7 @@ function deaaddweights(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     # Check orientation
     if orient != :Graph && orient != :Input && orient != :Output
-        error("Invalid orientation $orient. Orientation should be :Graph, :Input or :Output")
+        throw(ArgumentError("`orient` must be :Input, :Output or :Graph"));
     end
 
     # Compute specific weights based on the model
@@ -431,7 +431,7 @@ function deaaddweights(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         end
 
     else
-        error("Invalid model ", model)
+        throw(ArgumentError("Invalid model")); 
     end
 
     if orient == :Input

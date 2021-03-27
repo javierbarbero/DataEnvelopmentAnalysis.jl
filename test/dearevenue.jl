@@ -70,12 +70,12 @@
     show(IOBuffer(), dearevenuecooper)
 
     # Test errors
-    @test_throws ErrorException dearevenue([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
-    @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
-    @test_throws ErrorException dearevenue([1; 2; 3], [4 4; 5 5; 6 6], [4 4 4; 5 5 5; 6 6 6]) # Different number of output prices and outputs
-    @test_throws ErrorException dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
-    @test_throws ErrorException normfactor(dearevenue(X, Y, P)) # ERROR: RevenueDEAModel has no normalization factor
+    @test_throws DimensionMismatch dearevenue([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
+    @test_throws DimensionMismatch dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
+    @test_throws DimensionMismatch dearevenue([1; 2; 3], [4 4; 5 5; 6 6], [4 4 4; 5 5 5; 6 6 6]) # Different number of output prices and outputs
+    @test_throws ArgumentError dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
+    @test_throws ArgumentError dearevenue([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
+    @test_throws ArgumentError normfactor(dearevenue(X, Y, P)) # ERROR: RevenueDEAModel has no normalization factor
 
     # ------------------
     # Weak Disposability Tests

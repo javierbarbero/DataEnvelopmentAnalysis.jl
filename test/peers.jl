@@ -113,18 +113,18 @@ end
     show(IOBuffer(), P2)
 
     # Test errors
-    @test_throws ErrorException peers(dea(X, Y, rts = :VRS), namesref = ["A"]) #  Length of references names different to number of references DMUs
-    @test_throws ErrorException ispeer(Pn, "W", "A") # First name does not exists
-    @test_throws ErrorException ispeer(Pn, "A", "W") # Second name does not exists
+    @test_throws DimensionMismatch peers(dea(X, Y, rts = :VRS), namesref = ["A"]) #  Length of references names different to number of references DMUs
+    @test_throws ArgumentError ispeer(Pn, "W", "A") # First name does not exists
+    @test_throws ArgumentError ispeer(Pn, "A", "W") # Second name does not exists
 
     Prepeated = peers(dea([1; 1; 1; 1; 1], [1 ; 2 ;3; 4; 5], orient = :Output, names = ["A", "B", "B", "C", "C"]))
-    @test_throws ErrorException ispeer(Prepeated, "C", "A") # First name is repeated
-    @test_throws ErrorException ispeer(Prepeated, "A", "C") # Second name does not exists
+    @test_throws ArgumentError ispeer(Prepeated, "C", "A") # First name is repeated
+    @test_throws ArgumentError ispeer(Prepeated, "A", "C") # Second name does not exists
 
     @test_throws BoundsError ispeer(P2, 0) # BoundsErrror
 
     # Test struct defaults and errors
     @test names(wrongDEAmodel(3, [1; 2; 3])) == ["1"; "2"; "3"] # Default names if dmunames not in struct
-    @test_throws ErrorException peers(wrongDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
+    @test_throws ArgumentError peers(wrongDEAmodel(3, [1; 2; 3])) # Model does not have info on peers
 
 end

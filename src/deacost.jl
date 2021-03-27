@@ -64,17 +64,17 @@ function deacost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     nw, mw = size(W, 1), size(W, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nw != nx
-        error("number of observations is different in input prices and inputs")
+        throw(DimensionMismatch("number of rows in W and X ($nw, $nx) are not equal"));
     end
     if mw != m
-        error("number of input prices and intputs is different")
+        throw(DimensionMismatch("number of columns in W and X ($mw, $m) are not equal"));
     end
 
     if dispos != :Strong && dispos != :Weak
-        error("Invalued disposability $dispos. Disposability should be :Strong or :Weak")
+        throw(ArgumentError("`disposX` must be :Strong or :Weak"));
     end
 
     # Default optimizer

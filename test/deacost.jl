@@ -70,12 +70,12 @@
     show(IOBuffer(), deacostcooper)
 
     # Test errors
-    @test_throws ErrorException deacost([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
-    @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
-    @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
-    @test_throws ErrorException deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
-    @test_throws ErrorException deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
-    @test_throws ErrorException normfactor(deacost(X, Y, W)) # CostDEAModel has no normalization factor
+    @test_throws DimensionMismatch deacost([1; 2 ; 3], [4 ; 5], [1; 1; 1]) #  Different number of observations
+    @test_throws DimensionMismatch deacost([1; 2; 3], [4; 5; 6], [1; 2; 3; 4]) # Different number of observation in prices
+    @test_throws DimensionMismatch deacost([1 1; 2 2; 3 3 ], [4; 5; 6], [1 1 1; 2 2 2; 3 3 3]) # Different number of input prices and inputs
+    @test_throws ArgumentError deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], rts = :Error) # Invalid returns to scale
+    @test_throws ArgumentError deacost([1; 2; 3], [4; 5; 6], [1; 2; 3], dispos = :Error) # Invalid disposability
+    @test_throws ArgumentError normfactor(deacost(X, Y, W)) # CostDEAModel has no normalization factor
 
     # ------------------
     # Weak Disposability Tests

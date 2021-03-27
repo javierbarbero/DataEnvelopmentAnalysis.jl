@@ -69,10 +69,10 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     ny, s, Ty = size(Y)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if Tx != Ty
-        error("number of time periods is different in intputs and outputs")
+        throw(DimensionMismatch("number of time periods in X and Y ($Tx, $Ty) are not equal"));
     end
 
     # Default optimizer
@@ -125,6 +125,8 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
             TC[:, t] .= efft ./ efft_reft1
         elseif refperiod == :Geomean
             TC[:, t] .= sqrt.( (efft ./ efft_reft1) .* (efft1_reft ./ efft1) )
+        else
+            throw(ArgumentError("`refperiod` must be :Base, :Comparison or :Geomean"));
         end
 
         # Mamlmquist Index

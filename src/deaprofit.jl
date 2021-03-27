@@ -83,19 +83,19 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     np, sp = size(P, 1), size(P, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nw != nx
-        error("number of observations is different in input prices and inputs")
+        throw(DimensionMismatch("number of rows in W and X ($nw, $nx) are not equal"));
     end
     if np != ny
-        error("number of observations is different in output prices and outputs")
+        throw(DimensionMismatch("number of rows in P and Y ($np, $ny) are not equal"));
     end
     if mw != m
-        error("number of input prices and intputs is different")
+        throw(DimensionMismatch("number of columns in W and X ($mw, $m) are not equal"));
     end
     if sp != s
-        error("number of output prices and outputs is different")
+        throw(DimensionMismatch("number of columns in P and Y ($sp, $s) are not equal"));
     end
 
     # Build or get user directions
@@ -114,7 +114,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
             Gx = repeat(GxGydollar, 1, m);
         else
-            error("Invalid inputs direction")
+            throw(ArgumentError("Invalid `Gx`"));
         end
 
     else
@@ -136,7 +136,7 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
             Gy = repeat(GxGydollar, 1, s);
         else
-            error("Invalid outputs direction")
+            throw(ArgumentError("Invalid `Gy`"));
         end
 
     else
@@ -144,10 +144,10 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     end
 
     if (size(Gx, 1) != size(X, 1)) | (size(Gx, 2) != size(X, 2))
-        error("size of inputs should be equal to size of inputs direction")
+        throw(DimensionMismatch("size of Gx and X ($(size(Gx)), $(size(X))) are not equal"));
     end
     if (size(Gy, 1) != size(Y, 1)) | (size(Gy, 2) != size(Y, 2))
-        error("size of outputs should be equal to size of outputs direction")
+        throw(DimensionMismatch("size of Gy and Y ($(size(Gy)), $(size(Y))) are not equal"));
     end
 
     # Default optimizer

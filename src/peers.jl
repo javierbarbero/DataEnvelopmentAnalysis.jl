@@ -71,7 +71,7 @@ struct DEAPeers <: AbstractDEAPeers
 
     function DEAPeers(x::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing)
         if ! isdefined(x, :lambda)
-            error("Model does not have info on peers.")
+            throw(ArgumentError("Model does not have info on peers"));
         end
 
         n = nobs(x)
@@ -91,7 +91,7 @@ struct DEAPeers <: AbstractDEAPeers
                 dmunamesref = ["Ref$i" for i in 1:nref]
             end
         elseif length(namesref) != nref
-            error("Length of references names different to number of references DMUs")
+            throw(DimensionMismatch("length of `namesref` and number of reference DMUs are not equal"));
         else
             dmunamesref = namesref
         end
@@ -256,17 +256,17 @@ function ispeer(P::DEAPeers, i::String, j::String)
     jval = findall(x -> x == j, P.dmunames)
 
     if length(ival) == 0
-        error("Name $i does not exists")
+        throw(ArgumentError("Name $i does not exists"));
     end
     if length(jval) == 0
-        error("Name $j does not exists")
+        throw(ArgumentError("Name $j does not exists"));
     end
 
     if length(ival) > 1
-        error("Name $i is repeated. Search by name not possible.")
+        throw(ArgumentError("Name $i is repeated. Search by name not possible."));
     end
     if length(jval) > 1
-        error("Name $j is repeated. Search by name not possible.")
+        throw(ArgumentError("Name $j is repeated. Search by name not possible."));
     end
 
     ival = ival[1]

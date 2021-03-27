@@ -11,7 +11,7 @@
     dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS)
 
     @test efficiency(dearussellio, :X) ≈ [1 1; 1 1; 1 1; 0.5 2/3; 0.4 0.4; 2/3 1; 0.5 0.8; 0.625 0.5]
-    @test_throws ErrorException efficiency(dearussellio, :Y) # No output efficiency in input oriented model 
+    @test_throws ArgumentError efficiency(dearussellio, :Y) # No output efficiency in input oriented model 
     @test efficiency(dearussellio) ≈ [1; 1; 1; 0.5833333333333334; 0.4; 0.8333333333333334; 0.65; 0.5625]
     @test convert(Matrix, peers(dearussellio)) == 
             [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
@@ -78,7 +78,7 @@
     dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS)
 
     @test efficiency(dearusselloo, :Y) ≈ [1 1; 1 1; 1 1; 7/3 1.4; 7/3 7/3; 1 2; 7/6 7/4; 46/9 1]
-    @test_throws ErrorException efficiency(dearusselloo, :X) # No input efficiency in input oriented model 
+    @test_throws ArgumentError efficiency(dearusselloo, :X) # No input efficiency in input oriented model 
     @test efficiency(dearusselloo) ≈ [1.0; 1.0; 1.0; 1.8666666666666665; 2.333333333333333; 1.5; 1.4583333333333335; 3.0555555555555554]
     @test convert(Matrix, peers(dearusselloo)) == 
             [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
@@ -225,14 +225,14 @@
     # ------------------
     # Test errors
     # ------------------
-    @test_throws ErrorException dearussell([1; 2 ; 3], [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException dearussell([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException dearussell([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException dearussell([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException dearussell([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
-    @test_throws ErrorException dearussell([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws DimensionMismatch dearussell([1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch dearussell([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch dearussell([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch dearussell([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError dearussell([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
+    @test_throws ArgumentError dearussell([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
 
-    @test_throws ErrorException efficiency(dearussellio, :Error) # Invalid efficiency type
+    @test_throws ArgumentError efficiency(dearussellio, :Error) # Invalid efficiency type
     
 
 end

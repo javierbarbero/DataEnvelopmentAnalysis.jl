@@ -86,16 +86,16 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
+        throw(DimensionMismatch("number of rows in Xref and Yref ($nrefx, $nrefy) are not equal"));
     end
     if m != mref
-        error("number of inputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in X and Xref ($m, $mref) are not equal"));
     end
     if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in Y and Yref ($s, $sref) are not equal"));
     end
 
     # Build or get user directions
@@ -111,7 +111,7 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif Gx == :Mean
             Gx = repeat(mean(X, dims = 1), size(X, 1))
         else
-            error("Invalid inputs direction")
+            throw(ArgumentError("Invalid `Gx`"));
         end
 
     else
@@ -130,7 +130,7 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif Gy == :Mean
             Gy = repeat(mean(Y, dims = 1), size(Y, 1))
         else
-            error("Invalid outputs direction")
+            throw(ArgumentError("Invalid `Gy`"));
         end
 
     else
@@ -141,10 +141,10 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nGy, sGy = size(Gy, 1), size(Gy, 2)
 
     if (size(Gx, 1) != size(X, 1)) | (size(Gx, 2) != size(X, 2))
-        error("size of inputs should be equal to size of inputs direction")
+        throw(DimensionMismatch("size of Gx and X ($(size(Gx)), $(size(X))) are not equal"));
     end
     if (size(Gy, 1) != size(Y, 1)) | (size(Gy, 2) != size(Y, 2))
-        error("size of outputs should be equal to size of outputs direction")
+        throw(DimensionMismatch("size of Gy and Y ($(size(Gy)), $(size(Y))) are not equal"));
     end
 
     # Default optimizer
@@ -185,7 +185,7 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
         else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
         # Optimize and return results

@@ -95,11 +95,11 @@
     show(IOBuffer(), deagdfnoslack)
 
     # Test errors
-    @test_throws ErrorException deagdf([1; 2 ; 3], [4 ; 5], alpha = 0.5) #  Different number of observations
-    @test_throws ErrorException deagdf([1; 2], [4 ; 5], alpha = 0.5, Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException deagdf([1; 2; 3], [4; 5; 6], alpha = 0.5, rts = :Error) # Invalid returns to scale
+    @test_throws DimensionMismatch deagdf([1; 2 ; 3], [4 ; 5], alpha = 0.5) #  Different number of observations
+    @test_throws DimensionMismatch deagdf([1; 2], [4 ; 5], alpha = 0.5, Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch deagdf([1 1; 2 2], [4 4; 5 5], alpha = 0.5, Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError deagdf([1; 2; 3], [4; 5; 6], alpha = 0.5, rts = :Error) # Invalid returns to scale
 
     # ------------------
     # Test Vector and Matrix inputs and outputs

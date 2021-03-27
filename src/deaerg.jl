@@ -71,16 +71,16 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     nrefy, sref = size(Yref, 1), size(Yref, 2)
 
     if nx != ny
-        error("number of observations is different in inputs and outputs")
+        throw(DimensionMismatch("number of rows in X and Y ($nx, $ny) are not equal"));
     end
     if nrefx != nrefy
-        error("number of observations is different in inputs reference set and ouputs reference set")
+        throw(DimensionMismatch("number of rows in Xref and Yref ($nrefx, $nrefy) are not equal"));
     end
     if m != mref
-        error("number of inputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in X and Xref ($m, $mref) are not equal"));
     end
     if s != sref
-        error("number of outputs in evaluation set and reference set is different")
+        throw(DimensionMismatch("number of columns in Y and Yref ($s, $sref) are not equal"));
     end
 
     # Default optimizer
@@ -123,7 +123,7 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         elseif rts == :VRS
             @constraint(deamodel, sum(mu) == beta)
         else
-            error("Invalid returns to scale $rts. Returns to scale should be :CRS or :VRS")
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
         # Optimize and return results
@@ -186,6 +186,6 @@ function efficiency(model::EnhancedRussellGraphDEAModel, type::Symbol)::Vector
 
     if type == :beta return model.beta end
 
-    error(typeof(model), " has no efficiency type ", string(type))
+    throw(ArgumentError("$(typeof(model)) has no efficiency $(type)"));
 
 end

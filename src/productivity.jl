@@ -102,6 +102,6 @@ function prodchange(model::AbstractProductivityDEAModel, type::Symbol = :Prod)::
         end
     end
 
-    error(typeof(model), " has no productivity change component ", string(type))
+    throw(ArgumentError("$(typeof(model)) has no productivity change component $(type)"));
 
 end

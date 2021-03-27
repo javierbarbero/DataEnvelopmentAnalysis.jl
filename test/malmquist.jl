@@ -82,8 +82,9 @@
     show(IOBuffer(), mprod3)
 
     # Test errors
-    @test_throws ErrorException malmquist(X[1:4,:,:], X[1:5,:,:]) # Different number of observations in inputs and outputs
-    @test_throws ErrorException malmquist(X[:,:,1:2], X[:,:,1:3]) # Different number of time periods in inputs and outputs
-    @test_throws ErrorException prodchange(mprod, :Error)
+    @test_throws DimensionMismatch malmquist(X[1:4,:,:], X[1:5,:,:]) # Different number of observations in inputs and outputs
+    @test_throws DimensionMismatch malmquist(X[:,:,1:2], X[:,:,1:3]) # Different number of time periods in inputs and outputs
+    @test_throws ArgumentError malmquist(X, Y, refperiod = :Error) # Invalid reference period
+    @test_throws ArgumentError prodchange(mprod, :Error)
 
 end

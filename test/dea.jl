@@ -252,15 +252,18 @@
     show(IOBuffer(), deaionoslack)
 
     # Test errors
-    @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5]) #  Different number of observations
-    @test_throws ErrorException dea([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
-    @test_throws ErrorException dea([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
-    @test_throws ErrorException dea([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
-    @test_throws ErrorException dea([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
-    @test_throws ErrorException dea([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws DimensionMismatch dea([1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch dea([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch dea([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch dea([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError dea([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
+    @test_throws ArgumentError dea([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
 
-    @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposX = :Error)  # Invalid inputs disposability
-    @test_throws ErrorException dea([1; 2 ; 3], [4 ; 5; 6], disposY = :Error)  # Invalid outputs disposability
+    @test_throws ArgumentError dea([1; 2 ; 3], [4 ; 5; 6], disposX = :Error)  # Invalid inputs disposability
+    @test_throws ArgumentError dea([1; 2 ; 3], [4 ; 5; 6], disposY = :Error)  # Invalid outputs disposability
+
+    @test_throws ArgumentError targets(deaio, :Error) # Invalid target
+    @test_throws ArgumentError slacks(deaio, :Error) # Invalid slacks
 
     # ------------------
     # Weak Disposability Tests
