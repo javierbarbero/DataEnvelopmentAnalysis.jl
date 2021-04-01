@@ -107,7 +107,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Default optimizer
     if optimizer === nothing 
-        optimizer = DEAOptimizer(GLPK.Optimizer)
+        optimizer = DEAOptimizer(:LP)
     end
 
     # Compute efficiency for each DMU

@@ -79,7 +79,7 @@ function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     # Default optimizer
     if optimizer === nothing 
-        optimizer = DEAOptimizer(GLPK.Optimizer)
+        optimizer = DEAOptimizer(:LP)
     end    
 
     # Get maximum revenue targets and lambdas

@@ -85,7 +85,7 @@ function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
 
     # Default optimizer
     if optimizer === nothing 
-        optimizer = DEAOptimizer(Ipopt.Optimizer)
+        optimizer = DEAOptimizer(:NLP)
     end
 
     # Compute efficiency for each DMU

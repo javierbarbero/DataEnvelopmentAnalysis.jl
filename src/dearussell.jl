@@ -91,9 +91,9 @@ function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     # Default optimizer
     if optimizer === nothing 
         if orient == :Input || orient == :Output
-            optimizer = DEAOptimizer(GLPK.Optimizer)
+            optimizer = DEAOptimizer(:LP)
         else
-            optimizer = DEAOptimizer(Ipopt.Optimizer)
+            optimizer = DEAOptimizer(:NLP)
         end
     end
 
