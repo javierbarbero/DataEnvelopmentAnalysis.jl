@@ -12,7 +12,7 @@ julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 2
 julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia&gt; deaddf(X, Y, Gx = :Ones, Gy = :Ones)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones
@@ -31,7 +31,7 @@ Gx = Ones; Gy = Ones
 10  10.2311        6.12173e-15   0.0              0.0
 11   0.0           0.0           4.0              0.0
 ─────────────────────────────────────────────────────</code></pre><p>To compute the variable returns to scale model, we simply set the <code>rts</code> parameter to <code>:VRS</code>:</p><pre><code class="language-julia-repl">julia&gt; deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = VRS
 Gx = Ones; Gy = Ones
@@ -52,18 +52,18 @@ Gx = Ones; Gy = Ones
 ────────────────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; deaddfvrs = deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
 
 julia&gt; efficiency(deaddfvrs)
-11-element Array{Float64,1}:
+11-element Vector{Float64}:
  -3.4305304041327586e-16
-  1.4188679245283022    
-  0.0                   
-  0.0                   
-  4.067924528301886     
+  1.4188679245283022
+  0.0
+  0.0
+  4.067924528301886
  -1.816728585750256e-16
-  0.0                   
-  0.0                   
-  0.0                   
-  5.000000000000003     
-  0.0     </code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>DEAPeers</code> object:</p><pre><code class="language-julia">julia&gt; peers(deaddfvrs)
+  0.0
+  0.0
+  0.0
+  5.000000000000003
+  0.0</code></pre><p>The optimal peers, <span>$λ$</span>, are returned with the <code>peers</code> function and are returned as a <code>DEAPeers</code> object:</p><pre><code class="language-julia">julia&gt; peers(deaddfvrs)
 DEA Peers
 1: 1 ( 1.0 ) 
 2: 1 ( 0.4981132075471699 ) 6 ( 0.22830188679245278 ) 7 ( 0.2735849056603774 ) 
@@ -80,7 +80,7 @@ DEA Peers
 julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia&gt; deaddf(X, Y, Gx = :Ones, Gy = :Ones)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones
@@ -98,4 +98,4 @@ Gx = Ones; Gy = Ones
 9    1.83784       4.75676       0.0              0.0
 10  10.2311        6.12173e-15   0.0              0.0
 11   0.0           0.0           4.0              0.0
-─────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/deaddf.jl#L21-L70">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../radial/">« Radial Models</a><a class="docs-footer-nextpage" href="../additive/">Additive Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 1 April 2021 17:34">Thursday 1 April 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+─────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/deaddf.jl#L21-L70">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../radial/">« Radial Models</a><a class="docs-footer-nextpage" href="../additive/">Additive Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 April 2021 09:29">Friday 2 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

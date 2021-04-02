@@ -14,7 +14,7 @@ julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
 julia&gt; mprod = malmquist(X, Y);
 
 julia&gt; nperiods(mprod)
-2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/productivity.jl#L8-L30">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.prodchange" href="#DataEnvelopmentAnalysis.prodchange"><code>DataEnvelopmentAnalysis.prodchange</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">prodchange(model::AbstractProductivityDEAModel)</code></pre><p>Return productivity change of a productivity change DEA model.</p><p><strong>Optional Arguments</strong></p><ul><li><code>type=Prod</code>: component of productivity change to return.</li></ul><p>Type specification:</p><ul><li><code>:Prod</code>: productivity change.</li><li><code>:EC</code>: efficiency change.</li><li><code>:TC</code>: technological change.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = Array{Float64,3}(undef, 5, 1, 2);
+2</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/productivity.jl#L8-L30">source</a></section></article><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.prodchange" href="#DataEnvelopmentAnalysis.prodchange"><code>DataEnvelopmentAnalysis.prodchange</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">prodchange(model::AbstractProductivityDEAModel)</code></pre><p>Return productivity change of a productivity change DEA model.</p><p><strong>Optional Arguments</strong></p><ul><li><code>type=Prod</code>: component of productivity change to return.</li></ul><p>Type specification:</p><ul><li><code>:Prod</code>: productivity change.</li><li><code>:EC</code>: efficiency change.</li><li><code>:TC</code>: technological change.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = Array{Float64,3}(undef, 5, 1, 2);
 
 julia&gt; X[:, :, 1] = [2; 3; 5; 4; 4];
 
@@ -29,7 +29,7 @@ julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
 julia&gt; mprod = malmquist(X, Y);
 
 julia&gt; prodchange(mprod)
-5×1 Array{Float64,2}:
+×1 Matrix{Float64}:
  2.0
  1.5
  1.25
@@ -37,7 +37,7 @@ julia&gt; prodchange(mprod)
  0.6000000000000001
 
 julia&gt; prodchange(mprod, :EC)
-5×1 Array{Float64,2}:
+5×1 Matrix{Float64}:
  1.3333333333333333
  1.0
  0.8333333333333334
@@ -45,10 +45,9 @@ julia&gt; prodchange(mprod, :EC)
  0.4
 
 julia&gt; prodchange(mprod, :TC)
-5×1 Array{Float64,2}:
+5×1 Matrix{Float64}:
  1.5
  1.5
  1.5
  1.5
- 1.5
-</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/productivity.jl#L33-L86">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../malmquist/">« Malmquist Index</a><a class="docs-footer-nextpage" href="../../optimizer/">Configuring Optimizer »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 1 April 2021 17:34">Thursday 1 April 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ 1.5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/productivity.jl#L33-L85">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../malmquist/">« Malmquist Index</a><a class="docs-footer-nextpage" href="../../optimizer/">Configuring Optimizer »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 April 2021 09:29">Friday 2 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

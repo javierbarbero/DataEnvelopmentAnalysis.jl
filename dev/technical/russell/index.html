@@ -30,7 +30,7 @@ Orientation = Input; Returns to Scale = CRS
 ──────────────────────────────────────────</code></pre><p>To compute the variable returns to scale model, we simply set the <code>rts</code> parameter to <code>:VRS</code>:</p><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS);
 
 julia&gt; efficiency(dearussellio)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0
@@ -41,7 +41,7 @@ julia&gt; efficiency(dearussellio)
  0.5625
 
 julia&gt; efficiency(dearussellio, :X)
-8×2 Array{Float64,2}:
+8×2 Matrix{Float64}:
  1.0       1.0
  1.0       1.0
  1.0       1.0
@@ -78,7 +78,7 @@ Orientation = Output; Returns to Scale = CRS
 ────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS);
 
 julia&gt; efficiency(dearusselloo)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0
@@ -89,7 +89,7 @@ julia&gt; efficiency(dearusselloo)
  3.0555555555555554
 
 julia&gt; efficiency(dearusselloo, :Y)
-8×2 Array{Float64,2}:
+8×2 Matrix{Float64}:
  1.0      1.0
  1.0      1.0
  1.0      1.0
@@ -127,7 +127,7 @@ Orientation = Graph; Returns to Scale = VRS
 ────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; dearussellgr = dearussell(X, Y, orient = :Graph, rts = :VRS);
 
 julia&gt; efficiency(dearussellgr)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  0.9999996498240314
  0.99999997633837
  0.9999999894257894
@@ -138,7 +138,7 @@ julia&gt; efficiency(dearussellgr)
  0.4477946881737884
 
 julia&gt; efficiency(dearussellgr, :X)
-8×1 Array{Float64,2}:
+8×1 Matrix{Float64}:
  1.0
  0.9999999519440551
  0.9999999739201625
@@ -149,7 +149,7 @@ julia&gt; efficiency(dearussellgr, :X)
  0.4249893701037514
 
 julia&gt; efficiency(dearussellgr, :Y)
-8×1 Array{Float64,2}:
+8×1 Matrix{Float64}:
  1.0000007087261955
  1.0
  1.0
@@ -179,4 +179,4 @@ Orientation = Input; Returns to Scale = VRS
 9     1.0       1.0       1.0       0.0
 10    0.485746  0.563492  0.408     0.0
 11    0.882353  1.0       0.764706  0.0
-───────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/dearussell.jl#L23-L61">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../generalizeddf/">« Generalized Distance Function Models</a><a class="docs-footer-nextpage" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 1 April 2021 17:34">Thursday 1 April 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+───────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/dearussell.jl#L23-L61">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../generalizeddf/">« Generalized Distance Function Models</a><a class="docs-footer-nextpage" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 April 2021 09:29">Friday 2 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

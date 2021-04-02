@@ -13,7 +13,7 @@ julia&gt; X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 2
 julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia&gt; deaadd(X, Y)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = Ones
@@ -32,7 +32,7 @@ Weights = Ones
 10  35.0          25.0             10.0  0.0
 11   4.0           0.0              4.0  4.78849e-16
 ────────────────────────────────────────────────────</code></pre><p>The same model is computed with:</p><pre><code class="language-julia">deaadd(X, Y, :Ones)</code></pre><p>The additive DEA model can be computed under constant returns to scale setting the <code>rts</code> parameter to <code>:CRS</code>:</p><pre><code class="language-julia">deaadd(X, Y, :Ones, rts = :CRS)</code></pre><p>The package can compute a wide class of different DEA models known as general  efficiency measures (GEMs):</p><ul><li>The measure of inefficiency proportions (MIP).</li><li>The normalized weighted additive DEA model.</li><li>The range adjusted measure (RAM).</li><li>The bounded adjusted  measure (BAM).</li></ul><h2 id="Measure-of-Inefficiency-Proportions-(MIP)"><a class="docs-heading-anchor" href="#Measure-of-Inefficiency-Proportions-(MIP)">Measure of Inefficiency Proportions (MIP)</a><a id="Measure-of-Inefficiency-Proportions-(MIP)-1"></a><a class="docs-heading-anchor-permalink" href="#Measure-of-Inefficiency-Proportions-(MIP)" title="Permalink"></a></h2><p>The measure of inefficiency proportions (MIP), <em>Charnes et al. (1987)</em> and <em>Cooper et al. (1999)</em>, use the weights:</p><p class="math-container">\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/{\mathbf{x}}_{o},1/{{\mathbf{y}}_{o}})\]</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :MIP)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = MIP
@@ -51,7 +51,7 @@ Weights = MIP
 10   1.04322      17.0             15.0   1.0
 11   0.235294      0.0              4.0   0.0
 ─────────────────────────────────────────────────────</code></pre><h2 id="Normalized-Weighted-Additive-Model"><a class="docs-heading-anchor" href="#Normalized-Weighted-Additive-Model">Normalized Weighted Additive Model</a><a id="Normalized-Weighted-Additive-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Normalized-Weighted-Additive-Model" title="Permalink"></a></h2><p>The normalized weighted additive DEA model, <em>Lovell and Pastor (1995)</em>, use the weights:</p><p class="math-container">\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/{\mathbf{σ^-}},1/{{\mathbf{σ^+}}})\]</p><p>where <span>$\mathbf{σ^-}$</span>and <span>$\mathbf{σ^+}$</span> are the standard deviations of inputs and outputs respectively.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :Normalized)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = Normalized
@@ -70,7 +70,7 @@ Weights = Normalized
 10   3.98989      17.0          15.0           1.0
 11   0.642462      0.0           4.0           0.0
 ──────────────────────────────────────────────────────────</code></pre><h2 id="Range-Adjusted-Measure-(RAM)"><a class="docs-heading-anchor" href="#Range-Adjusted-Measure-(RAM)">Range Adjusted Measure (RAM)</a><a id="Range-Adjusted-Measure-(RAM)-1"></a><a class="docs-heading-anchor-permalink" href="#Range-Adjusted-Measure-(RAM)" title="Permalink"></a></h2><p>The range adjusted measure (RAM), <em>Cooper et al. (1999)</em>, use the weights::</p><p class="math-container">\[(\mathbf{\rho^{-}, \mathbf{\rho^{+}}})=(1/(m+s)R^-,(1/(m+s)R^+)\]</p><p>where <span>$R^-$</span>and <span>$R^+$</span>are the inputs and outputs variables&#39; ranges.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :RAM)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = RAM
@@ -89,7 +89,7 @@ Weights = RAM
 10   0.417646     17.0          15.0           1.0
 11   0.0666667     0.0           4.0           0.0
 ──────────────────────────────────────────────────────────</code></pre><h2 id="Bounded-Adjusted-Measure-(BAM)"><a class="docs-heading-anchor" href="#Bounded-Adjusted-Measure-(BAM)">Bounded Adjusted  Measure (BAM)</a><a id="Bounded-Adjusted-Measure-(BAM)-1"></a><a class="docs-heading-anchor-permalink" href="#Bounded-Adjusted-Measure-(BAM)" title="Permalink"></a></h2><p>The bounded adjusted  measure (BAM), <em>Cooper et al. (2011)</em>, use the weights:::</p><p class="math-container">\[(\mathbf{\rho_{x}^{-}, \mathbf{\rho_{y}^{+}}})=(1/(m+s)({\mathbf{x}}_{o}-{\mathbf{\underline{x}}}),(1/(m+s)({\mathbf{\overline{y}}} - {\mathbf{y}}_{o})\]</p><p>where <span>$\mathbf{\underline{x}}$</span> and <span>$\mathbf{\overline{y}}$</span> are the minimum and maximum observed values of inputs and outputs respectively.</p><pre><code class="language-julia-repl">julia&gt; deaadd(X, Y, :BAM)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = BAM
@@ -112,7 +112,7 @@ Weights = BAM
 julia&gt; Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia&gt; deaadd(X, Y, :MIP)
-Weighted Additive DEA Model
+Weighted Additive DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Orientation = Graph; Returns to Scale = VRS
 Weights = MIP
@@ -130,4 +130,4 @@ Weights = MIP
 9    0.0           0.0              0.0   0.0
 10   1.04322      17.0             15.0   1.0
 11   0.235294      0.0              4.0   0.0
-─────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/deaadd.jl#L24-L74">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../directional/">« Directional Distance Function Models</a><a class="docs-footer-nextpage" href="../generalizeddf/">Generalized Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 1 April 2021 17:34">Thursday 1 April 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+─────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/deaadd.jl#L24-L74">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../directional/">« Directional Distance Function Models</a><a class="docs-footer-nextpage" href="../generalizeddf/">Generalized Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 April 2021 09:29">Friday 2 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

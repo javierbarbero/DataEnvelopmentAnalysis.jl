@@ -12,7 +12,7 @@ julia&gt; Y[:, :, 1] = [1; 4; 6; 3; 5];
 julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
 
 julia&gt; malmquist(X, Y)
-Mamlmquist DEA Model
+Mamlmquist DEA Model 
 DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
 Orientation = Input; Returns to Scale = CRS
 Referene period = Geomean
@@ -25,8 +25,8 @@ Referene period = Geomean
 4  1.33333  0.888889  1.5
 5  0.6      0.4       1.5
 ─────────────────────────
-M  = Malmquist Productivity Index
-EC = Efficiency Change
+M  = Malmquist Productivity Index 
+EC = Efficiency Change 
 TC = Technological Change</code></pre><h3 id="malmquist-Function-Documentation"><a class="docs-heading-anchor" href="#malmquist-Function-Documentation">malmquist Function Documentation</a><a id="malmquist-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#malmquist-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.malmquist" href="#DataEnvelopmentAnalysis.malmquist"><code>DataEnvelopmentAnalysis.malmquist</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">malmquist(X, Y)</code></pre><p>Compute the Malmquist productivity index using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses between input oriented radial model <code>:Input</code> or output oriented radial model <code>:Output</code>.</li><li><code>refperiod=:Geomean</code>: chooses reference period for technological change: <code>:Base</code>, <code>:Comparison</code> or <code>:Geomean</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = Array{Float64,3}(undef, 5, 1, 2);
 
 julia&gt; X[:, :, 1] = [2; 3; 5; 4; 4];
@@ -40,7 +40,7 @@ julia&gt; Y[:, :, 1] = [1; 4; 6; 3; 5];
 julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
 
 julia&gt; malmquist(X, Y)
-Mamlmquist DEA Model
+Mamlmquist DEA Model 
 DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
 Orientation = Input; Returns to Scale = CRS
 Referene period = Geomean
@@ -53,6 +53,6 @@ Referene period = Geomean
 4  1.33333  0.888889  1.5
 5  0.6      0.4       1.5
 ─────────────────────────
-M  = Malmquist Productivity Index
-EC = Efficiency Change
-TC = Technological Change</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/aecf648cc45387427160f14042344071e1599367/src/malmquist.jl#L19-L61">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../economic/commoneconomic/">« Common functions for economic models</a><a class="docs-footer-nextpage" href="../commonproductivity/">Common functions for productivity change models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 1 April 2021 17:34">Thursday 1 April 2021</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+M  = Malmquist Productivity Index 
+EC = Efficiency Change 
+TC = Technological Change</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/6203aaf3658b99cef5552db525dde65bf3669717/src/malmquist.jl#L19-L61">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../economic/commoneconomic/">« Common functions for economic models</a><a class="docs-footer-nextpage" href="../commonproductivity/">Common functions for productivity change models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 2 April 2021 09:29">Friday 2 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
