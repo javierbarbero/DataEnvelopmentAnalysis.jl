@@ -34,7 +34,7 @@ julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones
@@ -58,7 +58,7 @@ Gx = Ones; Gy = Ones
 To compute the variable returns to scale model, we simply set the `rts` parameter to `:VRS`:
 ```jldoctest 1
 julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = VRS
 Gx = Ones; Gy = Ones
@@ -84,18 +84,18 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> deaddfvrs = deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
 
 julia> efficiency(deaddfvrs)
-11-element Array{Float64,1}:
+11-element Vector{Float64}:
  -3.4305304041327586e-16
-  1.4188679245283022    
-  0.0                   
-  0.0                   
-  4.067924528301886     
+  1.4188679245283022
+  0.0
+  0.0
+  4.067924528301886
  -1.816728585750256e-16
-  0.0                   
-  0.0                   
-  0.0                   
-  5.000000000000003     
-  0.0     
+  0.0
+  0.0
+  0.0
+  5.000000000000003
+  0.0
 ```
 
 The optimal peers, ``λ``, are returned with the `peers` function and are returned as a `DEAPeers` object:

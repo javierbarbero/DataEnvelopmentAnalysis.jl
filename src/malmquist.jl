@@ -41,7 +41,7 @@ julia> Y[:, :, 1] = [1; 4; 6; 3; 5];
 julia> Y[:, :, 2] = [1; 4; 6; 3; 3];
 
 julia> malmquist(X, Y)
-Mamlmquist DEA Model
+Mamlmquist DEA Model 
 DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
 Orientation = Input; Returns to Scale = CRS
 Referene period = Geomean
@@ -54,8 +54,8 @@ Referene period = Geomean
 4  1.33333  0.888889  1.5
 5  0.6      0.4       1.5
 ─────────────────────────
-M  = Malmquist Productivity Index
-EC = Efficiency Change
+M  = Malmquist Productivity Index 
+EC = Efficiency Change 
 TC = Technological Change
 ```
 """

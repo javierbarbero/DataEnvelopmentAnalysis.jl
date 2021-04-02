@@ -59,7 +59,7 @@ julia> Y[:, :, 2] = [1; 4; 6; 3; 3];
 julia> mprod = malmquist(X, Y);
 
 julia> prodchange(mprod)
-5×1 Array{Float64,2}:
+×1 Matrix{Float64}:
  2.0
  1.5
  1.25
@@ -67,7 +67,7 @@ julia> prodchange(mprod)
  0.6000000000000001
 
 julia> prodchange(mprod, :EC)
-5×1 Array{Float64,2}:
+5×1 Matrix{Float64}:
  1.3333333333333333
  1.0
  0.8333333333333334
@@ -75,13 +75,12 @@ julia> prodchange(mprod, :EC)
  0.4
 
 julia> prodchange(mprod, :TC)
-5×1 Array{Float64,2}:
+5×1 Matrix{Float64}:
  1.5
  1.5
  1.5
  1.5
  1.5
-
 ```
 """
 function prodchange(model::AbstractProductivityDEAModel, type::Symbol = :Prod)::Matrix

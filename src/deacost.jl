@@ -38,7 +38,7 @@ julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 
 julia> deacost(X, Y, W)
-Cost DEA Model
+Cost DEA Model 
 DMUs = 5; Inputs = 2; Outputs = 2
 Orientation = Input; Returns to Scale = VRS
 ──────────────────────────────────

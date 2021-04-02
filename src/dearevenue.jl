@@ -38,7 +38,7 @@ julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 
 julia> dearevenue(X, Y, P)
-Revenue DEA Model
+Revenue DEA Model 
 DMUs = 5; Inputs = 2; Outputs = 2
 Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────

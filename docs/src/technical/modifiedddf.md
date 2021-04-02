@@ -58,7 +58,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
 
 julia> efficiency(deamddfvrs)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  7.423112595976122e-7
  4.0394299500299253e-7
  4.840938492567068e-7
@@ -72,7 +72,7 @@ julia> efficiency(deamddfvrs)
 Estimated $\beta$ on inputs and outputs are returned with the `efficiency` function:
 ```jldoctest 1
 julia> efficiency(deamddfvrs, :X)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  0.0
  3.95266969245659e-7
  4.870818366962988e-7
@@ -83,7 +83,7 @@ julia> efficiency(deamddfvrs, :X)
  5.412000442949787
 
 julia> efficiency(deamddfvrs, :Y)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  7.498338684288291e-7
  8.67602575733351e-9
  0.0

@@ -47,7 +47,7 @@ julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
 julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones)
-Directional DF DEA Model
+Directional DF DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones

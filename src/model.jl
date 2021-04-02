@@ -70,14 +70,12 @@ julia> dmunames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
 julia> deaio = dea(X, Y, names = dmunames);
 
 julia> names(deaio)
-11-element Array{String,1}:
+11-element Vector{String}:
  "A"
  "B"
  "C"
  "D"
- "E"
- "F"
- "G"
+ ⋮
  "H"
  "I"
  "J"

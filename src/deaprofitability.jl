@@ -40,7 +40,7 @@ julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 
 julia> deaprofitability(X, Y, W, P)
-Profitability DEA Model
+Profitability DEA Model 
 DMUs = 5; Inputs = 2; Outputs = 2
 alpha = 0.5; Returns to Scale = VRS
 ─────────────────────────────────────────────────────────

@@ -65,7 +65,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> deaergvrs = deaerg(X, Y, rts = :VRS);
 
 julia> efficiency(deaergvrs)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0
@@ -79,7 +79,7 @@ julia> efficiency(deaergvrs)
 Estimated $\beta$'s are returned with the `efficiency` function using `:beta` as the second argument:
 ```jldoctest 1
 julia> efficiency(deaergvrs, :beta)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0

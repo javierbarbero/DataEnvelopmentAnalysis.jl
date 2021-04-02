@@ -61,7 +61,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS);
 
 julia> efficiency(dearussellio)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0
@@ -72,7 +72,7 @@ julia> efficiency(dearussellio)
  0.5625
 
 julia> efficiency(dearussellio, :X)
-8×2 Array{Float64,2}:
+8×2 Matrix{Float64}:
  1.0       1.0
  1.0       1.0
  1.0       1.0
@@ -131,7 +131,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS);
 
 julia> efficiency(dearusselloo)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  1.0
  1.0
  1.0
@@ -142,7 +142,7 @@ julia> efficiency(dearusselloo)
  3.0555555555555554
 
 julia> efficiency(dearusselloo, :Y)
-8×2 Array{Float64,2}:
+8×2 Matrix{Float64}:
  1.0      1.0
  1.0      1.0
  1.0      1.0
@@ -201,7 +201,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> dearussellgr = dearussell(X, Y, orient = :Graph, rts = :VRS);
 
 julia> efficiency(dearussellgr)
-8-element Array{Float64,1}:
+8-element Vector{Float64}:
  0.9999996498240314
  0.99999997633837
  0.9999999894257894
@@ -212,7 +212,7 @@ julia> efficiency(dearussellgr)
  0.4477946881737884
 
 julia> efficiency(dearussellgr, :X)
-8×1 Array{Float64,2}:
+8×1 Matrix{Float64}:
  1.0
  0.9999999519440551
  0.9999999739201625
@@ -223,7 +223,7 @@ julia> efficiency(dearussellgr, :X)
  0.4249893701037514
 
 julia> efficiency(dearussellgr, :Y)
-8×1 Array{Float64,2}:
+8×1 Matrix{Float64}:
  1.0000007087261955
  1.0
  1.0

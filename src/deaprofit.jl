@@ -51,9 +51,10 @@ julia> P = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
 julia> W = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
 
 julia> deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)
-Profit DEA Model
+Profit DEA Model 
 DMUs = 8; Inputs = 2; Outputs = 2
 Returns to Scale = VRS
+Gx = Monetary; Gy = Monetary
 ─────────────────────────────────────
    Profit     Technical    Allocative
 ─────────────────────────────────────

@@ -63,16 +63,16 @@ Orientation = Input; Returns to Scale = VRS
 ───────────────────────────────────────────────────────
     efficiency       slackX1       slackX2      slackY1
 ───────────────────────────────────────────────────────
-1     1.0        0.0           0.0          0.0        
-2     0.869986   0.0           0.0          0.0        
-3     1.0        0.0           2.56789e-13  0.0        
-4     1.0       -8.03397e-16   0.0          0.0        
-5     0.71164    0.0           0.0          2.69841    
+1     1.0        0.0           0.0          0.0
+2     0.869986   0.0           0.0          0.0
+3     1.0        0.0           2.56789e-13  0.0
+4     1.0       -8.03397e-16   0.0          0.0
+5     0.71164    0.0           0.0          2.69841
 6     1.0        2.70127e-16   0.0          3.78178e-16
-7     1.0        0.0           0.0          0.0        
-8     1.0        0.0          -1.27018e-14  0.0        
-9     1.0        0.0           0.0          0.0        
-10    0.493121   3.90444e-15   0.0          0.0        
+7     1.0        0.0           0.0          0.0
+8     1.0        0.0          -1.27018e-14  0.0
+9     1.0        0.0           0.0          0.0
+10    0.493121   3.90444e-15   0.0          0.0
 11    1.0        0.0           4.0          4.78849e-16
 ───────────────────────────────────────────────────────
 ```
@@ -82,7 +82,7 @@ Estimated efficiency scores are returned with the `efficiency` function:
 julia> deaiovrs = dea(X, Y, orient = :Input, rts = :VRS);
 
 julia> efficiency(deaiovrs)
-11-element Array{Float64,1}:
+11-element Vector{Float64}:
  1.0
  0.8699861687413553
  1.0000000000000002
@@ -116,7 +116,7 @@ DEA Peers
 Input and output slacks are returned with the `slacks` function:
 ```jldoctest 1
 julia> slacks(deaiovrs, :X)
-11×2 Array{Float64,2}:
+11×2 Matrix{Float64}:
   0.0           0.0
   0.0           0.0
   0.0           2.56789e-13
@@ -128,9 +128,10 @@ julia> slacks(deaiovrs, :X)
   0.0           0.0
   3.90444e-15   0.0
   0.0           4.0
-
+```
+```jldoctest 1
 julia> slacks(deaiovrs, :Y)
-11×1 Array{Float64,2}:
+11×1 Matrix{Float64}:
  0.0
  0.0
  0.0
@@ -147,7 +148,7 @@ julia> slacks(deaiovrs, :Y)
 Input and output optimal targets are returned with the `targets` function:
 ```jldoctest 1
 julia> targets(deaiovrs, :X)
-11×2 Array{Float64,2}:
+11×2 Matrix{Float64}:
   5.0     13.0
  13.9198  10.4398
  16.0     26.0
@@ -159,9 +160,10 @@ julia> targets(deaiovrs, :X)
  37.0     14.0
  20.7111  12.328
   5.0     13.0
-
+```
+```jldoctest 1
 julia> targets(deaiovrs, :Y)
-11×1 Array{Float64,2}:
+11×1 Matrix{Float64}:
  12.0
  14.0
  25.0
@@ -201,16 +203,16 @@ Orientation = Output; Returns to Scale = VRS
 ──────────────────────────────────────────────────
     efficiency       slackX1  slackX2      slackY1
 ──────────────────────────────────────────────────
-1      1.0       0.0              0.0  0.0        
-2      1.50752   5.78599e-15      0.0  0.0        
-3      1.0       0.0              0.0  0.0        
-4      1.0      -8.03397e-16      0.0  0.0        
-5      3.20395  -3.38377e-15      0.0  0.0        
+1      1.0       0.0              0.0  0.0
+2      1.50752   5.78599e-15      0.0  0.0
+3      1.0       0.0              0.0  0.0
+4      1.0      -8.03397e-16      0.0  0.0
+5      3.20395  -3.38377e-15      0.0  0.0
 6      1.0       2.70127e-16      0.0  3.78178e-16
-7      1.0       0.0              0.0  0.0        
-8      1.0       0.0              0.0  0.0        
-9      1.0       0.0              0.0  0.0        
-10     1.19231   5.0             11.0  0.0        
+7      1.0       0.0              0.0  0.0
+8      1.0       0.0              0.0  0.0
+9      1.0       0.0              0.0  0.0
+10     1.19231   5.0             11.0  0.0
 11     1.0       0.0              4.0  4.78849e-16
 ──────────────────────────────────────────────────
 ```

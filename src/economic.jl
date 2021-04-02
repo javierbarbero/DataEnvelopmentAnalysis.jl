@@ -54,20 +54,20 @@ julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 julia> profitbl = deaprofitability(X, Y, W, P)
 julia> efficiency(profitbl)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  0.38795983677810825
  0.9999999082180037
  0.7652173234322985
- 0.249999984621284
+ 0.24999998462128403
  0.15879016408241559
 
 julia> efficiency(profitbl, :Allocative)
-5-element Array{Float64,1}:
- 0.6096511887087087
+5-element Vector{Float64}:
+ 0.6096511887087086
  0.9999999387832732
  0.765217344390068
- 0.9999999256504388
- 0.6086956149040872
+ 0.9999999256504392
+ 0.608695614904087
 ```
 """
 function efficiency(model::AbstractEconomicDEAModel, type::Symbol = :Economic)::Vector
@@ -121,7 +121,7 @@ julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 julia> profit = deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary);
 julia> targets(profit, :X)
-5×2 Array{Float64,2}:
+5×2 Matrix{Float64}:
  2.0  4.0
  2.0  4.0
  2.0  4.0
@@ -129,7 +129,7 @@ julia> targets(profit, :X)
  2.0  4.0
 
 julia> targets(profit, :Y)
-5×2 Array{Float64,2}:
+5×2 Matrix{Float64}:
  10.0  8.0
  10.0  8.0
  10.0  8.0
@@ -162,7 +162,7 @@ julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
 julia> profit = deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Ones)
 julia> normfactor(profit)
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  8.0
  8.0
  8.0
