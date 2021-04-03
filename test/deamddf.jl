@@ -100,6 +100,7 @@
 
     # Print
     show(IOBuffer(), deamddfcrs)
+    show(IOBuffer(), deamddfnoslack)
     show(IOBuffer(), deamddfvrs)
 
     # ------------------
