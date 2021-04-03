@@ -21,7 +21,7 @@ For a tutorial on how to use the package, check the documentation on the [Radial
 
 Technical efficiency DEA models:
 ```@contents
-Pages = ["technical/radial.md", "technical/directional.md", "technical/additive.md", "technical/generalizeddf.md", "technical/russell.md", "technical/enhancedrussell.md", "technical/modifiedddf.md"]
+Pages = ["technical/radial.md", "technical/directional.md", "technical/additive.md", "technical/generalizeddf.md", "technical/russell.md", "technical/enhancedrussell.md", "technical/modifiedddf.md", "technical/holder.md"]
 Depth = 2
 ```
 

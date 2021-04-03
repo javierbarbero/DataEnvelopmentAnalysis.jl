@@ -33,6 +33,7 @@ module DataEnvelopmentAnalysis
     TechnicalDEAModel,
     RadialDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel, 
     RussellDEAModel, EnhancedRussellGraphDEAModel, ModifiedDDFDEAModel,
+    AbstractHolderDEAModel, HolderL1DEAModel, HolderL2DEAModel, HolderLInfDEAModel,
     AbstractEconomicDEAModel,
     AbstractCostDEAModel, AbstractRevenueDEAModel, AbstractProfitDEAModel, AbstractProfitabilityDEAModel,
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
@@ -44,7 +45,7 @@ module DataEnvelopmentAnalysis
     peers, peersmatrix, ispeer,
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf, 
-    dearussell, deaerg, deamddf,
+    dearussell, deaerg, deamddf, deaholder,
     efficiency, slacks,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
@@ -70,6 +71,7 @@ module DataEnvelopmentAnalysis
     include("dearussell.jl")
     include("deaerg.jl")
     include("deamddf.jl")
+    include("deaholder.jl")
 
     include("economic.jl")
     include("econoptim.jl")

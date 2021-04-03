@@ -12,6 +12,7 @@ using Test
     include("dearussell.jl")
     include("deaerg.jl")
     include("deamddf.jl")
+    include("deaholder.jl")
 
     include("econoptim.jl")
     include("deacost.jl")

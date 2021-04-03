@@ -9,6 +9,7 @@ end
 
 - Aparicio, J., Pastor, J. T., and Ray, S. C. (2013). "**An overall measure of technical inefficiency at the firm and at the industry level: the ‘lost profit on outlay’**." *European Journal of Operational Research*, 226(1), 154-162.
 - Banker, R., Charnes, A., and Cooper, W.W. (1984). "**Some Models for Estimating Technical and Scale Inefficiencies in Data Envelopment Analysis.**" *Management Science*, 30(9), 1078–1092.
+- Briec, W. (1998). "**Hölder distance function and measurement of technical efficiency**." *Journal of Productivity Analysis*, 11: 111–131.
 - Caves D.W., Christensen L.R., Diewert, W.E. (1982). "**The Economic Theory of Index Numbers and the Measurement of Input, Output, and Productivity.**" *Econometrica*, 50(6), 1393–1414.
 - Chambers, R.G., Chung, Y., and Färe R. (1996). "**Benefit and Distance Functions.**" *Journal of Economic Theory*, 70(2), 407 – 419.
 - Chambers, R.G., Chung, Y., and Färe R. (1998). "**Profit, Directional Distance Functions, and Nerlovian Efficiency.**” Journal of Optimization Theory and Applications 98(2), 351-364.
