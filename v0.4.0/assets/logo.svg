@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450pt" height="450pt" viewBox="0 0 450 450" version="1.1">
+<g id="surface2">
+<path style="fill:none;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 125 325 L 175 125 "/>
+<path style="fill:none;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 175 125 L 375 75 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(79.607843%,23.529412%,20%);fill-opacity:1;" d="M 165 325 C 165 347.089844 147.089844 365 125 365 C 102.910156 365 85 347.089844 85 325 C 85 302.910156 102.910156 285 125 285 C 147.089844 285 165 302.910156 165 325 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(21.960784%,59.607843%,14.901961%);fill-opacity:1;" d="M 215 125 C 215 147.089844 197.089844 165 175 165 C 152.910156 165 135 147.089844 135 125 C 135 102.910156 152.910156 85 175 85 C 197.089844 85 215 102.910156 215 125 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(58.431373%,34.509804%,69.803922%);fill-opacity:1;" d="M 415 75 C 415 97.089844 397.089844 115 375 115 C 352.910156 115 335 97.089844 335 75 C 335 52.910156 352.910156 35 375 35 C 397.089844 35 415 52.910156 415 75 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(25.098039%,38.823529%,84.705882%);fill-opacity:1;" d="M 315 225 C 315 247.089844 297.089844 265 275 265 C 252.910156 265 235 247.089844 235 225 C 235 202.910156 252.910156 185 275 185 C 297.089844 185 315 202.910156 315 225 "/>
+<path style="fill:none;stroke-width:20;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 25 425 L 25 39.640625 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 5 39.640625 L 25 5 L 45 39.640625 "/>
+<path style="fill:none;stroke-width:20;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 15 425 L 410.359375 425 "/>
+<path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 410.359375 405 L 445 425 L 410.359375 445 "/>
+</g>
+</svg>
