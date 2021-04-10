@@ -13,6 +13,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Enhanced Russell Graph Slack Based Measure" => "technical/enhancedrussell.md",
                 "Modified Directional Distance Function" => "technical/modifiedddf.md",
                 "Hölder Distance Function" => "technical/holder.md",
+                "Reverse Directional Distance Function" => "technical/reverseddf.md",
                 "Common functions for technical models" => "technical/commontechnical.md"
                 ],
         "Economic Efficiency Models" => Any[

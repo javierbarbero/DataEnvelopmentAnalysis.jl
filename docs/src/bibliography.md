@@ -24,6 +24,7 @@ end
 - Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" American Economic Review, 84(1), 66–83.
 - Farrell, M. J. (1957). "**The Measurement of Productive Efficiency of Production.**" Journal of the Royal Statistical Society, Series A, 120(III), 253-281.
 - Lovell, C. A. K., and Pastor, J. T. (1995). "**Units Invariant and Translation Invariant DEA Models.**" *Operations Research Letters*, 18, 147–151.
+- Pastor, J.T., Aparicio, J., Alcaraz, J., Vidal, F. and Pastor, D. (2016). “**The Reverse Directional Distance Function**” in *Advances in Efficiency and Productivity*, edited by J. Aparicio, C.A.K. Lovell and J.T. Pastor, Springer, Cham. 
 - Pastor, J. T., Ruiz, J. L., and Sirvent, I. (1999). "**An enhanced DEA Russell graph efficiency measure**." *European Journal of Operational Research*, 115(3), 596-607.
 - Pastor, J.T., Lovell, C.A.K., and Aparicio, J. (2012). "**Families of linear efficiency programs based on Debreu’s loss function.**" *Journal of Productivity Analysis* 38(2), 109-120.
 - Shephard, R.W. (1953). *Cost and production functions.* Princeton University Press, Princeton, New Jersey.
