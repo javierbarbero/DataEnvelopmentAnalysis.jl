@@ -1,6 +1,12 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.4.0 (April 10, 2021)
+----------------------------
+
+- Add Hölder distance function model.
+- Add Reverse directional distance function model.
+
 Version 0.3.0 (March 18, 2021)
 ----------------------------
 
