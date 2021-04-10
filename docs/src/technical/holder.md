@@ -9,9 +9,9 @@ end
 
 *Briec (1998)* defined technical inefficiency using Hölder norms.
 
-## Hölder 1
+## Hölder L1
 
-In this example we compute the Hölder l 1 DEA model under varible returns to scale:
+In this example we compute the Hölder L1 DEA model under varible returns to scale:
 ```jldoctest 1
 julia> using DataEnvelopmentAnalysis
 
@@ -68,16 +68,16 @@ julia> efficiency(holderl1, :min)
 ```
 with inputs and outputs numbered sequentially.
 
-## Hölder 2
+## Hölder L2
 
 !!! warning "Requieres a solver that supports SOS constraints"
-    The Hölder l 2 model requieres a solver that supports SOS constraints, such as [Gurobi](https://github.com/jump-dev/Gurobi.jl). 
+    The Hölder L2 model requieres a solver that supports SOS constraints, such as [Gurobi](https://github.com/jump-dev/Gurobi.jl). 
 
     Solving the model with Ipopt will return invalid results.
 
-## Hölder Inf
+## Hölder LInf
 
-In this example we compute the Hölder l Inf DEA model under varible returns to scale:
+In this example we compute the Hölder LInf DEA model under varible returns to scale:
 ```jldoctest 1
 julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 

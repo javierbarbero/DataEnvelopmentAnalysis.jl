@@ -20,7 +20,7 @@ DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA mode
 | `deaerg`       |         | LP           | GLPK              |
 | `deamddf`      |         | NLP          | Ipopt             |
 | `deaholder`    | `l = 1` | LP           | GLPK              |
-| `deaholder`    | `l = 2` | LP           |                   |
+| `deaholder`    | `l = 2` | QP           |                   |
 | `deaholder`    |`l = Inf`| LP           | GLPK              |
 | `deacost`      |         | LP           | GLPK              |
 | `dearevenue`   |         | LP           | GLPK              |
@@ -32,6 +32,7 @@ DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA mode
 Where:
 - LP = Linear programming.
 - NLP = Nonlinear programming.
+- QP = Quadratic programming.
 
 Models can be solved using a different optimizer by passing a `DEAOptimizer` object to the `optimizer` optional argument. See [JuMP documentation](https://jump.dev/JuMP.jl/v0.21.6/installation/#Installing-a-solver) for a list of all available solvers.
 
