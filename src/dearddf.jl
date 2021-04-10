@@ -201,9 +201,7 @@ function dearddfdirections(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, mea
 
         # Build or get user directions
         if typeof(Gx) == Symbol
-            if Gx == :Zeros
-                Gx = zeros(size(X))
-            elseif Gx == :Ones
+            if Gx == :Ones
                 Gx = ones(size(X))
             elseif Gx == :Observed
                 Gx = X
@@ -215,9 +213,7 @@ function dearddfdirections(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, mea
         end
 
         if typeof(Gy) == Symbol
-            if Gy == :Zeros
-                Gy = zeros(size(Y))
-            elseif Gy == :Ones
+            if Gy == :Ones
                 Gy = ones(size(Y))
             elseif Gy == :Observed
                 Gy = Y

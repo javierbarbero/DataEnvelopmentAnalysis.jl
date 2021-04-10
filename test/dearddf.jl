@@ -62,7 +62,7 @@
     # Print
     show(IOBuffer(), rddferg)   
 
-    # Reverse DDF for Modified DDF :VRS
+    # Reverse DDF for Modified DDF for :Observed :VRS 
     mddf = deamddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS, slack = false)
     rddfmddf = dearddf(X, Y, :MDDF, Gx = :Observed, Gy = :Observed, rts = :VRS)
 
@@ -70,12 +70,26 @@
     @test targets(rddfmddf, :X) ≈ targets(mddf, :X) atol = 1e-5
     @test targets(rddfmddf, :Y) ≈ targets(mddf, :Y) atol = 1e-5
     
-    # Reverse DDF for Modified DDF :CRS
+    # Reverse DDF for Modified DDF for :Observed :CRS
     mddfcrs = deamddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :CRS, slack = false)
     rddfmddfcrs = dearddf(X, Y, :MDDF, Gx = :Observed, Gy = :Observed, rts = :CRS)
 
     @test targets(rddfmddfcrs, :X) ≈ targets(mddfcrs, :X) atol = 1e-5
     @test targets(rddfmddfcrs, :Y) ≈ targets(mddfcrs, :Y) atol = 1e-5
+
+    # Reverse DDF for Modified DDF for :Ones :VRS 
+    mddfones = deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS, slack = false)
+    rddfmddfones = dearddf(X, Y, :MDDF, Gx = :Ones, Gy = :Ones, rts = :VRS)
+
+    @test targets(rddfmddfones, :X) ≈ targets(mddfones, :X) atol = 1e-5
+    @test targets(rddfmddfones, :Y) ≈ targets(mddfones, :Y) atol = 1e-5
+
+    # Reverse DDF for Modified DDF for :Mean :VRS 
+    mddfmean = deamddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :VRS, slack = false)
+    rddfmddfmean = dearddf(X, Y, :MDDF, Gx = :Mean, Gy = :Mean, rts = :VRS)
+
+    @test targets(rddfmddfmean, :X) ≈ targets(mddfmean, :X) atol = 1e-5
+    @test targets(rddfmddfmean, :Y) ≈ targets(mddfmean, :Y) atol = 1e-5
 
     # Print
     show(IOBuffer(), rddfmddf)
