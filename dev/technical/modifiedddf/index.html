@@ -19,9 +19,9 @@ Gx = Ones; Gy = Ones
 ───────────────────────────────────────────────────────
    efficiency          βx          βy  slackX1  slackY1
 ───────────────────────────────────────────────────────
-1  7.42311e-7  0.0         7.49834e-7      0.0      0.0
-2  4.03943e-7  3.95267e-7  8.67603e-9      0.0      0.0
-3  4.84094e-7  4.87082e-7  0.0             0.0      0.0
+1  7.42338e-7  0.0         7.49867e-7      0.0      0.0
+2  3.97731e-7  3.78622e-7  1.91088e-8      0.0      0.0
+3  4.83998e-7  4.86874e-7  0.0             0.0      0.0
 4  1.32755e-6  1.33672e-6  0.0             0.0      0.0
 5  4.0         2.0         2.0             0.0      0.0
 6  7.33333     7.33333     0.0             0.0      0.0
@@ -31,28 +31,28 @@ Gx = Ones; Gy = Ones
 
 julia&gt; efficiency(deamddfvrs)
 8-element Vector{Float64}:
- 7.423112595976122e-7
- 4.0394299500299253e-7
- 4.840938492567068e-7
- 1.3275492427779482e-6
- 4.000000398014331
- 7.333333863503834
- 2.0000013699988735
+ 7.423380868494941e-7
+ 3.9773060690474414e-7
+ 4.839979925116349e-7
+ 1.327547239652975e-6
+ 4.000000398014332
+ 7.333333863503837
+ 2.0000013477402137
  8.059000425674004</code></pre><p>Estimated <span>$\beta$</span> on inputs and outputs are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; efficiency(deamddfvrs, :X)
 8-element Vector{Float64}:
  0.0
- 3.95266969245659e-7
- 4.870818366962988e-7
- 1.3367167143310045e-6
- 2.000000408809775
- 7.333333865967322
- 2.0000013799988317
+ 3.786218512295063e-7
+ 4.868738237228173e-7
+ 1.3367161141172963e-6
+ 2.0000004088097754
+ 7.333333865967325
+ 2.0000013569193515
  5.412000442949787
 
 julia&gt; efficiency(deamddfvrs, :Y)
 8-element Vector{Float64}:
- 7.498338684288291e-7
- 8.67602575733351e-9
+ 7.498667608019586e-7
+ 1.910875567523785e-8
  0.0
  0.0
  1.9999999892045561
@@ -71,11 +71,11 @@ Gx = Ones; Gy = Ones
     efficiency           βx           βy  slackX1  slackY1
 ──────────────────────────────────────────────────────────
 1   1.5         9.42849e-11   1.5             0.0      0.0
-2   5.26619e-7  0.0           5.36618e-7      0.0      0.0
+2   4.97957e-7  2.6901e-10    4.97688e-7      0.0      0.0
 3   2.0         6.35153e-11   2.0             0.0      0.0
 4   6.0         3.92967e-11   6.0             0.0      0.0
 5   4.5         4.74326e-11   4.5             0.0      0.0
 6  10.5         3.39566e-11  10.5             0.0      0.0
 7   8.5         3.53945e-11   8.5             0.0      0.0
 8   9.412       3.64964e-11   9.412           0.0      0.0
-──────────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/9e35aab6a923b19cd6b06b3ba2f177d249a159e2/src/deamddf.jl#L24-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../enhancedrussell/">« Enhanced Russell Graph Slack Based Measure</a><a class="docs-footer-nextpage" href="../holder/">Hölder Distance Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 10:08">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+──────────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/b4e66e0e45f76b4691ad254828e1dee0a7b6de60/src/deamddf.jl#L24-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../enhancedrussell/">« Enhanced Russell Graph Slack Based Measure</a><a class="docs-footer-nextpage" href="../holder/">Hölder Distance Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 10 April 2021 09:17">Saturday 10 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
