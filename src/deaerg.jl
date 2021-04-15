@@ -96,7 +96,7 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     betai = zeros(n)
     tXi = zeros(n, m)
     tYi = zeros(n, s)
-    mui = spzeros(n, nref)
+    lambdaeff = spzeros(n, nref)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -133,7 +133,8 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         betai[i] = JuMP.value(beta)
         tXi[i,:] = JuMP.value.(tX)
         tYi[i,:] = JuMP.value.(tY)
-        mui[i,:] = JuMP.value.(mu)
+        mui = JuMP.value.(mu)
+        lambdaeff[i,:] = mui ./ betai[i]
 
         # Check termination status
         if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
@@ -144,7 +145,6 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     slackX = tXi ./ betai
     slackY = tYi ./ betai
-    lambdaeff = mui ./ betai
 
     # Get X and Y targets
     Xtarget = X - slackX
