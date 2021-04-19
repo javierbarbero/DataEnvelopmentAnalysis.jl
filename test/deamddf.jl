@@ -85,8 +85,8 @@
     deamddfvrsobs = deamddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS)
 
     @test efficiency(deamddfvrsobs) ≈ [0; 0; 0; 0; 35/30; 0.571429; 0.142857; 2.549936] atol = 1e-5
-    @test efficiency(deamddfvrsobs, :X) ≈ [0; 0; 0; 0; 0; 0.428571; 0.142857; 0.108763] atol = 1e-5
-    @test efficiency(deamddfvrsobs, :Y) ≈ [0; 0; 0; 0; 35/30; 0.142857; 0.0; 2.441174] atol = 1e-5
+    @test efficiency(deamddfvrsobs, :X) ≈ [0; 0; 0; 0; 0; 0.428571; 0.142857; 0.0] atol = 1e-5
+    @test efficiency(deamddfvrsobs, :Y) ≈ [0; 0; 0; 0; 35/30; 0.142857; 0.0; 2.549936] atol = 1e-5
 
     # Modified DDF VRS Mean
     deamddfvrsmean = deamddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :VRS)
@@ -102,6 +102,12 @@
     show(IOBuffer(), deamddfcrs)
     show(IOBuffer(), deamddfnoslack)
     show(IOBuffer(), deamddfvrs)
+
+    # ------------------
+    # Test model with zero Directions
+    # ------------------   
+    deamddfzeros = deamddf(X, Y, Gx = zeros(size(X)), Gy = zeros(size(Y)), rts = :VRS)
+    @test efficiency(deamddfzeros) == zeros(8)
 
     # ------------------
     # Test slacks with different data

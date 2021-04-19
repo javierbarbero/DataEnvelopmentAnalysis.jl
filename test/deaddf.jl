@@ -386,4 +386,11 @@
 
     @test efficiency(deaddf(X, Y, Gx = X, Gy = Y)) ≈ [0.4285714286; 0; 0.1111111111; 0.25; 0.4285714286; 0.4285714286; 0.3207547170; 0.6666666667]
 
+    # ------------------
+    # Test model with zero Directions
+    # ------------------   
+    deamddfzeros = deaddf(X, Y, Gx = zeros(size(X)), Gy = zeros(size(Y)), rts = :VRS)
+    @test efficiency(deamddfzeros) == zeros(8)
+
+
 end

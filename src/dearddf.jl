@@ -229,8 +229,20 @@ function dearddfdirections(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, mea
         betax = mddfmodel.betax
         betay = mddfmodel.betay
 
-        Gxrddf = (betax ./ (betax .+ betay)) .* Gx
-        Gyrddf = (betay ./ (betax .+ betay)) .* Gy
+        for i = 1:n
+            if betax[i] != 0
+                Gxrddf[i,:] = (betax[i] / (betax[i] + betay[i])) .* Gx[i,:]
+            else
+                Gxrddf[i,:] .= 0
+            end
+
+            if betay[i] != 0
+                Gyrddf[i,:] = (betay[i] / (betax[i] + betay[i])) .* Gy[i,:]
+            else
+                Gyrddf[i,:] .= 0
+            end
+        end
+
     else
         throw(ArgumentError("Invalid efficiency `measure`"));
     end

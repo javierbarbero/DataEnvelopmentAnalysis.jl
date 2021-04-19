@@ -168,35 +168,42 @@ function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         Gx0 = Gx[i,:]
         Gy0 = Gy[i,:]
 
-        # Create the optimization model
-        deamodel = newdeamodel(optimizer)
+        # Solve if any direction is different from zero
+        if any(Gx0 .!= 0) | any(Gy0 .!= 0)
+            # Create the optimization model
+            deamodel = newdeamodel(optimizer)
 
-        @variable(deamodel, eff)
-        @variable(deamodel, lambda[1:nref] >= 0)
+            @variable(deamodel, eff)
+            @variable(deamodel, lambda[1:nref] >= 0)
 
-        @objective(deamodel, Max, eff)
+            @objective(deamodel, Max, eff)
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j] - eff * Gx0[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] + eff * Gy0[j])
+            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j] - eff * Gx0[j])
+            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] + eff * Gy0[j])
 
-        # Add return to scale constraints
-        if rts == :CRS
-            # No contraint to add for constant returns to scale
-        elseif rts == :VRS
-            @constraint(deamodel, sum(lambda) == 1)
+            # Add return to scale constraints
+            if rts == :CRS
+                # No contraint to add for constant returns to scale
+            elseif rts == :VRS
+                @constraint(deamodel, sum(lambda) == 1)
+            else
+                throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            end
+
+            # Optimize and return results
+            JuMP.optimize!(deamodel)
+
+            effi[i]  = JuMP.objective_value(deamodel)
+            lambdaeff[i,:] = JuMP.value.(lambda)
+
+            # Check termination status
+            if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
+                @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            end
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
-        end
-
-        # Optimize and return results
-        JuMP.optimize!(deamodel)
-
-        effi[i]  = JuMP.objective_value(deamodel)
-        lambdaeff[i,:] = JuMP.value.(lambda)
-
-        # Check termination status
-        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            effi[i]  = 0.0
+            lambdaeff[i,:] .= 0.0
+            lambdaeff[i,i] = 1.0
         end
 
     end

@@ -53,18 +53,18 @@ Modified DDF DEA Model
 DMUs = 8; Inputs = 1; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones
-──────────────────────────────────────────────────────────
-    efficiency           βx           βy  slackX1  slackY1
-──────────────────────────────────────────────────────────
-1   1.5         9.42849e-11   1.5             0.0      0.0
-2   4.97957e-7  2.6901e-10    4.97688e-7      0.0      0.0
-3   2.0         6.35153e-11   2.0             0.0      0.0
-4   6.0         3.92967e-11   6.0             0.0      0.0
-5   4.5         4.74326e-11   4.5             0.0      0.0
-6  10.5         3.39566e-11  10.5             0.0      0.0
-7   8.5         3.53945e-11   8.5             0.0      0.0
-8   9.412       3.64964e-11   9.412           0.0      0.0
-──────────────────────────────────────────────────────────
+────────────────────────────────────────────
+   efficiency   βx      βy  slackX1  slackY1
+────────────────────────────────────────────
+1       1.5    0.0   1.5        0.0      0.0
+2       0.0    0.0   0.0        0.0      0.0
+3       2.0    0.0   2.0        0.0      0.0
+4       6.0    0.0   6.0        0.0      0.0
+5       4.5    0.0   4.5        0.0      0.0
+6      10.5    0.0  10.5        0.0      0.0
+7       8.5    0.0   8.5        0.0      0.0
+8       9.412  0.0   9.412      0.0      0.0
+────────────────────────────────────────────
 ```
 """
 function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
@@ -144,7 +144,7 @@ function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Default optimizer
     if optimizer === nothing 
-        optimizer = DEAOptimizer(:NLP)
+        optimizer = DEAOptimizer(:LP)
     end
 
     # Compute efficiency for each DMU
@@ -165,39 +165,48 @@ function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         Gx0 = Gx[i,:]
         Gy0 = Gy[i,:]
 
-        # Create the optimization model
-        deamodel = newdeamodel(optimizer)
-        set_silent(deamodel)
+        # Solve if any direction is different from zero
+        if any(Gx0 .!= 0) | any(Gy0 .!= 0)
+            # Create the optimization model
+            deamodel = newdeamodel(optimizer)
+            set_silent(deamodel)
 
-        @variable(deamodel, betax >= 0)
-        @variable(deamodel, betay >= 0)
-        @variable(deamodel, lambda[1:nref] >= 0)
+            @variable(deamodel, betax >= 0)
+            @variable(deamodel, betay >= 0)
+            @variable(deamodel, lambda[1:nref] >= 0)
 
-        @objective(deamodel, Max, betax + betay)
+            @objective(deamodel, Max, betax + betay)
 
-        @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j] - betax * Gx0[j])
-        @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] + betay * Gy0[j])
+            @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j] - betax * Gx0[j])
+            @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j] + betay * Gy0[j])
 
-        # Add return to scale constraints
-        if rts == :CRS
-            # No contraint to add for constant returns to scale
-        elseif rts == :VRS
-            @constraint(deamodel, sum(lambda) == 1)
+            # Add return to scale constraints
+            if rts == :CRS
+                # No contraint to add for constant returns to scale
+            elseif rts == :VRS
+                @constraint(deamodel, sum(lambda) == 1)
+            else
+                throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            end
+
+            # Optimize and return results
+            JuMP.optimize!(deamodel)
+
+            effi[i]  = JuMP.objective_value(deamodel)
+            betaxi[i] = JuMP.value(betax)
+            betayi[i] = JuMP.value(betay)
+            lambdaeff[i,:] = JuMP.value.(lambda)
+
+            # Check termination status
+            if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
+                @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            end
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
-        end
-
-        # Optimize and return results
-        JuMP.optimize!(deamodel)
-
-        effi[i]  = JuMP.objective_value(deamodel)
-        betaxi[i] = JuMP.value(betax)
-        betayi[i] = JuMP.value(betay)
-        lambdaeff[i,:] = JuMP.value.(lambda)
-
-        # Check termination status
-        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            effi[i]  = 0.0
+            betaxi[i] = 0.0
+            betayi[i] = 0.0
+            lambdaeff[i,:] .= 0.0
+            lambdaeff[i,i] = 1.0
         end
 
     end
