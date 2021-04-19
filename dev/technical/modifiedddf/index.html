@@ -16,49 +16,49 @@ Modified DDF DEA Model
 DMUs = 8; Inputs = 1; Outputs = 1
 Returns to Scale = VRS
 Gx = Ones; Gy = Ones
-───────────────────────────────────────────────────────
-   efficiency          βx          βy  slackX1  slackY1
-───────────────────────────────────────────────────────
-1  7.42338e-7  0.0         7.49867e-7      0.0      0.0
-2  3.97731e-7  3.78622e-7  1.91088e-8      0.0      0.0
-3  4.83998e-7  4.86874e-7  0.0             0.0      0.0
-4  1.32755e-6  1.33672e-6  0.0             0.0      0.0
-5  4.0         2.0         2.0             0.0      0.0
-6  7.33333     7.33333     0.0             0.0      0.0
-7  2.0         2.0         0.0             0.0      0.0
-8  8.059       5.412       2.647           0.0      0.0
-───────────────────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
+───────────────────────────────────────────────
+   efficiency       βx     βy  slackX1  slackY1
+───────────────────────────────────────────────
+1     0.0      0.0      0.0        0.0      0.0
+2     0.0      0.0      0.0        0.0      0.0
+3     0.0      0.0      0.0        0.0      0.0
+4     0.0      0.0      0.0        0.0      0.0
+5     4.0      2.0      2.0        0.0      0.0
+6     7.33333  7.33333  0.0        0.0      0.0
+7     2.0      2.0      0.0        0.0      0.0
+8     8.059    5.412    2.647      0.0      0.0
+───────────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
 
 julia&gt; efficiency(deamddfvrs)
 8-element Vector{Float64}:
- 7.423380868494941e-7
- 3.9773060690474414e-7
- 4.839979925116349e-7
- 1.327547239652975e-6
- 4.000000398014332
- 7.333333863503837
- 2.0000013477402137
- 8.059000425674004</code></pre><p>Estimated <span>$\beta$</span> on inputs and outputs are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; efficiency(deamddfvrs, :X)
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+ 4.000000000000001
+ 7.333333333333334
+ 2.0
+ 8.059000000000001</code></pre><p>Estimated <span>$\beta$</span> on inputs and outputs are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia-repl">julia&gt; efficiency(deamddfvrs, :X)
 8-element Vector{Float64}:
  0.0
- 3.786218512295063e-7
- 4.868738237228173e-7
- 1.3367161141172963e-6
- 2.0000004088097754
- 7.333333865967325
- 2.0000013569193515
- 5.412000442949787
+ 0.0
+ 0.0
+ 0.0
+ 1.999999999999999
+ 7.333333333333334
+ 2.0
+ 5.412000000000001
 
 julia&gt; efficiency(deamddfvrs, :Y)
 8-element Vector{Float64}:
- 7.498667608019586e-7
- 1.910875567523785e-8
  0.0
  0.0
- 1.9999999892045561
  0.0
  0.0
- 2.6469999827242163</code></pre><h3 id="deamddf-Function-Documentation"><a class="docs-heading-anchor" href="#deamddf-Function-Documentation">deamddf Function Documentation</a><a id="deamddf-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#deamddf-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.deamddf" href="#DataEnvelopmentAnalysis.deamddf"><code>DataEnvelopmentAnalysis.deamddf</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">deamddf(X, Y; Gx, Gy)</code></pre><p>Compute data envelopment analysis modified directional distance function model for inputs <code>X</code> and outputs <code>Y</code>, using directions <code>Gx</code> and <code>Gy</code>.</p><p><strong>Direction specification:</strong></p><p>The directions <code>Gx</code> and <code>Gy</code> can be one of the following symbols.</p><ul><li><code>:Ones</code>: use ones.</li><li><code>:Observed</code>: use observed values.</li><li><code>:Mean</code>: use column means.</li></ul><p>Alternatively, a vector or matrix with the desired directions can be supplied.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+ 2.0000000000000018
+ 0.0
+ 0.0
+ 2.6470000000000002</code></pre><h3 id="deamddf-Function-Documentation"><a class="docs-heading-anchor" href="#deamddf-Function-Documentation">deamddf Function Documentation</a><a id="deamddf-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#deamddf-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.deamddf" href="#DataEnvelopmentAnalysis.deamddf"><code>DataEnvelopmentAnalysis.deamddf</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">deamddf(X, Y; Gx, Gy)</code></pre><p>Compute data envelopment analysis modified directional distance function model for inputs <code>X</code> and outputs <code>Y</code>, using directions <code>Gx</code> and <code>Gy</code>.</p><p><strong>Direction specification:</strong></p><p>The directions <code>Gx</code> and <code>Gy</code> can be one of the following symbols.</p><ul><li><code>:Ones</code>: use ones.</li><li><code>:Observed</code>: use observed values.</li><li><code>:Mean</code>: use column means.</li></ul><p>Alternatively, a vector or matrix with the desired directions can be supplied.</p><p><strong>Optional Arguments</strong></p><ul><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 
 julia&gt; Y = [1; 5; 8; 9; 3; 7; 9; 2.353] ;
 
@@ -67,15 +67,15 @@ Modified DDF DEA Model
 DMUs = 8; Inputs = 1; Outputs = 1
 Returns to Scale = CRS
 Gx = Ones; Gy = Ones
-──────────────────────────────────────────────────────────
-    efficiency           βx           βy  slackX1  slackY1
-──────────────────────────────────────────────────────────
-1   1.5         9.42849e-11   1.5             0.0      0.0
-2   4.97957e-7  2.6901e-10    4.97688e-7      0.0      0.0
-3   2.0         6.35153e-11   2.0             0.0      0.0
-4   6.0         3.92967e-11   6.0             0.0      0.0
-5   4.5         4.74326e-11   4.5             0.0      0.0
-6  10.5         3.39566e-11  10.5             0.0      0.0
-7   8.5         3.53945e-11   8.5             0.0      0.0
-8   9.412       3.64964e-11   9.412           0.0      0.0
-──────────────────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/a1274d5de7bafcacb938e276473fcee515922cc2/src/deamddf.jl#L24-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../enhancedrussell/">« Enhanced Russell Graph Slack Based Measure</a><a class="docs-footer-nextpage" href="../holder/">Hölder Distance Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 15 April 2021 15:52">Thursday 15 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+────────────────────────────────────────────
+   efficiency   βx      βy  slackX1  slackY1
+────────────────────────────────────────────
+1       1.5    0.0   1.5        0.0      0.0
+2       0.0    0.0   0.0        0.0      0.0
+3       2.0    0.0   2.0        0.0      0.0
+4       6.0    0.0   6.0        0.0      0.0
+5       4.5    0.0   4.5        0.0      0.0
+6      10.5    0.0  10.5        0.0      0.0
+7       8.5    0.0   8.5        0.0      0.0
+8       9.412  0.0   9.412      0.0      0.0
+────────────────────────────────────────────</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/0d35ad025e684f64b3ad577dbb61103551f52454/src/deamddf.jl#L24-L69">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../enhancedrussell/">« Enhanced Russell Graph Slack Based Measure</a><a class="docs-footer-nextpage" href="../holder/">Hölder Distance Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 19 April 2021 10:35">Monday 19 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
