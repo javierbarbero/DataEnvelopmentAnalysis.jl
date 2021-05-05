@@ -1,6 +1,10 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.5.0 (May 5, 2021)
+----------------------------
+- Change default optimizer of Modified Directional Distance Function model to GLPK.
+
 Version 0.4.0 (April 10, 2021)
 ----------------------------
 
