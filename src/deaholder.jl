@@ -578,7 +578,7 @@ function Base.show(io::IO, x::HolderL2DEAModel)
             print(io, "Weighted (weakly) Hölder distance function \n")
         end
 
-        show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ; ["slackY$i" for i in 1:s ]], dmunames))
+        show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
     end
 
 end
