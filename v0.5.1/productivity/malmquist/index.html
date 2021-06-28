@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Malmquist Index · DataEnvelopmentAnalysis</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.svg" alt="DataEnvelopmentAnalysis logo"/></a><div class="docs-package-name"><span class="docs-autofit">DataEnvelopmentAnalysis</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Technical Efficiency Models</span><ul><li><a class="tocitem" href="../../technical/radial/">Radial Models</a></li><li><a class="tocitem" href="../../technical/directional/">Directional Distance Function Models</a></li><li><a class="tocitem" href="../../technical/additive/">Additive Models</a></li><li><a class="tocitem" href="../../technical/generalizeddf/">Generalized Distance Function Models</a></li><li><a class="tocitem" href="../../technical/russell/">Russell Models</a></li><li><a class="tocitem" href="../../technical/enhancedrussell/">Enhanced Russell Graph Slack Based Measure</a></li><li><a class="tocitem" href="../../technical/modifiedddf/">Modified Directional Distance Function</a></li><li><a class="tocitem" href="../../technical/holder/">Hölder Distance Function</a></li><li><a class="tocitem" href="../../technical/reverseddf/">Reverse Directional Distance Function</a></li><li><a class="tocitem" href="../../technical/commontechnical/">Common functions for technical models</a></li></ul></li><li><span class="tocitem">Economic Efficiency Models</span><ul><li><a class="tocitem" href="../../economic/cost/">Cost Models</a></li><li><a class="tocitem" href="../../economic/revenue/">Revenue Models</a></li><li><a class="tocitem" href="../../economic/profit/">Profit Models</a></li><li><a class="tocitem" href="../../economic/profitability/">Profitability Models</a></li><li><a class="tocitem" href="../../economic/commoneconomic/">Common functions for economic models</a></li></ul></li><li><span class="tocitem">Productivity Change Models</span><ul><li class="is-active"><a class="tocitem" href>Malmquist Index</a><ul class="internal"><li><a class="tocitem" href="#The-Malmquist-Productivity-Index"><span>The Malmquist Productivity Index</span></a></li></ul></li><li><a class="tocitem" href="../commonproductivity/">Common functions for productivity change models</a></li></ul></li><li><a class="tocitem" href="../../optimizer/">Configuring Optimizer</a></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Productivity Change Models</a></li><li class="is-active"><a href>Malmquist Index</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Malmquist Index</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/productivity/malmquist.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="The-Malmquist-index"><a class="docs-heading-anchor" href="#The-Malmquist-index">The Malmquist index</a><a id="The-Malmquist-index-1"></a><a class="docs-heading-anchor-permalink" href="#The-Malmquist-index" title="Permalink"></a></h1><h2 id="The-Malmquist-Productivity-Index"><a class="docs-heading-anchor" href="#The-Malmquist-Productivity-Index">The Malmquist Productivity Index</a><a id="The-Malmquist-Productivity-Index-1"></a><a class="docs-heading-anchor-permalink" href="#The-Malmquist-Productivity-Index" title="Permalink"></a></h2><p>The Malmquist index introduced by <em>Caves, Christensen and Diewert(1982)</em> measures the change in  productivity of the observation under evaluation by comparing its relative performance with respect to  reference  technologies corresponding to two different time periods.</p><p>Following <em>Fare, Grosskopf, Norris and Zhang (1994)</em> productivity change can be decomposed into efficiency change and technical change under the assumption of a constant returns to scale techncology.</p><p>In this example we compute the Malmquist productivity index:</p><pre><code class="language-julia-repl">julia&gt; X = Array{Float64,3}(undef, 5, 1, 2);
+
+julia&gt; X[:, :, 1] = [2; 3; 5; 4; 4];
+
+julia&gt; X[:, :, 2] = [1; 2; 4; 3; 4];
+
+julia&gt; Y = Array{Float64,3}(undef, 5, 1, 2);
+
+julia&gt; Y[:, :, 1] = [1; 4; 6; 3; 5];
+
+julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
+
+julia&gt; malmquist(X, Y)
+Mamlmquist DEA Model 
+DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
+Orientation = Input; Returns to Scale = CRS
+Referene period = Geomean
+─────────────────────────
+         M        EC   TC
+─────────────────────────
+1  2.0      1.33333   1.5
+2  1.5      1.0       1.5
+3  1.25     0.833333  1.5
+4  1.33333  0.888889  1.5
+5  0.6      0.4       1.5
+─────────────────────────
+M  = Malmquist Productivity Index 
+EC = Efficiency Change 
+TC = Technological Change</code></pre><h3 id="malmquist-Function-Documentation"><a class="docs-heading-anchor" href="#malmquist-Function-Documentation">malmquist Function Documentation</a><a id="malmquist-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#malmquist-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.malmquist" href="#DataEnvelopmentAnalysis.malmquist"><code>DataEnvelopmentAnalysis.malmquist</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia">malmquist(X, Y)</code></pre><p>Compute the Malmquist productivity index using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses between input oriented radial model <code>:Input</code> or output oriented radial model <code>:Output</code>.</li><li><code>refperiod=:Geomean</code>: chooses reference period for technological change: <code>:Base</code>, <code>:Comparison</code> or <code>:Geomean</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul><p><strong>Examples</strong></p><pre><code class="language-julia-repl">julia&gt; X = Array{Float64,3}(undef, 5, 1, 2);
+
+julia&gt; X[:, :, 1] = [2; 3; 5; 4; 4];
+
+julia&gt; X[:, :, 2] = [1; 2; 4; 3; 4];
+
+julia&gt; Y = Array{Float64,3}(undef, 5, 1, 2);
+
+julia&gt; Y[:, :, 1] = [1; 4; 6; 3; 5];
+
+julia&gt; Y[:, :, 2] = [1; 4; 6; 3; 3];
+
+julia&gt; malmquist(X, Y)
+Mamlmquist DEA Model 
+DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
+Orientation = Input; Returns to Scale = CRS
+Referene period = Geomean
+─────────────────────────
+         M        EC   TC
+─────────────────────────
+1  2.0      1.33333   1.5
+2  1.5      1.0       1.5
+3  1.25     0.833333  1.5
+4  1.33333  0.888889  1.5
+5  0.6      0.4       1.5
+─────────────────────────
+M  = Malmquist Productivity Index 
+EC = Efficiency Change 
+TC = Technological Change</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/170e789b88af9fa69e2865a2fc6ee9b5cc08d341/src/malmquist.jl#L19-L61">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../economic/commoneconomic/">« Common functions for economic models</a><a class="docs-footer-nextpage" href="../commonproductivity/">Common functions for productivity change models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Monday 28 June 2021 15:07">Monday 28 June 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
