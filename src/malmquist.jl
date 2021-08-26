@@ -89,7 +89,8 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     TC    = zeros(n, T - 1)
 
     # For each time period
-    for t = 1:T - 1
+    @showprogress 1 "Computing..." for t = 1:T - 1
+        sleep(0.1)
 
         # Compute efficiency in t
         efft = efficiency(dea(X[:, :, t], Y[:, :, t], orient = orient, rts = rts, slack = false, optimizer = optimizer))

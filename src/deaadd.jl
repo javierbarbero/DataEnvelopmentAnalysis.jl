@@ -167,7 +167,8 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     slackY = zeros(n, s)
     lambdaeff = spzeros(n, nref)
 
-    for i=1:n
+    @showprogress 1 "Computing..." for i=1:n
+        sleep(0.1)
         # Value of inputs and outputs to evaluate
         x0 = X[i,:]
         y0 = Y[i,:]

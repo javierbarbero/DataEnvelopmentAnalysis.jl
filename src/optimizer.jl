@@ -12,6 +12,7 @@ An data structure storing the configuration of a DEA optimizer.
 # Optimizer specification:
 - `LP`: linear programming default optimizer, GLPK.
 - `NLP`: nonlinear programmin default optimizer, Ipopt.
+- `COSMO`: a pure Julia solver
 - Any JuMP supported solver.
 
 # Optional Arguments
@@ -34,6 +35,9 @@ struct DEAOptimizer <: AbstractDEAOptimizerModel
             optimizer =  GLPK.Optimizer
         elseif optimizer == :NLP
             optimizer = Ipopt.Optimizer
+# specify optimizer COSMO (Ipopt and GLK are not supported on ARM computers)
+        elseif optimizer == :COSMO
+            optimizer = COSMO.Optimizer
         end
 
         new(optimizer, time_limit, silent)

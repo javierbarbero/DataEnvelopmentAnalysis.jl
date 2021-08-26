@@ -36,7 +36,8 @@ function deamincost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     Ytarget = Y[:,:]
     clambdaeff = spzeros(n, n)
 
-    for i=1:n
+    @showprogress 1 "Computing..." for i=1:n
+        sleep(0.1)
         # Value of inputs and outputs to evaluate
         y0 = Y[i,:]
         w0 = W[i,:]

@@ -11,7 +11,9 @@ module DataEnvelopmentAnalysis
     using Ipopt
     using SparseArrays
     using LinearAlgebra
-
+    using ProgressMeter
+    using COSMO 
+    
     using Printf: @sprintf
     using Statistics: std
     using StatsBase: CoefTable

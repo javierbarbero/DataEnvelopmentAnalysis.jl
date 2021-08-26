@@ -29,7 +29,6 @@ end
 """
     dea(X, Y)
 Compute the radial model using data envelopment analysis for inputs X and outputs Y.
-
 # Optional Arguments
 - `orient=:Input`: chooses the radially oriented input mode. For the radially oriented output model choose `:Output`.
 - `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
@@ -39,13 +38,10 @@ Compute the radial model using data envelopment analysis for inputs X and output
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 - `names`: a vector of strings with the names of the decision making units.
-
 # Examples
 ```jldoctest
 julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
 julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
 julia> dea(X, Y)
 Radial DEA Model 
 DMUs = 11; Inputs = 2; Outputs = 1
@@ -117,7 +113,8 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     effi = zeros(n)
     lambdaeff = spzeros(n, nref)
 
-    for i=1:n
+    @showprogress 1 "Computing..." for i=1:n
+        sleep(0.1)
         # Value of inputs and outputs to evaluate
         x0 = X[i,:]
         y0 = Y[i,:]
@@ -129,7 +126,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         @variable(deamodel, lambda[1:nref] >= 0)
 
         if orient == :Input
-            # Input orientation
+            # Input orientation
             @objective(deamodel, Min, eff)
 
             # Inequality or equality restrictions based on disposability
@@ -175,7 +172,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
 
-        # Optimize and return results
+        # Optimize and return results
         JuMP.optimize!(deamodel)
 
         effi[i]  = JuMP.objective_value(deamodel)
@@ -197,10 +194,10 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         Ytarget = Y .* effi
     end
 
-    # Compute slacks
+    # Compute slacks
     if slack == true
 
-        # Use additive model with radial efficient X and Y to get slacks
+        # Use additive model with radial efficient X and Y to get slacks
         if disposX == :Strong
             rhoX = ones(size(X))
         elseif disposX == :Weak
