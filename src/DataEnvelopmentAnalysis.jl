@@ -11,6 +11,7 @@ module DataEnvelopmentAnalysis
     using Ipopt
     using SparseArrays
     using LinearAlgebra
+    using ProgressMeter
 
     using Printf: @sprintf
     using Statistics: std
@@ -85,6 +86,8 @@ module DataEnvelopmentAnalysis
     include("productivity.jl")
     include("malmquist.jl")
 
+    include("progressbarmeter.jl")
+    
     function __init__()
 
         nothing
