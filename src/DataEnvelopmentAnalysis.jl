@@ -67,6 +67,7 @@ module DataEnvelopmentAnalysis
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
+    include("bigdata.jl")
     include("deaddf.jl")
     include("deagdf.jl")
     include("dearussell.jl")
