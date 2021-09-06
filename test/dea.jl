@@ -347,4 +347,14 @@
 
     @test efficiency(dea(X, Y, orient = :Input)) ≈ [0.4; 1; 0.8; 0.6; 0.4; 0.4; 0.5142857143; 0.2]
 
+    # ------------------
+    # Run with different progress meter options
+    # ------------------
+    # Just run the code for code coverage as the progress meter does not affect the result
+    X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17]
+    Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12]
+
+    dea(X, Y, progress = true)
+    dea(X, Y, progress = false)
+
 end

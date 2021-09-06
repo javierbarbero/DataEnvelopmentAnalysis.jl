@@ -1,10 +1,10 @@
 # This file contains function to enable progress meter log 
 
 
-function progressbarmeter(n::Integer; show_progress = true)
-    if show_progress == true 
-        Progress(n; enabled = show_progress)
+function progressbarmeter(n::Integer; desc::String = "Computing DEA model", progress::Bool = true)
+    if progress == true 
+        Progress(n; desc = desc, enabled = progress)
     else
-        Progress(n;enabled = false)
+        Progress(n; enabled = false)
     end
 end
