@@ -11,6 +11,8 @@ module DataEnvelopmentAnalysis
     using Ipopt
     using SparseArrays
     using LinearAlgebra
+    using Statistics 
+    using InvertedIndices 
 
     using Printf: @sprintf
     using Statistics: std
@@ -40,6 +42,7 @@ module DataEnvelopmentAnalysis
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
+    Subset,
     # All models
     nobs, ninputs, noutputs,
     # Peers
@@ -47,7 +50,7 @@ module DataEnvelopmentAnalysis
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf, 
     dearussell, deaerg, deamddf, deaholder, dearddf,
-    efficiency, slacks,
+    efficiency, slacks,deabigdata,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 
@@ -56,7 +59,11 @@ module DataEnvelopmentAnalysis
     targets,
     # Productivity models
     malmquist,
-    nperiods, prodchange
+    nperiods, prodchange,
+
+    # temporary 
+    initialsubset, bestpracticesfinder,
+    exteriorsfinder, unionsubset, excludingsubset
 
     # Include code of functions
     include("optimizer.jl")
@@ -67,7 +74,7 @@ module DataEnvelopmentAnalysis
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
-    include("bigdata.jl")
+    include("deabigdata.jl")
     include("deaddf.jl")
     include("deagdf.jl")
     include("dearussell.jl")

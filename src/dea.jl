@@ -72,7 +72,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
     names::Union{Vector{String},Nothing} = nothing,
-    optimizer::Union{DEAOptimizer,Nothing} = nothing, bigdata::Bool = false)::RadialDEAModel
+    optimizer::Union{DEAOptimizer,Nothing} = nothing)::RadialDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -117,79 +117,76 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     effi = zeros(n)
     lambdaeff = spzeros(n, nref)
 
-    if bigdata == true 
-        effi, lambdaeff = bigdata(X, Y, orient, rts) 
-    else
-        for i=1:n
-            # Value of inputs and outputs to evaluate
-            x0 = X[i,:]
-            y0 = Y[i,:]
 
-            # Create the optimization model
-            deamodel = newdeamodel(optimizer)
+    for i=1:n
+        # Value of inputs and outputs to evaluate
+        x0 = X[i,:]
+        y0 = Y[i,:]
 
-            @variable(deamodel, eff)
-            @variable(deamodel, lambda[1:nref] >= 0)
+        # Create the optimization model
+        deamodel = newdeamodel(optimizer)
 
-            if orient == :Input
-                # Input orientation
-                @objective(deamodel, Min, eff)
+        @variable(deamodel, eff)
+        @variable(deamodel, lambda[1:nref] >= 0)
 
-                # Inequality or equality restrictions based on disposability
-                if disposX == :Strong
-                    @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff * x0[j])
-                elseif disposX == :Weak
-                    @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == eff * x0[j])
-                end
+        if orient == :Input
+            # Input orientation
+            @objective(deamodel, Min, eff)
 
-                if disposY == :Strong
-                    @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
-                elseif disposY == :Weak
-                    @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j])
-                end
-
-            elseif orient == :Output
-                # Output orientation
-                @objective(deamodel, Max, eff)
-
-                # Inequality or equality restrictions based on disposability
-                if disposX == :Strong
-                    @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
-                elseif disposX == :Weak
-                    @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j])
-                end
-
-                if disposY == :Strong
-                    @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= eff * y0[j])
-                elseif disposY == :Weak
-                    @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == eff * y0[j])
-                end
-
-            else
-                throw(ArgumentError("`orient` must be :Input or :Output"));
+            # Inequality or equality restrictions based on disposability
+            if disposX == :Strong
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= eff * x0[j])
+            elseif disposX == :Weak
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == eff * x0[j])
             end
 
-            # Add return to scale constraints
-            if rts == :CRS
-                # No contraint to add for constant returns to scale
-            elseif rts == :VRS
-                @constraint(deamodel, sum(lambda) == 1)
-            else
-                throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            if disposY == :Strong
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= y0[j])
+            elseif disposY == :Weak
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == y0[j])
             end
 
-            # Optimize and return results
-            JuMP.optimize!(deamodel)
+        elseif orient == :Output
+            # Output orientation
+            @objective(deamodel, Max, eff)
 
-            effi[i]  = JuMP.objective_value(deamodel)
-            lambdaeff[i,:] = JuMP.value.(lambda)
-
-            # Check termination status
-            if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
-                @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+            # Inequality or equality restrictions based on disposability
+            if disposX == :Strong
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) <= x0[j])
+            elseif disposX == :Weak
+                @constraint(deamodel, [j in 1:m], sum(Xref[t,j] * lambda[t] for t in 1:nref) == x0[j])
             end
 
+            if disposY == :Strong
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) >= eff * y0[j])
+            elseif disposY == :Weak
+                @constraint(deamodel, [j in 1:s], sum(Yref[t,j] * lambda[t] for t in 1:nref) == eff * y0[j])
+            end
+
+        else
+            throw(ArgumentError("`orient` must be :Input or :Output"));
         end
+
+        # Add return to scale constraints
+        if rts == :CRS
+            # No contraint to add for constant returns to scale
+        elseif rts == :VRS
+            @constraint(deamodel, sum(lambda) == 1)
+        else
+            throw(ArgumentError("`rts` must be :CRS or :VRS"));
+        end
+
+        # Optimize and return results
+        JuMP.optimize!(deamodel)
+
+        effi[i]  = JuMP.objective_value(deamodel)
+        lambdaeff[i,:] = JuMP.value.(lambda)
+
+        # Check termination status
+        if (termination_status(deamodel) != MOI.OPTIMAL) && (termination_status(deamodel) != MOI.LOCALLY_SOLVED)
+            @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
+        end
+
     end
 
     # Get first-stage X and Y targets

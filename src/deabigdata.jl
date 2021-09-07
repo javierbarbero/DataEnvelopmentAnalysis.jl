@@ -10,6 +10,8 @@ Base.@kwdef mutable struct Subset
     indexDMU::Vector{Int64} # Initial index of selected DMUs
 end
 
+
+
 """
     initialsubset(X, Y)
 
@@ -130,10 +132,11 @@ function initialsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
     # add the number of DMUs needed to fill out the subsample 
     z = p - length(dmus_selected)
     new_dmus = pre_scores[1:z,2]
+    new_dmus = convert.(Int64, new_dmus)
     dmus_selected = vcat(dmus_selected, new_dmus)
 
     D_S = Subset(X = X[dmus_selected,:], Y = Y[dmus_selected, :], indexDMU = dmus_selected)
-    Non_D_S = Subset(X = X_unselected, Y = Y_unselected, indexDMU = dmus_unselected)
+    Non_D_S = excludingsubset(X, Y, dmus_selected)
 
     return D_S, Non_D_S
 end
@@ -145,8 +148,9 @@ end
     Identify best-practices in the subsample selected
 """
 
-function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool)
-    evaluation = deamodel(D_S.X, D_S.Y, orient = orient, rts = rts, slack = slack)
+function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool, optimizer::Union{DEAOptimizer,Nothing}, X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
+
+    evaluation = dea(D_S.X, D_S.Y, orient = orient, rts = rts, slack = slack, optimizer = optimizer)
 
     scores = efficiency(evaluation)
 
@@ -159,9 +163,8 @@ function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bo
         end
     end
 
-    best_practices = Subset(X = D_S.X[index_bestpractices,:], 
-                            Y = D_S.Y[index_bestpractices,:], 
-                            indexDMU = D_S.indexDMU[index_bestpractices,:])
+    index_to_keep = D_S.indexDMU[index_bestpractices]
+    best_practices = createsubset(X, Y, index_to_keep)
 
     return best_practices, evaluation 
 end
@@ -170,25 +173,27 @@ end
 """
     exteriorfinder(Subset_1,Subset2, orient, rts, slack)
 
-    Find exterior DMUs in D \ D^S respect to the hull of B^S
+    Find exterior DMUs in D excluding D^S respect to the hull of B^S
 """
 
-function exteriorsfinder(B_S::Subset, Non_D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool)
-    eval = deamodel(Non_D_S.X, Non_D_S.Y, Xref = B_S.X, Y_ref = B_S.Y, orient = orient, rts = rts, slack = slack)
+function exteriorsfinder(B_S::Subset, Non_D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool, optimizer::Union{DEAOptimizer,Nothing}, X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
+
+    eval = dea(Non_D_S.X, Non_D_S.Y, orient = orient, rts = rts, slack = slack, Xref = B_S.X, Yref = B_S.Y, optimizer = optimizer)
     scores = efficiency(eval)
 
     index_exteriors = Vector{Int64}()
     for i in 1:length(scores)
-        if scores[i] >= 1
+        if scores[i] > 1
             push!(index_exteriors, i)
+            println(string(Non_D_S.indexDMU[i], " has ", scores[i]))
         else
             nothing
         end
     end
 
-    E = Subset(X = Non_D_S.X[index_exteriors,:], 
-                            Y = Non_D_S.Y[index_exteriors,:], 
-                            indexDMU = Non_D_S.indexDMU[index_exteriors,:])
+    index_to_keep = Non_D_S.indexDMU[index_exteriors]
+
+    E = createsubset(X, Y, index_to_keep)
     
     return E, eval 
 
@@ -201,10 +206,10 @@ end
 """
 function reformatlambda(results_Non_D_S_Union_E::RadialDEAModel, results_D_S_Union_E::RadialDEAModel, F::Subset, D_S_Union_E::Subset)
 
-    lambda_1 = results_Non_D_S_Union_E.lambda # F is the hull 
-    lambda_2 = results_D_S_Union_E.lambda # F + other are the hull here, we have to drop those which are not hull   
+    lambda_1 = results_D_S_Union_E.lambda # F is the hull 
+    lambda_2 = results_Non_D_S_Union_E.lambda # F + other are the hull here, we have to drop those which are not hull   
     
-    index_to_keep = findall(x -> x in F.indexDMU, results_D_S_Union_E.indexDMU)
+    index_to_keep = findall(x -> x in F.indexDMU, D_S_Union_E.indexDMU)
     lambda_1 = lambda_1[:,index_to_keep]
 
     lambda = vcat(lambda_1,lambda_2)
@@ -214,7 +219,49 @@ function reformatlambda(results_Non_D_S_Union_E::RadialDEAModel, results_D_S_Uni
 end
 
 """
-    bigdata(X, Y)
+    excludingsubset(X, Y, index_to_exclude)
+
+    Creates the subset excluding the index 
+"""
+
+function excludingsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix}, index_to_exclude::Vector{Int64})
+    entire_index = [i for i in 1:size(X,1)]
+
+    index_to_keep = findall(x -> !(x in index_to_exclude), entire_index)
+
+    return Subset(X = X[index_to_keep, :], Y = Y[index_to_keep,:], indexDMU = entire_index[index_to_keep])
+end
+
+"""
+    unionsubset(X, Y, indexsubsetone, indexsubsettwo)
+
+    Creates the subset unioning subset one and subset two
+"""
+
+function unionsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix}, indexsubsetone::Vector{Int64}, indexsubsettwo)
+    union_index = vcat(indexsubsetone,indexsubsettwo)
+
+    entire_index = [i for i in 1:size(X,1)]
+
+    return Subset(X = X[union_index, :], Y = Y[union_index,:], indexDMU = entire_index[union_index])
+
+end
+
+"""
+    createsubset(X,Y, index_to_include)
+
+    Creates the subset based on original X and Y sample and the index of DMUs to keep
+"""
+function createsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix}, indexsubset::Vector{Int64})
+    sort!(indexsubset)
+
+    return Subset(X = X[indexsubset,:], Y = Y[indexsubset,:], indexDMU = indexsubset)
+end
+
+
+
+"""
+    deabigdata(X, Y)
 
     Apply Radial DEA Model using KZCT algorithm
     The algorithm is such as:
@@ -222,11 +269,11 @@ end
     2. D <- get a sample of DMUs 
     3. D^S <- select a subsample of D 
     4. B^S <- find best-practices in D^S 
-    5. E <- find exterior DMUs in D \ D^S respect to the hull of B^S 
+    5. E <- find exterior DMUs in D excluding D^S respect to the hull of B^S 
     6. If E = {}, then F = B^S and all DMUs are altready evaluated (go to step 7)
     Otherwise 
         6.1. F <- find best-practice DMUs in D^S Union E 
-        6.2. Evaluate DMUs in D \ (D^S Union E) respoect to the F's hull 
+        6.2. Evaluate DMUs in D excluding (D^S Union E) respoect to the F's hull 
     7. End 
 
     Where F is the set of efficient DMUs. 
@@ -240,26 +287,29 @@ end
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 """
 
-function bigdata(X::Union{Vector, Matrix}, Y::Union{Vector, Matrix}, orient::Symbol, rts::Symbol, slack::Bool = false)
+function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
+        orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
+        disposX::Symbol = :Strong, disposY::Symbol = :Strong,
+        names::Union{Vector{String},Nothing} = nothing,
+        optimizer::Union{DEAOptimizer,Nothing} = nothing)
     # Create and fill the subsample
     D_S, Non_D_S = initialsubset(X, Y)
-    entire_index_DMU = vcat(D_S.indexDMU, Non_D_S.indexDMU)
     # Find the best-practices B_S in D_S
-    B_S, results_D_S = bestpracticesfinder(D_S, orient, rts, slack)
-    # Find exterior DMUs in D \ D^S respect to the hull of B^S 
-    E, results_non_D_S = exteriorsfinder(B_S, Non_D_S, orient, rts, slack)
+    B_S, results_D_S = bestpracticesfinder(D_S, orient, rts, slack, optimizer, X, Y)
+    # Find exterior DMUs in D excluding D^S respect to the hull of B^S 
+    E, results_non_D_S = exteriorsfinder(B_S, Non_D_S, orient, rts, slack, optimizer, X, Y)
     # If E is not empty, then we have to find best practice DMUs in D^S Union E, otherwise, F = B_S and all DMUs are already evaluated 
-    if size(E.X,1)>1
-        D_S_Union_E = Subset(X = vcat(D_S.X, E.X), Y = vcat(D_S.X, E.X), indexDMU = vcat(D_S.indexDMU, E.indexDMU))
-        F, results_D_S_Union_E = bestpracticesfinder(D_S_Union_E, orient, rts, slack)
-        Non_D_S_Union_E = Subset(X = X[Not(D_S_Union_E.indexDMU),:], Y = Y[Not(D_S_Union_E.indexDMU),:], indexDMU = entire_index_DMU[Not(D_S_Union_E.indexDMU)])
-        Other, results_Non_D_S_Union_E = exteriorsfinder(F, Non_D_S_Union_E, orient, rts, slack) 
-        Non_F = Subset(X = X[Not(F.indexDMU),:], Y = Y[Not(F.indexDMU), :], indexDMU = entire_index_DMU[Not(F.indexDMU)])
+    if size(E.X,1)>0
+        D_S_Union_E = unionsubset(X,Y, D_S.indexDMU, E.indexDMU)
+        F, results_D_S_Union_E = bestpracticesfinder(D_S_Union_E, orient, rts, slack, optimizer, X, Y)
+        Non_D_S_Union_E = excludingsubset(X,Y, D_S_Union_E.indexDMU)
+        Other, results_Non_D_S_Union_E = exteriorsfinder(F, Non_D_S_Union_E, orient, rts, slack, optimizer, X, Y) 
+        Non_F = excludingsubset(X,Y, F.indexDMU)
         # reformat to get in the same order for effi
         effi_scores = vcat(efficiency(results_D_S_Union_E),efficiency(results_Non_D_S_Union_E))
         effi_index = vcat(D_S_Union_E.indexDMU, Non_D_S_Union_E.indexDMU)
         effi_matrix = hcat(effi_scores, effi_index)
-        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = true), :]
+        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = false), :]
         effi = effi_matrix[:,1]
 
         # reformat lambda
@@ -267,17 +317,61 @@ function bigdata(X::Union{Vector, Matrix}, Y::Union{Vector, Matrix}, orient::Sym
 
     else
         F = B_S
-        Non_F = Subset(X = X[Not(F.indexDMU),:], Y = Y[Not(F.indexDMU), :], indexDMU = entire_index_DMU[Not(F.indexDMU)])
+        Non_F = excludingsubset(X,Y, F.indexDMU)
         # reformat to get in the same order for effi
         effi_scores = vcat(efficiency(results_D_S),efficiency(results_non_D_S))
         effi_index = vcat(D_S.indexDMU, Non_D_S.indexDMU)
         effi_matrix = hcat(effi_scores, effi_index)
-        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = true), :]
+        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2]), rev = false, :]
         effi = effi_matrix[:,1]
 
         # reformat lambda
         lambdaeff = reformatlambda(results_non_D_S, results_D_S, B_S, D_S)
     end 
+
+    effi = round.(effi ; digits = 6)
     
-    return effi, lambdaeff 
+    # Get first-stage X and Y targets
+    if orient == :Input
+        Xtarget = X .* effi
+        Ytarget = Y
+    elseif orient == :Output
+        Xtarget = X
+        Ytarget = Y .* effi
+    end
+    n = size(effi,1)
+    m = size(X,2)
+    s = size(Y,2)
+
+    # Compute slacks
+    if slack == true
+        # Use additive model with radial efficient X and Y to get slacks
+        if disposX == :Strong
+            rhoX = ones(size(X))
+        elseif disposX == :Weak
+            rhoX = zeros(size(X))
+        end
+
+        if disposY == :Strong
+            rhoY = ones(size(Y))
+        elseif disposY == :Weak
+            rhoY = zeros(size(Y))
+        end
+
+        slacksmodel = deaadd(Xtarget, Ytarget, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = X, Yref = Y, optimizer = optimizer)
+        slackX = slacks(slacksmodel, :X)
+        slackY = slacks(slacksmodel, :Y)
+
+        # Get second-stage X and Y targets
+        Xtarget = Xtarget - slackX
+        Ytarget = Ytarget + slackY
+    else
+        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
+        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
+
+        slackX = Array{Float64}(undef, 0, 0)
+        slackY = Array{Float64}(undef, 0, 0)
+    end
+    return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
+
 end
