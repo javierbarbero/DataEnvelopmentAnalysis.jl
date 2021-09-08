@@ -13,6 +13,7 @@ module DataEnvelopmentAnalysis
     using LinearAlgebra
     using Statistics 
     using InvertedIndices 
+    using ProgressMeter
 
     using Printf: @sprintf
     using Statistics: std
@@ -93,6 +94,8 @@ module DataEnvelopmentAnalysis
     include("productivity.jl")
     include("malmquist.jl")
 
+    include("progressbarmeter.jl")
+    
     function __init__()
 
         nothing

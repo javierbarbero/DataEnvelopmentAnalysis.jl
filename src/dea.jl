@@ -72,7 +72,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
     names::Union{Vector{String},Nothing} = nothing,
-    optimizer::Union{DEAOptimizer,Nothing} = nothing)::RadialDEAModel
+    optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)::RadialDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -117,6 +117,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     effi = zeros(n)
     lambdaeff = spzeros(n, nref)
 
+    p = progressbarmeter(n, desc = "Computing Radial DEA Model...", progress = progress)
 
     for i=1:n
         # Value of inputs and outputs to evaluate
@@ -187,6 +188,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             @warn ("DMU $i termination status: $(termination_status(deamodel)). Primal status: $(primal_status(deamodel)). Dual status: $(dual_status(deamodel))")
         end
 
+        next!(p)
     end
 
     # Get first-stage X and Y targets
