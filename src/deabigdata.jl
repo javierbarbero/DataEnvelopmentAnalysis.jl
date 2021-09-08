@@ -156,7 +156,7 @@ function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bo
 
     index_bestpractices = Vector{Int64}()
     for i in 1:length(scores)
-        if scores[i] >= 1
+        if scores[i] >= 0.99
             push!(index_bestpractices, i)
         else
             nothing
@@ -183,9 +183,8 @@ function exteriorsfinder(B_S::Subset, Non_D_S::Subset, orient::Symbol, rts::Symb
 
     index_exteriors = Vector{Int64}()
     for i in 1:length(scores)
-        if scores[i] > 1
+        if scores[i] >= 0.99
             push!(index_exteriors, i)
-            println(string(Non_D_S.indexDMU[i], " has ", scores[i]))
         else
             nothing
         end
@@ -294,8 +293,11 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         optimizer::Union{DEAOptimizer,Nothing} = nothing)
     # Create and fill the subsample
     D_S, Non_D_S = initialsubset(X, Y)
+
+
     # Find the best-practices B_S in D_S
     B_S, results_D_S = bestpracticesfinder(D_S, orient, rts, slack, optimizer, X, Y)
+
     # Find exterior DMUs in D excluding D^S respect to the hull of B^S 
     E, results_non_D_S = exteriorsfinder(B_S, Non_D_S, orient, rts, slack, optimizer, X, Y)
     # If E is not empty, then we have to find best practice DMUs in D^S Union E, otherwise, F = B_S and all DMUs are already evaluated 
