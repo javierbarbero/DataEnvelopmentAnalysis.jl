@@ -329,7 +329,6 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         lambdaeff = reformatlambda(results_non_D_S, results_D_S, B_S, D_S)
     end 
 
-    effi = round.(effi ; digits = 6)
     
     # Get first-stage X and Y targets
     if orient == :Input
