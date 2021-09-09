@@ -43,7 +43,7 @@ module DataEnvelopmentAnalysis
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
-    Subset,
+    Subset,KZCTAlgorithm,
     # All models
     nobs, ninputs, noutputs,
     # Peers

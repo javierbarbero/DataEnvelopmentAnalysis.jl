@@ -1,19 +1,55 @@
-# This file contains functions for the Khezimotlagh et al. (2019) algorithm (we use KZCT as acronym here)
+# This file contains functions for the Khezrimotlagh et al. (2019) algorithm (we use KZCT as acronym here)
 # D. Khezrimotlagh, J. Zhu and W.D. Cook et al. / European Journal of Operational Research 274 (2019) 1047–1054
 """
     Subset
-Model subset as implemented in KZCT algorithm (2019)
+A data structure representing a subset of DMUs.
 """
 Base.@kwdef mutable struct Subset 
-    X::Union{Matrix,Vector} # Inputs subset of selected DMUs
-    Y::Union{Matrix,Vector} # Outputs subset of selected DMUs 
-    indexDMU::Vector{Int64} # Initial index of selected DMUs
+    X::Union{Matrix,Vector} = [] # Inputs subset of selected DMUs
+    Y::Union{Matrix,Vector} = [] # Outputs subset of selected DMUs 
+    indexDMU::Vector{Int64} = [] # Initial index of selected DMUs
+    eff::Vector{Float64} = [] # Efficiency scores
+    lambdaeff::SparseMatrixCSC{Float64, Int64} = spzeros(2,2) # Optimal weights
+    slackX::Matrix = Matrix(zeros(2,2))
+    slackY::Matrix = Matrix(zeros(2,2))
+    Xtarget::Matrix = Matrix(zeros(2,2))
+    Ytarget::Matrix = Matrix(zeros(2,2))
+end
+
+"""
+    KZCTAlgorithm
+A data structure representing the Khezrimotlagh et al. (2019) algorithm.
+"""
+Base.@kwdef mutable struct KZCTAlgorithm
+    n::Int64
+    m::Int64
+    s::Int64
+    orient::Symbol
+    rts::Symbol
+    disposX::Symbol
+    disposY::Symbol
+    slack::Bool
+    optimizer::DEAOptimizer
+    dmunames::Union{Vector{String},Nothing}
+    eff::Vector = Vector{Float64}()
+    slackX::Matrix = Matrix(zeros(2,2))
+    slackY::Matrix = Matrix(zeros(2,2))
+    lambda::SparseMatrixCSC{Float64, Int64} = spzeros(2,2)
+    Xtarget::Matrix = Matrix(zeros(2,2))
+    Ytarget::Matrix= Matrix(zeros(2,2))
+    D::Subset = Subset()# Initial Sample  
+    Dˢ::Subset = Subset() # Selected Sample 
+    D_exluding_Dˢ::Subset = Subset() # Unselected sample 
+    Bˢ::Subset = Subset() # Best-practices among Dˢ
+    Ε::Subset = Subset() # Find exterior in D_exluding_Dˢ respect to the hull of Bˢ
+    Dˢ_union_E::Subset = Subset() # Union Dˢ subset and E subset
+    F::Subset = Subset() # Efficient DMUs 
+    D_exluding_Dˢ_union_Ε::Subset = Subset() # Inefficient DMUs to be evaluated respect to the F's hull 
 end
 
 
-
 """
-    initialsubset(X, Y)
+    initialsubset!(KZCT_algorithm)
 
     Creates the initial subset as in KZCT algorithm:
     1. Determines p the size of the subset and create an empty vector or matrix to fill out 
@@ -37,8 +73,11 @@ end
         are selected as those having the greatest pre-scores. 
 
 """
-function initialsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
+function initialsubset!(KZCT_algorithm::KZCTAlgorithm)
     
+    X = KZCT_algorithm.D.X 
+    Y = KZCT_algorithm.D.Y
+
     # Step 1 
     # Number of DMUs
     n = size(X,1)
@@ -91,7 +130,7 @@ function initialsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
     end
 
     unique!(dmus_selected)
-    initial_index = [i for i in 1:n]
+    initial_index = KZCT_algorithm.D.indexDMU
     dmus_unselected = initial_index[Not(dmus_selected)]
 
     # Step 4
@@ -135,22 +174,31 @@ function initialsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
     new_dmus = convert.(Int64, new_dmus)
     dmus_selected = vcat(dmus_selected, new_dmus)
 
-    D_S = Subset(X = X[dmus_selected,:], Y = Y[dmus_selected, :], indexDMU = dmus_selected)
-    Non_D_S = excludingsubset(X, Y, dmus_selected)
-
-    return D_S, Non_D_S
+    KZCT_algorithm.Dˢ = Subset(X = X[dmus_selected,:], Y = Y[dmus_selected, :], indexDMU = dmus_selected)
+    KZCT_algorithm.D_exluding_Dˢ = excludingsubset(X, Y, dmus_selected)
+    
 end
 
 
 """
-    bestpracticesfinder(Subset_1, orient, rts, slack)
+    bestpracticesfinder!(KZCT_algorithm, subset)
 
     Identify best-practices in the subsample selected
 """
 
-function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool, optimizer::Union{DEAOptimizer,Nothing}, X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
+function bestpracticesfinder!(KZCT_algorithm::KZCTAlgorithm, subset::Symbol)
 
-    evaluation = dea(D_S.X, D_S.Y, orient = orient, rts = rts, slack = slack, optimizer = optimizer)
+    if subset == :Dˢ
+        evaluation = dea(KZCT_algorithm.Dˢ.X, KZCT_algorithm.Dˢ.Y, 
+                        orient = KZCT_algorithm.orient, rts = KZCT_algorithm.rts, 
+                        slack = KZCT_algorithm.slack, optimizer = KZCT_algorithm.optimizer)
+    elseif subset == :Dˢ_union_E
+        evaluation = dea(KZCT_algorithm.Dˢ_union_E.X, KZCT_algorithm.Dˢ_union_E.Y, 
+                        orient = KZCT_algorithm.orient, rts = KZCT_algorithm.rts, 
+                        slack = KZCT_algorithm.slack, optimizer = KZCT_algorithm.optimizer)
+    else 
+        throw(ArgumentError("`subset` must be :Dˢ or :Dˢ_union_E"));
+    end
 
     scores = efficiency(evaluation)
 
@@ -163,22 +211,55 @@ function bestpracticesfinder(D_S::Subset, orient::Symbol, rts::Symbol, slack::Bo
         end
     end
 
-    index_to_keep = D_S.indexDMU[index_bestpractices]
-    best_practices = createsubset(X, Y, index_to_keep)
-
-    return best_practices, evaluation 
+    if subset == :Dˢ
+        index_to_keep = KZCT_algorithm.Dˢ.indexDMU[index_bestpractices]
+        KZCT_algorithm.Bˢ = createsubset(KZCT_algorithm.D.X, KZCT_algorithm.D.Y, index_to_keep)
+        KZCT_algorithm.Bˢ.eff = scores[index_bestpractices]
+        KZCT_algorithm.Dˢ.eff = scores 
+        KZCT_algorithm.Bˢ.lambdaeff = evaluation.lambda 
+        KZCT_algorithm.Dˢ.lambdaeff = evaluation.lambda
+        KZCT_algorithm.Dˢ.slackX = slacks(evaluation, :X)
+        KZCT_algorithm.Dˢ.slackY = slacks(evaluation, :Y)
+        KZCT_algorithm.Dˢ.Xtarget = targets(evaluation, :X)
+        KZCT_algorithm.Dˢ.Ytarget = targets(evaluation, :Y)
+    else 
+        index_to_keep = KZCT_algorithm.Dˢ_union_E.indexDMU[index_bestpractices]
+        KZCT_algorithm.F = createsubset(KZCT_algorithm.D.X, KZCT_algorithm.D.Y, index_to_keep)
+        KZCT_algorithm.F.eff = scores[index_bestpractices]
+        KZCT_algorithm.Dˢ_union_E.eff = scores 
+        KZCT_algorithm.F.lambdaeff = evaluation.lambda 
+        KZCT_algorithm.Dˢ_union_E.lambdaeff = evaluation.lambda
+        KZCT_algorithm.Dˢ_union_E.slackX = slacks(evaluation, :X)
+        KZCT_algorithm.Dˢ_union_E.slackY = slacks(evaluation, :Y)
+        KZCT_algorithm.Dˢ_union_E.Xtarget = targets(evaluation, :X)
+        KZCT_algorithm.Dˢ_union_E.Ytarget = targets(evaluation, :Y)
+    end
+    
 end
 
 
 """
-    exteriorfinder(Subset_1,Subset2, orient, rts, slack)
+    exteriorsfinder!(KZCT_algorithm, subset)
 
-    Find exterior DMUs in D excluding D^S respect to the hull of B^S
+    Find exterior DMUs respect to the hull
 """
 
-function exteriorsfinder(B_S::Subset, Non_D_S::Subset, orient::Symbol, rts::Symbol, slack::Bool, optimizer::Union{DEAOptimizer,Nothing}, X::Union{Vector,Matrix}, Y::Union{Vector,Matrix})
+function exteriorsfinder!(KZCT_algorithm::KZCTAlgorithm, subset::Symbol)
+    X = KZCT_algorithm.D.X 
+    Y = KZCT_algorithm.D.Y 
 
-    eval = dea(Non_D_S.X, Non_D_S.Y, orient = orient, rts = rts, slack = slack, Xref = B_S.X, Yref = B_S.Y, optimizer = optimizer)
+    if subset == :Bˢ
+        eval = dea(KZCT_algorithm.D_exluding_Dˢ.X, KZCT_algorithm.D_exluding_Dˢ.Y, 
+                    orient = KZCT_algorithm.orient, rts = KZCT_algorithm.rts, slack = KZCT_algorithm.slack, 
+                    Xref = KZCT_algorithm.Bˢ.X, Yref = KZCT_algorithm.Bˢ.Y, optimizer = KZCT_algorithm.optimizer)
+    elseif subset == :F 
+        eval = dea(KZCT_algorithm.D_exluding_Dˢ_union_Ε.X, KZCT_algorithm.D_exluding_Dˢ_union_Ε.Y, 
+        orient = KZCT_algorithm.orient, rts = KZCT_algorithm.rts, slack = KZCT_algorithm.slack, 
+        Xref = KZCT_algorithm.F.X, Yref = KZCT_algorithm.F.Y, optimizer = KZCT_algorithm.optimizer)
+    else 
+        throw(ArgumentError("`subset` must be :Bˢ or :F"));
+    end
+
     scores = efficiency(eval)
 
     index_exteriors = Vector{Int64}()
@@ -190,32 +271,32 @@ function exteriorsfinder(B_S::Subset, Non_D_S::Subset, orient::Symbol, rts::Symb
         end
     end
 
-    index_to_keep = Non_D_S.indexDMU[index_exteriors]
+    if subset == :Bˢ
+        index_to_keep = KZCT_algorithm.D_exluding_Dˢ.indexDMU[index_exteriors]
+        KZCT_algorithm.Ε = createsubset(X, Y, index_to_keep)
+        KZCT_algorithm.Ε.eff = scores[index_exteriors]
+        KZCT_algorithm.Ε.lambdaeff = eval.lambda[index_exteriors]
+        KZCT_algorithm.D_exluding_Dˢ.eff = scores 
+        KZCT_algorithm.D_exluding_Dˢ.lambdaeff = eval.lambda 
+        KZCT_algorithm.D_exluding_Dˢ.slackX = slacks(eval, :X)
+        KZCT_algorithm.D_exluding_Dˢ.slackY = slacks(eval, :Y)
+        KZCT_algorithm.D_exluding_Dˢ.Xtarget = targets(eval, :X)
+        KZCT_algorithm.D_exluding_Dˢ.Ytarget = targets(eval, :Y)
+    else
+        index_to_keep = KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU[index_exteriors]
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.eff = scores 
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.lambdaeff = eval.lambda 
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.slackX = slacks(eval, :X)
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.slackY = slacks(eval, :Y)
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.Xtarget = targets(eval, :X)
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε.Ytarget = targets(eval, :Y)
+    end
 
-    E = createsubset(X, Y, index_to_keep)
     
-    return E, eval 
 
 end
 
-"""
-    reformatlambda(results_1, results_2, index_1, index_2)
 
-    Remormat lambdas from results to return lambdas in the same order / format than the initial sample D 
-"""
-function reformatlambda(results_Non_D_S_Union_E::RadialDEAModel, results_D_S_Union_E::RadialDEAModel, F::Subset, D_S_Union_E::Subset)
-
-    lambda_1 = results_D_S_Union_E.lambda # F is the hull 
-    lambda_2 = results_Non_D_S_Union_E.lambda # F + other are the hull here, we have to drop those which are not hull   
-    
-    index_to_keep = findall(x -> x in F.indexDMU, D_S_Union_E.indexDMU)
-    lambda_1 = lambda_1[:,index_to_keep]
-
-    lambda = vcat(lambda_1,lambda_2)
-
-    return lambda
-
-end
 
 """
     excludingsubset(X, Y, index_to_exclude)
@@ -256,6 +337,163 @@ function createsubset(X::Union{Vector,Matrix}, Y::Union{Vector,Matrix}, indexsub
 
     return Subset(X = X[indexsubset,:], Y = Y[indexsubset,:], indexDMU = indexsubset)
 end
+"""
+    getscores!(KZCT_algorithm)
+
+    Get the scores in the proper order of the sample D 
+"""
+
+function getscores!(KZCT_algorithm::KZCTAlgorithm,  Exterior_presence::Bool)
+    if Exterior_presence == true 
+        eff = vcat(KZCT_algorithm.Dˢ_union_E.eff, KZCT_algorithm.D_exluding_Dˢ_union_Ε.eff)
+        eff_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+        effi_matrix = hcat(eff, eff_index)
+        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = false), :]
+        KZCT_algorithm.eff = effi_matrix[:,1]
+    else 
+        eff = vcat(KZCT_algorithm.Dˢ.eff, KZCT_algorithm.D_exluding_Dˢ.eff)
+        eff_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+        effi_matrix = hcat(eff, eff_index)
+        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = false), :]
+        KZCT_algorithm.eff = effi_matrix[:,1]
+    end
+
+end
+
+"""
+    getlambdas!(KZCT_algorithm, Exterior_presence)
+
+    Get the lambdas in the proper order of the sample D 
+"""
+
+function getlambdas!(KZCT_algorithm::KZCTAlgorithm,  Exterior_presence::Bool)
+    if Exterior_presence == true 
+        lambda_1 = KZCT_algorithm.Dˢ_union_E.lambdaeff # F is the hull 
+        lambda_2 = KZCT_algorithm.D_exluding_Dˢ_union_Ε.lambdaeff # F + other are the hull here, we have to drop those which are not hull   
+        index_to_keep = findall(x -> x in KZCT_algorithm.F.indexDMU, KZCT_algorithm.Dˢ_union_E.indexDMU)
+        lambda_1 = lambda_1[:,index_to_keep]
+        KZCT_algorithm.lambda = vcat(lambda_1,lambda_2)
+    else 
+        lambda_1 = KZCT_algorithm.Dˢ.lambdaeff # F is the hull 
+        lambda_2 = KZCT_algorithm.D_exluding_Dˢ.lambdaeff # F + other are the hull here, we have to drop those which are not hull   
+        index_to_keep = findall(x -> x in KZCT_algorithm.F.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+        lambda_1 = lambda_1[:,index_to_keep]
+        KZCT_algorithm.lambda = vcat(lambda_1,lambda_2)
+    end
+end
+
+"""
+    getslacks!(KZCT_algorithm, slacks, Exterior_presence)
+
+    Get the slacks in the proper order of the sample D 
+"""
+
+function getslacks!(KZCT_algorithm::KZCTAlgorithm, slacks::Symbol, Exterior_presence::Bool)
+
+    if Exterior_presence == true 
+        if slacks == :X
+            slackX = vcat(KZCT_algorithm.Dˢ_union_E.slackX, KZCT_algorithm.D_exluding_Dˢ_union_Ε.slackX)
+            slackX_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+            slackX_matrix = hcat(slackX, slackX_index)
+            slackX_matrix = slackX_matrix[sortperm(slackX_matrix[:, size(slackX,2)+1], rev = false), :]
+            KZCT_algorithm.slackX = slackX_matrix[:,1:size(slackX,2)]
+
+        elseif slacks == :Y
+            slackY = vcat(KZCT_algorithm.Dˢ_union_E.slackY, KZCT_algorithm.D_exluding_Dˢ_union_Ε.slackY)
+            slackY_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+            slackY_matrix = hcat(slackY, slackY_index)
+            slackY_matrix = slackY_matrix[sortperm(slackY_matrix[:, size(slackY,2)+1], rev = false), :]
+            KZCT_algorithm.slackY = slackY_matrix[:,1:size(slackY,2)]
+        else 
+            throw(ArgumentError("`slacks` must be :X or :Y"));
+        end
+    else 
+        if slacks == :X
+            slackX = vcat(KZCT_algorithm.Dˢ.slackX, KZCT_algorithm.D_exluding_Dˢ.slackX)
+            slackX_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+            slackX_matrix = hcat(slackX, slackX_index)
+            slackX_matrix = slackX_matrix[sortperm(slackX_matrix[:, size(slackX,2)+1], rev = false), :]
+            KZCT_algorithm.slackX = slackX_matrix[:,1:size(slackX,2)]
+
+        elseif slacks == :Y
+            slackY = vcat(KZCT_algorithm.Dˢ.slackY, KZCT_algorithm.D_exluding_Dˢ.slackY)
+            slackY_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+            slackY_matrix = hcat(slackY, slackY_index)
+            slackY_matrix = slackY_matrix[sortperm(slackY_matrix[:, size(slackY,2)+1], rev = false), :]
+            KZCT_algorithm.slackY = slackY_matrix[:,1:size(slackY,2)]
+        else 
+            throw(ArgumentError("`slacks` must be :X or :Y"));
+        end
+    end
+end
+
+"""
+    gettargets!(KZCT_algorithm, targets, Exterior_presence)
+
+    Get the targets in the proper order of the sample D 
+"""
+
+function gettargets!(KZCT_algorithm::KZCTAlgorithm, targets::Symbol, Exterior_presence::Bool)
+    if Exterior_presence == true 
+        if targets == :X
+            Xtarget = vcat(KZCT_algorithm.Dˢ_union_E.Xtarget, KZCT_algorithm.D_exluding_Dˢ_union_Ε.Xtarget)
+            Xtarget_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+            Xtarget_matrix = hcat(Xtarget, Xtarget_index)
+            Xtarget_matrix = Xtarget_matrix[sortperm(Xtarget_matrix[:, size(Xtarget,2)+1], rev = false), :]
+            KZCT_algorithm.Xtarget = Xtarget_matrix[:,1:size(Xtarget,2)]
+
+        elseif targets == :Y
+            Ytarget = vcat(KZCT_algorithm.Dˢ_union_E.Ytarget, KZCT_algorithm.D_exluding_Dˢ_union_Ε.Ytarget)
+            Ytarget_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+            Ytarget_matrix = hcat(Ytarget, Ytarget_index)
+            Ytarget_matrix = Ytarget_matrix[sortperm(Ytarget_matrix[:, size(Ytarget,2)+1], rev = false), :]
+            KZCT_algorithm.Ytarget = Ytarget_matrix[:,1:size(Ytarget,2)]
+        else 
+            throw(ArgumentError("`targets` must be :X or :Y"));
+        end
+    else 
+        if targets == :X
+            Xtarget = vcat(KZCT_algorithm.Dˢ.Xtarget, KZCT_algorithm.D_exluding_Dˢ.Xtarget)
+            Xtarget_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+            Xtarget_matrix = hcat(Xtarget, Xtarget_index)
+            Xtarget_matrix = Xtarget_matrix[sortperm(Xtarget_matrix[:, size(Xtarget,2)+1], rev = false), :]
+            KZCT_algorithm.Xtarget = Xtarget_matrix[:,1:size(Xtarget,2)]
+
+        elseif targets == :Y
+            Ytarget = vcat(KZCT_algorithm.Dˢ.Ytarget, KZCT_algorithm.D_exluding_Dˢ.Ytarget)
+            Ytarget_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+            Ytarget_matrix = hcat(Ytarget, Ytarget_index)
+            Ytarget_matrix = Ytarget_matrix[sortperm(Ytarget_matrix[:, size(Ytarget,2)+1], rev = false), :]
+            KZCT_algorithm.Ytarget = Ytarget_matrix[:,1:size(Ytarget,2)]
+        else 
+            throw(ArgumentError("`targets` must be :X or :Y"));
+        end
+    end
+end
+
+"""
+    getresults!(KZCT_algorithm, Exterior_presence)
+
+    Get the results in the proper order of the sample D 
+"""
+function getresults!(KZCT_algorithm::KZCTAlgorithm, Exterior_presence::Bool)
+
+    # effi
+    getscores!(KZCT_algorithm, Exterior_presence)
+
+    # Lambda
+    getlambdas!(KZCT_algorithm, Exterior_presence)
+
+    # slacks 
+    getslacks!(KZCT_algorithm, :X, Exterior_presence)
+    getslacks!(KZCT_algorithm, :Y, Exterior_presence)
+
+    # targets 
+    gettargets!(KZCT_algorithm, :X, Exterior_presence)
+    gettargets!(KZCT_algorithm, :Y, Exterior_presence)
+
+
+end
 
 
 
@@ -284,95 +522,87 @@ end
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
+
+# Examples
+```jldoctest
+julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+
+julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+
+julia> deabigdata(X, Y)
+Radial DEA Model 
+DMUs = 11; Inputs = 2; Outputs = 1
+Orientation = Input; Returns to Scale = CRS
+────────────────────────────────────────────────────────
+    efficiency       slackX1       slackX2       slackY1
+────────────────────────────────────────────────────────
+1     1.0       -1.10378e-8   -1.55523e-8   -2.14142e-8
+2     0.62229   -3.8778e-11   -3.01925e-11  -3.79858e-11
+3     0.819856   4.18927e-11   3.39628e-11   4.72502e-11
+4     1.0        3.22358e-14   8.91749e-14   1.31448e-13
+5     0.310371   2.29024e-11   3.03865e-11   3.26362e-11
+6     0.555556   4.44444      -6.72088e-12  -2.42811e-12
+7     1.0        6.40683e-11  -9.57711e-13   5.13434e-12
+8     0.757669   2.82994e-10  -2.42352e-17  -6.78179e-17
+9     0.820106   1.64021      -1.38876e-7   -1.86896e-7
+10    0.490566   2.66381e-11   7.62939e-12   1.75776e-11
+11    1.0       -1.47048e-11   4.0          -2.66588e-11
+────────────────────────────────────────────────────────
+```
 """
 
 function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
         disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-        names::Union{Vector{String},Nothing} = nothing,
+        namesDMU::Union{Vector{String},Nothing} = nothing,
         optimizer::Union{DEAOptimizer,Nothing} = nothing)
-    # Create and fill the subsample
-    D_S, Non_D_S = initialsubset(X, Y)
+    
 
+    KZCT_algorithm = KZCTAlgorithm(n = size(X, 1), m = size(X,2), s = size(Y,2),
+                                    orient = orient, rts = rts, slack = slack, disposX = disposX, disposY = disposY,
+                                    dmunames = namesDMU, optimizer = optimizer)
+
+    # Initialize the sample 
+    KZCT_algorithm.D = Subset(X = X, Y = Y, indexDMU = vec([i for i in 1:size(X,1)]))
+
+    # Create and fill the subsample
+    initialsubset!(KZCT_algorithm)
 
     # Find the best-practices B_S in D_S
-    B_S, results_D_S = bestpracticesfinder(D_S, orient, rts, slack, optimizer, X, Y)
+    bestpracticesfinder!(KZCT_algorithm, :Dˢ)
 
     # Find exterior DMUs in D excluding D^S respect to the hull of B^S 
-    E, results_non_D_S = exteriorsfinder(B_S, Non_D_S, orient, rts, slack, optimizer, X, Y)
+    exteriorsfinder!(KZCT_algorithm, :Bˢ)
+
     # If E is not empty, then we have to find best practice DMUs in D^S Union E, otherwise, F = B_S and all DMUs are already evaluated 
-    if size(E.X,1)>0
-        D_S_Union_E = unionsubset(X,Y, D_S.indexDMU, E.indexDMU)
-        F, results_D_S_Union_E = bestpracticesfinder(D_S_Union_E, orient, rts, slack, optimizer, X, Y)
-        Non_D_S_Union_E = excludingsubset(X,Y, D_S_Union_E.indexDMU)
-        Other, results_Non_D_S_Union_E = exteriorsfinder(F, Non_D_S_Union_E, orient, rts, slack, optimizer, X, Y) 
-        Non_F = excludingsubset(X,Y, F.indexDMU)
-        # reformat to get in the same order for effi
-        effi_scores = vcat(efficiency(results_D_S_Union_E),efficiency(results_Non_D_S_Union_E))
-        effi_index = vcat(D_S_Union_E.indexDMU, Non_D_S_Union_E.indexDMU)
-        effi_matrix = hcat(effi_scores, effi_index)
-        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2], rev = false), :]
-        effi = effi_matrix[:,1]
+    if size(KZCT_algorithm.Ε.X,1)>0
 
-        # reformat lambda
-        lambdaeff = reformatlambda(results_Non_D_S_Union_E, results_D_S_Union_E, F, D_S_Union_E)
-
+        KZCT_algorithm.Dˢ_union_E = unionsubset(X,Y, KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.Ε.indexDMU)
+        bestpracticesfinder!(KZCT_algorithm, :Dˢ_union_E)
+        KZCT_algorithm.D_exluding_Dˢ_union_Ε = excludingsubset(X,Y, KZCT_algorithm.Dˢ_union_E.indexDMU)
+        exteriorsfinder!(KZCT_algorithm, :F) 
+        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0)
+ 
     else
-        F = B_S
-        Non_F = excludingsubset(X,Y, F.indexDMU)
-        # reformat to get in the same order for effi
-        effi_scores = vcat(efficiency(results_D_S),efficiency(results_non_D_S))
-        effi_index = vcat(D_S.indexDMU, Non_D_S.indexDMU)
-        effi_matrix = hcat(effi_scores, effi_index)
-        effi_matrix = effi_matrix[sortperm(effi_matrix[:, 2]), rev = false, :]
-        effi = effi_matrix[:,1]
-
-        # reformat lambda
-        lambdaeff = reformatlambda(results_non_D_S, results_D_S, B_S, D_S)
+        KZCT_algorithm.F = KZCT_algorithm.Bˢ
+        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0)
     end 
+ 
+    n = KZCT_algorithm.n 
+    m = KZCT_algorithm.m 
+    s = KZCT_algorithm.s 
+    orient = KZCT_algorithm.orient 
+    rts = KZCT_algorithm.rts 
+    disposX = KZCT_algorithm.disposX
+    dispoY = KZCT_algorithm.disposY 
+    names = KZCT_algorithm.dmunames
+    effi = KZCT_algorithm.eff
+    slackX = KZCT_algorithm.slackX 
+    slackY = KZCT_algorithm.slackY 
+    lambdaeff = KZCT_algorithm.lambda 
+    Xtarget = KZCT_algorithm.Xtarget
+    Ytarget = KZCT_algorithm.Ytarget
 
-    
-    # Get first-stage X and Y targets
-    if orient == :Input
-        Xtarget = X .* effi
-        Ytarget = Y
-    elseif orient == :Output
-        Xtarget = X
-        Ytarget = Y .* effi
-    end
-    n = size(effi,1)
-    m = size(X,2)
-    s = size(Y,2)
-
-    # Compute slacks
-    if slack == true
-        # Use additive model with radial efficient X and Y to get slacks
-        if disposX == :Strong
-            rhoX = ones(size(X))
-        elseif disposX == :Weak
-            rhoX = zeros(size(X))
-        end
-
-        if disposY == :Strong
-            rhoY = ones(size(Y))
-        elseif disposY == :Weak
-            rhoY = zeros(size(Y))
-        end
-
-        slacksmodel = deaadd(Xtarget, Ytarget, rhoX = rhoX, rhoY = rhoY, rts = rts, Xref = X, Yref = Y, optimizer = optimizer)
-        slackX = slacks(slacksmodel, :X)
-        slackY = slacks(slacksmodel, :Y)
-
-        # Get second-stage X and Y targets
-        Xtarget = Xtarget - slackX
-        Ytarget = Ytarget + slackY
-    else
-        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
-        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
-
-        slackX = Array{Float64}(undef, 0, 0)
-        slackY = Array{Float64}(undef, 0, 0)
-    end
     return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)
 
 end
