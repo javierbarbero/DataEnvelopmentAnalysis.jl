@@ -78,62 +78,25 @@ function initialsubset!(KZCT_algorithm::KZCTAlgorithm)
     X = KZCT_algorithm.D.X 
     Y = KZCT_algorithm.D.Y
 
-    # Step 1 
-    # Number of DMUs
-    n = size(X,1)
-    
-    # Size of the subset to create 
+    n = KZCT_algorithm.n
     p = convert(Int64, round(sqrt(n)))
-
-    # number of inputs 
-    m = size(X,2)
-
-    # number of ouputs 
-    s = size(Y,2)
+    m = KZCT_algorithm.m
+    s = KZCT_algorithm.s
     
-    # Step 2 
-    # Determine the minimum value for each input m 
-    X_min = Vector(zeros(m))
-    for i in 1:m 
-        X_min[i] = minimum(X[:,i])
-    end
-    # Determine the maximum value for each output s 
-    Y_max = Vector(zeros(m))
-    for i in 1:s 
-        Y_max[i] = maximum(Y[:,i])
+    # Select DMU's with the minimum input or the maximum output
+    dmus_selected = Vector{Int64}()
+    for x in 1:m
+        push!(dmus_selected, argmin(X[:,x]))
     end
 
-    # Step 3 
-    # Select a subset with m + s DMUs 
-    dmus_selected = Vector{Int64}()
-    for x in 1:m 
-        counter_x = 0 
-        for i in 1:n 
-            if (X[i,x] <= X_min[x] && counter_x == 0)
-                push!(dmus_selected, i)
-                counter_x = counter_x + 1 
-            else 
-                nothing 
-            end
-        end
-    end
     for y in 1:s
-        counter_y = 0 
-        for i in 1:n 
-            if (Y[i, y] >= Y_max[y] && counter_y == 0)
-                push!(dmus_selected, i)
-                counter_y = counter_y + 1 
-            else
-                nothing 
-            end
-        end
+        push!(dmus_selected, argmax(Y[:,y]))
     end
 
     unique!(dmus_selected)
     initial_index = KZCT_algorithm.D.indexDMU
     dmus_unselected = initial_index[Not(dmus_selected)]
 
-    # Step 4
     # Algorithm implementation to fill out the subsample up to the size p 
 
     # select unselected DMUs 
@@ -149,8 +112,6 @@ function initialsubset!(KZCT_algorithm::KZCTAlgorithm)
             for k in 1:100 
                 if X_unselected[i,x] <= quantile!(X[:,x], k / 100)
                     pre_scores[i, 1] = pre_scores[i, 1] + 1 
-                else
-                    nothing
                 end
             end
         end
@@ -158,8 +119,6 @@ function initialsubset!(KZCT_algorithm::KZCTAlgorithm)
             for k in 1:100 
                 if Y_unselected[i,y] >= quantile!(Y[:,y], k / 100)
                     pre_scores[i, 1] = pre_scores[i, 1] + 1 
-                else
-                    nothing
                 end
             end
         end
@@ -204,10 +163,14 @@ function bestpracticesfinder!(KZCT_algorithm::KZCTAlgorithm, subset::Symbol)
 
     index_bestpractices = Vector{Int64}()
     for i in 1:length(scores)
-        if scores[i] >= 0.99
-            push!(index_bestpractices, i)
-        else
-            nothing
+        if KZCT_algorithm.orient == :Input
+            if scores[i] >= 0.99
+                push!(index_bestpractices, i)
+            end
+        elseif KZCT_algorithm.orient == :Output
+            if scores[i] <= 1.01
+                push!(index_bestpractices, i)
+            end
         end
     end
 
@@ -264,10 +227,14 @@ function exteriorsfinder!(KZCT_algorithm::KZCTAlgorithm, subset::Symbol)
 
     index_exteriors = Vector{Int64}()
     for i in 1:length(scores)
-        if scores[i] >= 0.99
-            push!(index_exteriors, i)
-        else
-            nothing
+        if KZCT_algorithm.orient == :Input
+            if scores[i] >= 0.99
+                push!(index_exteriors, i)
+            end
+        elseif KZCT_algorithm.orient == :Output
+            if scores[i] <= 1.01
+                push!(index_exteriors, i)
+            end
         end
     end
 
@@ -476,7 +443,7 @@ end
 
     Get the results in the proper order of the sample D 
 """
-function getresults!(KZCT_algorithm::KZCTAlgorithm, Exterior_presence::Bool)
+function getresults!(KZCT_algorithm::KZCTAlgorithm, Exterior_presence::Bool, slack)
 
     # effi
     getscores!(KZCT_algorithm, Exterior_presence)
@@ -485,8 +452,13 @@ function getresults!(KZCT_algorithm::KZCTAlgorithm, Exterior_presence::Bool)
     getlambdas!(KZCT_algorithm, Exterior_presence)
 
     # slacks 
-    getslacks!(KZCT_algorithm, :X, Exterior_presence)
-    getslacks!(KZCT_algorithm, :Y, Exterior_presence)
+    if slack == true
+        getslacks!(KZCT_algorithm, :X, Exterior_presence)
+        getslacks!(KZCT_algorithm, :Y, Exterior_presence)
+    else
+        KZCT_algorithm.slackX = Array{Float64}(undef, 0, 0)
+        KZCT_algorithm.slackY = Array{Float64}(undef, 0, 0)
+    end
 
     # targets 
     gettargets!(KZCT_algorithm, :X, Exterior_presence)
@@ -553,17 +525,30 @@ Orientation = Input; Returns to Scale = CRS
 
 function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
-        disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-        namesDMU::Union{Vector{String},Nothing} = nothing,
+        names::Union{Vector{String},Nothing} = nothing,
         optimizer::Union{DEAOptimizer,Nothing} = nothing)
     
+    # Check parameters
+    nx, m = size(X, 1), size(X, 2)
+    ny, s = size(Y, 1), size(Y, 2)
 
-    KZCT_algorithm = KZCTAlgorithm(n = size(X, 1), m = size(X,2), s = size(Y,2),
-                                    orient = orient, rts = rts, slack = slack, disposX = disposX, disposY = disposY,
-                                    dmunames = namesDMU, optimizer = optimizer)
+    if nx != ny
+        throw(DimensionMismatch("number of@rows in X and Y ($nx, $ny) are not equal"));
+    end
+
+    # Default optimizer
+    if optimizer === nothing 
+        optimizer = DEAOptimizer(:LP)
+    end
+
+    n = nx
+
+    KZCT_algorithm = KZCTAlgorithm(n = n, m = m, s = s,
+                                    orient = orient, rts = rts, slack = slack, disposX = :Strong, disposY = :Strong,
+                                    dmunames = names, optimizer = optimizer)
 
     # Initialize the sample 
-    KZCT_algorithm.D = Subset(X = X, Y = Y, indexDMU = vec([i for i in 1:size(X,1)]))
+    KZCT_algorithm.D = Subset(X = X, Y = Y, indexDMU = collect(1:n))
 
     # Create and fill the subsample
     initialsubset!(KZCT_algorithm)
@@ -581,11 +566,11 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         bestpracticesfinder!(KZCT_algorithm, :Dˢ_union_E)
         KZCT_algorithm.D_exluding_Dˢ_union_Ε = excludingsubset(X,Y, KZCT_algorithm.Dˢ_union_E.indexDMU)
         exteriorsfinder!(KZCT_algorithm, :F) 
-        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0)
+        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0, slack)
  
     else
         KZCT_algorithm.F = KZCT_algorithm.Bˢ
-        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0)
+        getresults!(KZCT_algorithm, size(KZCT_algorithm.Ε.X,1)>0, slack)
     end 
  
     n = KZCT_algorithm.n 
@@ -594,7 +579,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     orient = KZCT_algorithm.orient 
     rts = KZCT_algorithm.rts 
     disposX = KZCT_algorithm.disposX
-    dispoY = KZCT_algorithm.disposY 
+    disposY = KZCT_algorithm.disposY 
     names = KZCT_algorithm.dmunames
     effi = KZCT_algorithm.eff
     slackX = KZCT_algorithm.slackX 

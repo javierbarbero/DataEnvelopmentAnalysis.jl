@@ -25,4 +25,6 @@ using Test
 
     include("peers.jl")
 
+    include("deabigdata.jl")
+
 end
