@@ -339,14 +339,40 @@ function getlambdas!(KZCT_algorithm::KZCTAlgorithm,  Exterior_presence::Bool)
         lambda_2 = KZCT_algorithm.D_exluding_Dˢ_union_Ε.lambdaeff # F + other are the hull here, we have to drop those which are not hull   
         index_to_keep = findall(x -> x in KZCT_algorithm.F.indexDMU, KZCT_algorithm.Dˢ_union_E.indexDMU)
         lambda_1 = lambda_1[:,index_to_keep]
-        KZCT_algorithm.lambda = vcat(lambda_1,lambda_2)
+        lambda = vcat(lambda_1,lambda_2)
+
+        lambda_index = vcat(KZCT_algorithm.Dˢ_union_E.indexDMU, KZCT_algorithm.D_exluding_Dˢ_union_Ε.indexDMU)
+        lambda_matrix = hcat(lambda, lambda_index)
+        lambda_matrix = lambda_matrix[sortperm(lambda_matrix[:, end], rev = false), :]
+        lambda = lambda_matrix[:,1:end-1]
     else 
         lambda_1 = KZCT_algorithm.Dˢ.lambdaeff # F is the hull 
         lambda_2 = KZCT_algorithm.D_exluding_Dˢ.lambdaeff # F + other are the hull here, we have to drop those which are not hull   
         index_to_keep = findall(x -> x in KZCT_algorithm.F.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
         lambda_1 = lambda_1[:,index_to_keep]
-        KZCT_algorithm.lambda = vcat(lambda_1,lambda_2)
+        lambda = vcat(lambda_1,lambda_2)
+
+        lambda_index = vcat(KZCT_algorithm.Dˢ.indexDMU, KZCT_algorithm.D_exluding_Dˢ.indexDMU)
+        lambda_matrix = hcat(lambda, lambda_index)
+        lambda_matrix = lambda_matrix[sortperm(lambda_matrix[:, end], rev = false), :]
+        lambda = lambda_matrix[:,1:end-1]
     end
+
+    # Create the sparse matrix for lambdas 
+    n = KZCT_algorithm.n 
+    rows = Int64[]
+    cols = Int64[]
+    vals = findnz(lambda)[3]
+    for f in KZCT_algorithm.F.indexDMU
+        j = [j for j in 1:n]
+        rows = vcat(rows, j)
+        h = [f for j in 1:n]
+        cols = vcat(cols, h)
+    end
+    
+    KZCT_algorithm.lambda = sparse(rows, cols, vals, n, n)
+    
+
 end
 
 """
