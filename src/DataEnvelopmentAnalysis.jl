@@ -60,11 +60,9 @@ module DataEnvelopmentAnalysis
     targets,
     # Productivity models
     malmquist,
-    nperiods, prodchange,
+    nperiods, prodchange
 
-    # temporary 
-    initialsubset, bestpracticesfinder,
-    exteriorsfinder, unionsubset, excludingsubset
+
 
     # Include code of functions
     include("optimizer.jl")
