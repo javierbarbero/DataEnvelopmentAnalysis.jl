@@ -16,7 +16,7 @@
     @test ninputs(holderio1) == 2
     @test noutputs(holderio1) == 1
     @test efficiency(holderio1) ≈ [0; 0; 0; 2.0; 4.0; 0.0; 1.0; 0.6]
-    @test efficiency(holderio1, :min) == [1; 1; 1; 2; 1; 2; 1; 1]
+    @test (efficiency(holderio1, :min) == [1; 1; 1; 2; 1; 2; 1; 1]) || (efficiency(holderio1, :min) == [1; 2; 1; 2; 1; 2; 1; 1])
     @test convert(Matrix, peers(holderio1)) ≈ 
             [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
@@ -29,7 +29,7 @@
     @test slacks(holderio1, :X) ≈ [0.0 0.0; 0.0 0.0; 0.0 0.0; 0.0 0.0; 0.0 1.0; 2.0 0.0; 0.0 1.0; 0.0 4.0]
     @test slacks(holderio1, :Y) ≈ zeros(8,1)
 
-    @test efficiency(deaholder(targets(holderio1, :X), targets(holderio1, :Y), l = 1, orient = :Input, rts = :VRS)) ≈ zeros(8,1)
+    @test efficiency(deaholder(targets(holderio1, :X), targets(holderio1, :Y), l = 1, orient = :Input, rts = :VRS)) ≈ zeros(8,1) atol = 1e-10
 
     # Test no slacks
     holderio1noslacks = deaholder(X, Y, l = 1, orient = :Input, rts = :VRS, slack = false)
@@ -143,7 +143,7 @@
     @test ninputs(holderoo1) == 1
     @test noutputs(holderoo1) == 2
     @test efficiency(holderoo1) ≈ [0; 0; 0; 3.0; 5.0; 0.0; 2.0; 3.0]
-    @test efficiency(holderoo1, :min) == [2; 2; 2; 3; 2; 2; 2; 3]
+    @test (efficiency(holderoo1, :min) == [2; 2; 2; 3; 2; 2; 2; 3]) || (efficiency(holderoo1, :min) ==  [3; 2; 3; 3; 2; 2; 2; 3])
     @test convert(Matrix, peers(holderoo1)) ≈ 
             [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
@@ -270,7 +270,7 @@
     @test ninputs(holdergr1) == 1
     @test noutputs(holdergr1) == 1
     @test efficiency(holdergr1) ≈ [0; 0; 0; 0.0; 3.0; 2.0; 0.0; 6.0]
-    @test efficiency(holdergr1, :min) == [1; 1; 1; 1; 1; 2; 2; 2]
+    @test (efficiency(holdergr1, :min) == [1; 1; 1; 1; 1; 2; 2; 2]) || (efficiency(holdergr1, :min)  == [2; 1; 1; 2; 1; 2; 2; 2])
     @test convert(Matrix, peers(holdergr1)) ≈ 
             [1.0  0.0  0.0    0.0    0.0  0.0  0.0  0.0
             0.0  1.0  0.0    0.0    0.0  0.0  0.0  0.0
