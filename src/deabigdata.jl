@@ -113,10 +113,15 @@ end
 
     Add results to the matrix
 """
-function getresults(subset::Matrix, evaluation::RadialDEAModel, n::Int64, m::Int64, s::Int64)
+function getresults(subset::Matrix, evaluation::RadialDEAModel, n::Int64, m::Int64, s::Int64, slack::Bool)
     scores = efficiency(evaluation)
-    slacksX = slacks(evaluation, :X)
-    slacksY = slacks(evaluation, :Y)
+    if slack
+        slacksX = slacks(evaluation, :X)
+        slacksY = slacks(evaluation, :Y)
+    else
+        slacksX = zeros(evaluation.n, m)
+        slacksY = zeros(evaluation.n, s)
+    end
     Xtargets = targets(evaluation, :X)
     Ytargets = targets(evaluation, :Y)
     lambdas = evaluation.lambda
@@ -215,7 +220,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     # Find the best-practices Bˢ in Dˢ
     evaluation = dea(Dˢ[:,coordX[1]:coordX[2]], Dˢ[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack, 
                     disposX = disposX, disposY = disposY, optimizer = optimizer)
-    Dˢ, lambdas_Dˢ = getresults(Dˢ, evaluation, n, m, s)
+    Dˢ, lambdas_Dˢ = getresults(Dˢ, evaluation, n, m, s, slack)
 
     index_bestpractices = bestpracticesfinder(Dˢ[:,coordscores[1]], orient)
 
@@ -228,7 +233,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                         rts = rts, slack = slack, Xref = Bˢ[:,coordX[1]:coordX[2]], Yref = Bˢ[:,coordY[1]:coordY[2]],
                         disposX = disposX, disposY = disposY, optimizer = optimizer)
 
-    D_excluding_Dˢ, lambdas_D_excluding_Dˢ = getresults(D_excluding_Dˢ, evaluation, n, m, s)
+    D_excluding_Dˢ, lambdas_D_excluding_Dˢ = getresults(D_excluding_Dˢ, evaluation, n, m, s, slack)
                     
     index_exteriors = bestpracticesfinder(D_excluding_Dˢ[:,coordscores[1]], orient)     
 
@@ -245,7 +250,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         evaluation = dea(Dˢ_union_E[:,coordX[1]:coordX[2]], Dˢ_union_E[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack,
                         disposX = disposX, disposY = disposY,optimizer = optimizer)
         
-        Dˢ_union_E, lambdas_Dˢ_union_E = getresults(Dˢ_union_E, evaluation, n, m, s)
+        Dˢ_union_E, lambdas_Dˢ_union_E = getresults(Dˢ_union_E, evaluation, n, m, s, slack)
 
         # Find the index of best practices DMUs 
         index_bestpractices = bestpracticesfinder(Dˢ_union_E[:,coordscores[1]], orient)
@@ -262,7 +267,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                             rts = rts, slack = slack, Xref = F[:,coordX[1]:coordX[2]], Yref = F[:,coordY[1]:coordY[2]],
                             disposX = disposX, disposY = disposY, optimizer = optimizer)
 
-        D_excluding_Dˢ_union_E, lambdas_D_excluding_Dˢ_union_E = getresults(D_excluding_Dˢ_union_E, evaluation, n, m, s)
+        D_excluding_Dˢ_union_E, lambdas_D_excluding_Dˢ_union_E = getresults(D_excluding_Dˢ_union_E, evaluation, n, m, s, slack)
 
         results = vcat(Dˢ_union_E, D_excluding_Dˢ_union_E)
         results = results[sortperm(results[:, 1], rev = false), :]
@@ -270,9 +275,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         index_lambda_to_keep = findall(x -> x in F[:,1],Dˢ_union_E[:,1])
         lambdaeff = vcat(lambdas_Dˢ_union_E[:,index_lambda_to_keep],lambdas_D_excluding_Dˢ_union_E)
         lambdaindex = vcat(Dˢ_union_E[:,1], D_excluding_Dˢ_union_E[:,1])
-        lambda_matrix = hcat(lambdaeff, lambdaindex)
-        lambda_matrix = lambda_matrix[sortperm(lambda_matrix[:, end], rev = false), :]
-        lambdaeff = lambda_matrix[:,1:end-1]
+        lambda_matrix = lambdaeff[sortperm(lambdaindex, rev = false), :]
     else
         F = Bˢ
         results = vcat(Dˢ, D_excluding_Dˢ)
@@ -281,29 +284,21 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         index_lambda_to_keep = findall(x -> x in F[:,1],D_excluding_Dˢ[:,1])
         lambdaeff = vcat(lambdas_Dˢ[:,index_lambda_to_keep],lambdas_D_excluding_Dˢ)
         lambdaindex = vcat(lambdas_Dˢ[:,1], lambdas_D_excluding_Dˢ[:,1])
-        lambda_matrix = hcat(lambdaeff, lambdaindex)
-        lambda_matrix = lambda_matrix[sortperm(lambda_matrix[:, end], rev = false), :]
-        lambdaeff = lambda_matrix[:,1:end-1]
+        lambda_matrix = lambdaeff[sortperm(lambdaindex, rev = false), :]
     end
-
 
     # Create the sparse matrix for lambdas 
-     
-    rows = Int64[]
-    cols = Int64[]
-    vals = findnz(lambdaeff)[3]
-    for f in F[:,1]
-        j = [j for j in 1:n]
-        rows = vcat(rows, j)
-        h = [f for j in 1:n]
-        cols = vcat(cols, h)
-    end
-    
-    lambdaeff = sparse(rows, cols, vals, n, n)
+    lambdaeff = spzeros(n, n)
+    lambdaeff[:, convert.(Int, lambdaindex[index_lambda_to_keep])] = lambda_matrix
+
     effi = results[:,coordscores[1]]
-    slackX = results[:, coordslackX[1]:coordslackX[2]]
-    slackY = results[:, coordslackY[1]:coordslackY[2]]
-    
+    if slack
+        slackX = results[:, coordslackX[1]:coordslackX[2]]
+        slackY = results[:, coordslackY[1]:coordslackY[2]]
+    else
+        slackX = Array{Float64}(undef, 0, 0)
+        slackY = Array{Float64}(undef, 0, 0)
+    end    
 
     Xtarget = results[:, m+s+m+s+1:m+s+m+s+m]
     Ytarget = results[:, m+s+m+s+m+1:m+s+m+s+m+s]
