@@ -27,8 +27,8 @@
             0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
             0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0]
-    @test slacks(dearussellio, :X) ≈ zeros(8,2)
-    @test slacks(dearussellio, :Y) ≈ zeros(8,1)
+    @test slacks(dearussellio, :X) ≈ zeros(8,2) atol = 1e-10
+    @test slacks(dearussellio, :Y) ≈ zeros(8,1) atol = 1e-10
 
     @test efficiency(dearussell(targets(dearussellio, :X), targets(dearussellio, :Y), orient = :Input, rts = :CRS)) ≈ ones(8,1)
 
@@ -88,7 +88,7 @@
     @test efficiency(dearusselloo, :Y) ≈ [1 1; 1 1; 1 1; 7/3 1.4; 7/3 7/3; 1 2; 7/6 7/4; 46/9 1]
     @test_throws ArgumentError efficiency(dearusselloo, :X) # No input efficiency in input oriented model 
     @test efficiency(dearusselloo) ≈ [1.0; 1.0; 1.0; 1.8666666666666665; 2.333333333333333; 1.5; 1.4583333333333335; 3.0555555555555554]
-    @test convert(Matrix, peers(dearusselloo)) == 
+    @test convert(Matrix, peers(dearusselloo)) ≈ 
             [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
@@ -96,7 +96,7 @@
             1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
             0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
             1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
-            1/3  0.0  2/3  0.0  0.0  0.0  0.0  0.0]
+            1/3  0.0  2/3  0.0  0.0  0.0  0.0  0.0] atol = 1e-10
     @test slacks(dearusselloo, :X) ≈ zeros(8,1)
     @test slacks(dearusselloo, :Y) ≈ zeros(8,2) atol = 1e-14
 

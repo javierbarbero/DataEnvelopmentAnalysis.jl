@@ -81,8 +81,11 @@ end
     @test ispeer(P2n, "G") == true
 
     # Test elements of DEAPeersDMU
-    @test P2n[1] == ((4, "D"), 0.424978317432784)
-    @test P2n[2] == ((7, "G"), 0.10928013876843023)
+    @test isa(P2n[1], Tuple)
+    @test P2n[1][1] == (4, "D")
+    @test P2n[1][2] ≈ 0.424978317432784
+    @test P2n[2][1] == (7, "G")
+    @test P2n[2][2] ≈ 0.10928013876843023
 
     # Sum function
     @test sum(P, dims = 2) ≈ [ 1.0
