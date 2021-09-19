@@ -47,19 +47,18 @@ function initialsubset(X::Union{Vector,Matrix},Y::Union{Vector,Matrix}, n::Int64
     # Algorithm implementation to fill out the subsample up to the size p 
 
     # select unselected DMUs 
-    X_unselected = X[Not(dmus_selected), :]
-    Y_unselected = Y[Not(dmus_selected), :]
+    X_unselected = @view X[Not(dmus_selected), :]
+    Y_unselected = @view Y[Not(dmus_selected), :]
 
     # create the pre-scores matrix (one column with the pre-score and the other to store the initial index)
-    pre_scores = Vector(zeros(length(dmus_unselected)))
-    pre_scores = hcat(pre_scores, dmus_unselected)
+    pre_scores = zeros(length(dmus_unselected))
     
-    for i in 1:size(X_unselected, 1)
+    @inbounds for i in 1:size(X_unselected, 1)
         for x in 1:m 
             xquant = quantile!(X[:,x], 0.01:0.01:1)
             for k in 1:100 
                 if X_unselected[i,x] <= xquant[k]
-                    pre_scores[i, 1] = pre_scores[i, 1] + 1 
+                    pre_scores[i] = pre_scores[i] + 1 
                 end
             end
         end
@@ -67,25 +66,25 @@ function initialsubset(X::Union{Vector,Matrix},Y::Union{Vector,Matrix}, n::Int64
             yquant = quantile!(Y[:,y], 0.01:0.01:1)
             for k in 1:100 
                 if Y_unselected[i,y] >= yquant[k]
-                    pre_scores[i, 1] = pre_scores[i, 1] + 1 
+                    pre_scores[i] = pre_scores[i] + 1 
                 end
             end
         end
     end
 
     # sort pre_scores to get the best DMUs in unselected DMUs 
-    pre_scores = pre_scores[sortperm(pre_scores[:, 2], rev = true), :]
+    score_perm = sortperm(pre_scores, rev = true)
+    dmus_unselected = dmus_unselected[score_perm]
+    pre_scores = pre_scores[score_perm, :]
 
     # add the number of DMUs needed to fill out the subsample 
     z = p - length(dmus_selected)
-    new_dmus = pre_scores[1:z,2]
-    new_dmus = convert.(Int64, new_dmus)
+    new_dmus = dmus_unselected[1:z]
     dmus_selected = vcat(dmus_selected, new_dmus)
+    dmus_unselected = initial_index[Not(dmus_selected)]
 
     # Creates the subsets Dˢ and D_excluding_Dˢ
-    Dˢ = [dmus_selected X[dmus_selected,:] Y[dmus_selected,:]]
-    D_excluding_Dˢ = [initial_index[Not(dmus_selected)] X[Not(dmus_selected),:] Y[Not(dmus_selected),:]]
-    return Dˢ, D_excluding_Dˢ
+    return dmus_selected, dmus_unselected
 end
 
 """
@@ -108,28 +107,6 @@ function bestpracticesfinder(scores::Vector, orient::Symbol)
     end
     return index_bestpractices
 end
-
-
-"""
-    getresults(Subset, evaluation)
-
-    Add results to the matrix
-"""
-function getresults(subset::Matrix, evaluation::RadialDEAModel, n::Int64, m::Int64, s::Int64, slack::Bool)
-    scores = efficiency(evaluation)
-    if slack
-        slacksX = slacks(evaluation, :X)
-        slacksY = slacks(evaluation, :Y)
-    else
-        slacksX = zeros(evaluation.n, m)
-        slacksY = zeros(evaluation.n, s)
-    end
-    lambdas = evaluation.lambda
-
-    subset = [subset[:,1:m+1+s] scores slacksX slacksY]
-    return subset, lambdas
-end
-
 
 """
     deabigdata(X, Y)
@@ -206,116 +183,98 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     n = nx
 
-#################################### SELECT A SUBSET Dˢ ########################################################    
+    # Select initial subset Dˢ using Khezrimotlagh et al. (2019) algorithm 
     Dˢ, D_excluding_Dˢ = initialsubset(X, Y, n, s, m)
 
-    # Fix the coordinates in the matrix 
-    coordX = [2, 2+m-1]
-    coordY = [2+m, 2+m+s-1]
-    coordscores = [2+m+s]
-    coordslackX = [coordscores[1]+1,coordscores[1]+1+m-1]
-    coordslackY = [coordslackX[2]+1, coordslackX[2]+1+s-1]
-#################################### FIND BEST-PRACTICES Bˢ ########################################################    
-
     # Find the best-practices Bˢ in Dˢ
-    evaluation = dea(Dˢ[:,coordX[1]:coordX[2]], Dˢ[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack, 
+    Dˢ_evaluation = dea(X[Dˢ, :], Y[Dˢ, :], orient = orient, rts = rts,slack = slack, 
                     disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
-    Dˢ, lambdas_Dˢ = getresults(Dˢ, evaluation, n, m, s, slack)
 
-    index_bestpractices = bestpracticesfinder(Dˢ[:,coordscores[1]], orient)
+    index_bestpractices = bestpracticesfinder(efficiency(Dˢ_evaluation), orient)
 
-    Bˢ = Dˢ[index_bestpractices,:]
-
-#################################### FIND EXTERIORS E ########################################################    
+    Bˢ = Dˢ[index_bestpractices]
 
     # Find exterior DMUs in D excluding Dˢ respect to the hull of Bˢ 
-    evaluation = dea(D_excluding_Dˢ[:,coordX[1]:coordX[2]], D_excluding_Dˢ[:,coordY[1]:coordY[2]], orient = orient,
-                        rts = rts, slack = slack, Xref = Bˢ[:,coordX[1]:coordX[2]], Yref = Bˢ[:,coordY[1]:coordY[2]],
+    D_excluding_Dˢ_evaluation = dea(X[D_excluding_Dˢ, :], Y[D_excluding_Dˢ, :], orient = orient,
+                        rts = rts, slack = slack, Xref = X[Bˢ, :], Yref = Y[Bˢ, :],
                         disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
-    D_excluding_Dˢ, lambdas_D_excluding_Dˢ = getresults(D_excluding_Dˢ, evaluation, n, m, s, slack)
                     
-    index_exteriors = bestpracticesfinder(D_excluding_Dˢ[:,coordscores[1]], orient)     
+    index_exteriors = bestpracticesfinder(efficiency(D_excluding_Dˢ_evaluation), orient)     
 
-    E = D_excluding_Dˢ[index_exteriors, :]
-
-#################################### IF EXTERIORS E, FIND D IN Dˢ_union_E ########################################################    
+    E = D_excluding_Dˢ[index_exteriors]
 
     # If E is not empty, then we have to find best practice DMUs in D^S Union E, otherwise, F = B_S and all DMUs are already evaluated 
-    if size(E,1)>0
-        # Create the subset Dˢ_union_E
+    if size(E,1) > 0
+        # Create the subset Dˢ_union_E        
         Dˢ_union_E = vcat(Dˢ, E)
-        Dˢ_union_E = Dˢ_union_E[sortperm(Dˢ_union_E[:, 1], rev = false), :]
+        
+        sort!(Dˢ_union_E, rev = false)
 
-        evaluation = dea(Dˢ_union_E[:,coordX[1]:coordX[2]], Dˢ_union_E[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack,
+        Dˢ_union_E_evaluation = dea(X[Dˢ_union_E, :], Y[Dˢ_union_E, :], orient = orient, rts = rts,slack = slack,
                         disposX = disposX, disposY = disposY,optimizer = optimizer, progress = progress)
         
-        Dˢ_union_E, lambdas_Dˢ_union_E = getresults(Dˢ_union_E, evaluation, n, m, s, slack)
-
         # Find the index of best practices DMUs 
-        index_bestpractices = bestpracticesfinder(Dˢ_union_E[:,coordscores[1]], orient)
+        index_bestpractices = bestpracticesfinder(efficiency(Dˢ_union_E_evaluation), orient)
         
         # Best practices DMUs are the efficient DMUs F of the sample D
-        F = Dˢ_union_E[index_bestpractices,:]
+        F = Dˢ_union_E[index_bestpractices]
 
         # # We then evaluate the rest of DMUs 
         initial_index = collect(1:n)
         
-        D_excluding_Dˢ_union_E = [initial_index[Not(Dˢ_union_E[:,1])] X[Not(Dˢ_union_E[:,1]),:] Y[Not(Dˢ_union_E[:,1]),:]]
-        
-        evaluation = dea(D_excluding_Dˢ_union_E[:,coordX[1]:coordX[2]], D_excluding_Dˢ_union_E[:,coordY[1]:coordY[2]], orient = orient,
-                            rts = rts, slack = slack, Xref = F[:,coordX[1]:coordX[2]], Yref = F[:,coordY[1]:coordY[2]],
+        D_excluding_Dˢ_union_E = initial_index[Not(Dˢ_union_E)]
+
+        D_excluding_Dˢ_union_E_evaluation = dea(X[D_excluding_Dˢ_union_E, :], Y[D_excluding_Dˢ_union_E, :], orient = orient,
+                            rts = rts, slack = slack, Xref = X[F, :], Yref = Y[F, :],
                             disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
-        D_excluding_Dˢ_union_E, lambdas_D_excluding_Dˢ_union_E = getresults(D_excluding_Dˢ_union_E, evaluation, n, m, s, slack)
-
-        results = vcat(Dˢ_union_E, D_excluding_Dˢ_union_E)
-        results = results[sortperm(results[:, 1], rev = false), :]
-
-        index_lambda_to_keep = findall(x -> x in F[:,1],Dˢ_union_E[:,1])
-        lambdaeff = vcat(lambdas_Dˢ_union_E[:,index_lambda_to_keep],lambdas_D_excluding_Dˢ_union_E)
-        lambdaindex = vcat(Dˢ_union_E[:,1], D_excluding_Dˢ_union_E[:,1])
-        lambda_matrix = lambdaeff[sortperm(lambdaindex, rev = false), :]
+        subset1  = Dˢ_union_E
+        results1 = Dˢ_union_E_evaluation
+        subset2  = D_excluding_Dˢ_union_E
+        results2 = D_excluding_Dˢ_union_E_evaluation   
     else
         F = Bˢ
-        results = vcat(Dˢ, D_excluding_Dˢ)
-        results = results[sortperm(results[:, 1], rev = false), :]
 
-        index_lambda_to_keep = findall(x -> x in F[:,1],D_excluding_Dˢ[:,1])
-        lambdaeff = vcat(lambdas_Dˢ[:,index_lambda_to_keep],lambdas_D_excluding_Dˢ)
-        lambdaindex = vcat(lambdas_Dˢ[:,1], lambdas_D_excluding_Dˢ[:,1])
-        lambda_matrix = lambdaeff[sortperm(lambdaindex, rev = false), :]
+        subset1  = Dˢ
+        results1 = Dˢ_evaluation
+        subset2  = D_excluding_Dˢ
+        results2 = D_excluding_Dˢ_evaluation
     end
+
+    # Get results
+    resultsperm = sortperm(vcat(subset1, subset2), rev = false)
+    effi = vcat(efficiency(results1), efficiency(results2))
+    effi = effi[resultsperm]
+
+    if slack
+        slackX = vcat(slacks(results1, :X), slacks(results2, :X))
+        slackY = vcat(slacks(results1, :Y), slacks(results2, :Y))
+
+        slackX = slackX[resultsperm, :]
+        slackY = slackY[resultsperm, :]
+    else
+        slackX = Array{Float64}(undef, 0, 0)
+        slackY = Array{Float64}(undef, 0, 0)
+    end
+
+    Xtarget = vcat(targets(results1, :X), targets(results2, :X))
+    Ytarget = vcat(targets(results1, :Y), targets(results2, :Y))
+
+    Xtarget = Xtarget[resultsperm, :]
+    Ytarget = Ytarget[resultsperm, :]
+
+    lambdas1 = peersmatrix(results1)
+    lambdas2 = peersmatrix(results2)
+
+    index_lambda_to_keep = findall(x -> x in F, subset1)
+    lambdaeff = vcat(lambdas1[:,index_lambda_to_keep],lambdas2)
+    lambdaindex = vcat(subset1, subset2)        
+    lambda_matrix = lambdaeff[resultsperm, :]  
 
     # Create the sparse matrix for lambdas 
     lambdaeff = spzeros(n, n)
     lambdaeff[:, convert.(Int, lambdaindex[index_lambda_to_keep])] = lambda_matrix
-
-    effi = results[:,coordscores[1]]
-    if slack
-        slackX = results[:, coordslackX[1]:coordslackX[2]]
-        slackY = results[:, coordslackY[1]:coordslackY[2]]
-    else
-        slackX = Array{Float64}(undef, 0, 0)
-        slackY = Array{Float64}(undef, 0, 0)
-    end    
-
-    # Get X and Y targets
-    if orient == :Input
-        Xtarget = X .* effi
-        Ytarget = Y
-    elseif orient == :Output
-        Xtarget = X
-        Ytarget = Y .* effi
-    end
-
-    if slack        
-        Xtarget = Xtarget - slackX
-        Ytarget = Ytarget + slackY
-    else
-        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
-        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
-    end
 
     # return results
     return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)  

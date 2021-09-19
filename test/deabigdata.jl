@@ -216,6 +216,22 @@
     @test_throws ArgumentError deabigdata([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
 
     # ------------------
+    # Test if no exteriors
+    # ------------------
+    Xnoext = [1 1; 1.5 1; 2 1]
+    Ynoext = [2 2; 1.5 1.5; 1 0.5]
+
+    deanoext = dea(Xnoext, Ynoext, orient = :Input)
+    deabignoext = deabigdata(Xnoext, Ynoext, orient = :Input)
+
+    @test efficiency(deanoext) ≈ efficiency(deabignoext)
+    @test slacks(deanoext, :X) ≈ slacks(deabignoext, :X)
+    @test slacks(deanoext, :X) ≈ slacks(deabignoext, :X)
+    @test targets(deanoext, :X) ≈ targets(deabignoext, :X)
+    @test targets(deanoext, :Y) ≈ targets(deabignoext, :Y)
+    @test peersmatrix(deanoext) ≈ peersmatrix(deabignoext)
+
+    # ------------------
     # Test with random data
     # ------------------
     rng = StableRNG(1234567)
@@ -228,6 +244,8 @@
     @test efficiency(rdeabig) ≈ efficiency(rdea)
     @test slacks(rdeabig, :X) ≈ slacks(rdea, :X)
     @test slacks(rdeabig, :Y) ≈ slacks(rdea, :Y)
+    @test targets(rdeabig, :X) ≈ targets(rdea, :X)
+    @test targets(rdeabig, :Y) ≈ targets(rdea, :Y)
     @test peersmatrix(rdeabig) ≈ peersmatrix(rdea)
 
     # ------------------
