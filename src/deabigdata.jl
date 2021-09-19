@@ -56,15 +56,17 @@ function initialsubset(X::Union{Vector,Matrix},Y::Union{Vector,Matrix}, n::Int64
     
     for i in 1:size(X_unselected, 1)
         for x in 1:m 
+            xquant = quantile!(X[:,x], 0.01:0.01:1)
             for k in 1:100 
-                if X_unselected[i,x] <= quantile!(X[:,x], k / 100)
+                if X_unselected[i,x] <= xquant[k]
                     pre_scores[i, 1] = pre_scores[i, 1] + 1 
                 end
             end
         end
         for y in 1:s 
+            yquant = quantile!(Y[:,y], 0.01:0.01:1)
             for k in 1:100 
-                if Y_unselected[i,y] >= quantile!(Y[:,y], k / 100)
+                if Y_unselected[i,y] >= yquant[k]
                     pre_scores[i, 1] = pre_scores[i, 1] + 1 
                 end
             end
