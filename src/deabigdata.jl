@@ -124,11 +124,9 @@ function getresults(subset::Matrix, evaluation::RadialDEAModel, n::Int64, m::Int
         slacksX = zeros(evaluation.n, m)
         slacksY = zeros(evaluation.n, s)
     end
-    Xtargets = targets(evaluation, :X)
-    Ytargets = targets(evaluation, :Y)
     lambdas = evaluation.lambda
 
-    subset = [subset[:,1:m+1+s] scores slacksX slacksY Xtargets Ytargets]
+    subset = [subset[:,1:m+1+s] scores slacksX slacksY]
     return subset, lambdas
 end
 
@@ -191,7 +189,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
         disposX::Symbol = :Strong, disposY::Symbol = :Strong,
         names::Union{Vector{String},Nothing} = nothing,
-        optimizer::Union{DEAOptimizer,Nothing} = nothing)
+        optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)
     
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
@@ -221,7 +219,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Find the best-practices Bˢ in Dˢ
     evaluation = dea(Dˢ[:,coordX[1]:coordX[2]], Dˢ[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack, 
-                    disposX = disposX, disposY = disposY, optimizer = optimizer)
+                    disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
     Dˢ, lambdas_Dˢ = getresults(Dˢ, evaluation, n, m, s, slack)
 
     index_bestpractices = bestpracticesfinder(Dˢ[:,coordscores[1]], orient)
@@ -233,7 +231,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     # Find exterior DMUs in D excluding Dˢ respect to the hull of Bˢ 
     evaluation = dea(D_excluding_Dˢ[:,coordX[1]:coordX[2]], D_excluding_Dˢ[:,coordY[1]:coordY[2]], orient = orient,
                         rts = rts, slack = slack, Xref = Bˢ[:,coordX[1]:coordX[2]], Yref = Bˢ[:,coordY[1]:coordY[2]],
-                        disposX = disposX, disposY = disposY, optimizer = optimizer)
+                        disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
     D_excluding_Dˢ, lambdas_D_excluding_Dˢ = getresults(D_excluding_Dˢ, evaluation, n, m, s, slack)
                     
@@ -250,7 +248,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         Dˢ_union_E = Dˢ_union_E[sortperm(Dˢ_union_E[:, 1], rev = false), :]
 
         evaluation = dea(Dˢ_union_E[:,coordX[1]:coordX[2]], Dˢ_union_E[:,coordY[1]:coordY[2]], orient = orient, rts = rts,slack = slack,
-                        disposX = disposX, disposY = disposY,optimizer = optimizer)
+                        disposX = disposX, disposY = disposY,optimizer = optimizer, progress = progress)
         
         Dˢ_union_E, lambdas_Dˢ_union_E = getresults(Dˢ_union_E, evaluation, n, m, s, slack)
 
@@ -267,7 +265,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         
         evaluation = dea(D_excluding_Dˢ_union_E[:,coordX[1]:coordX[2]], D_excluding_Dˢ_union_E[:,coordY[1]:coordY[2]], orient = orient,
                             rts = rts, slack = slack, Xref = F[:,coordX[1]:coordX[2]], Yref = F[:,coordY[1]:coordY[2]],
-                            disposX = disposX, disposY = disposY, optimizer = optimizer)
+                            disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
         D_excluding_Dˢ_union_E, lambdas_D_excluding_Dˢ_union_E = getresults(D_excluding_Dˢ_union_E, evaluation, n, m, s, slack)
 
@@ -302,8 +300,22 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         slackY = Array{Float64}(undef, 0, 0)
     end    
 
-    Xtarget = results[:, m+s+m+s+1:m+s+m+s+m]
-    Ytarget = results[:, m+s+m+s+m+1:m+s+m+s+m+s]
+    # Get X and Y targets
+    if orient == :Input
+        Xtarget = X .* effi
+        Ytarget = Y
+    elseif orient == :Output
+        Xtarget = X
+        Ytarget = Y .* effi
+    end
+
+    if slack        
+        Xtarget = Xtarget - slackX
+        Ytarget = Ytarget + slackY
+    else
+        if typeof(Xtarget) <: AbstractVector    Xtarget = Xtarget[:,:]  end
+        if typeof(Ytarget) <: AbstractVector    Ytarget = Ytarget[:,:]  end
+    end
 
     # return results
     return RadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)  
