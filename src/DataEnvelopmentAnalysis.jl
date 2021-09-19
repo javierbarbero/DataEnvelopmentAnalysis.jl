@@ -11,12 +11,11 @@ module DataEnvelopmentAnalysis
     using Ipopt
     using SparseArrays
     using LinearAlgebra
-    using Statistics 
     using InvertedIndices 
     using ProgressMeter
 
     using Printf: @sprintf
-    using Statistics: std
+    using Statistics: std, quantile!
     using StatsBase: CoefTable
 
     import StatsBase: nobs, mean
@@ -43,7 +42,6 @@ module DataEnvelopmentAnalysis
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
-    Subset,KZCTAlgorithm,
     # All models
     nobs, ninputs, noutputs,
     # Peers
@@ -51,7 +49,8 @@ module DataEnvelopmentAnalysis
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf, 
     dearussell, deaerg, deamddf, deaholder, dearddf,
-    efficiency, slacks,deabigdata,
+    deabigdata,
+    efficiency, slacks,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 

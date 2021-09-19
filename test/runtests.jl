@@ -1,6 +1,9 @@
 using DataEnvelopmentAnalysis
+using Distributions
 using LinearAlgebra
+using Random
 using SparseArrays
+using StableRNGs
 using Test
 
 @testset "DataEnvelopmentAnalysis" begin

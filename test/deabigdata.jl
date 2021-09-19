@@ -201,6 +201,21 @@
     @test_throws ArgumentError deabigdata([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
 
     # ------------------
+    # Test with random data
+    # ------------------
+    rng = StableRNG(1234567)
+    X = rand(Uniform(10, 20), 500, 6)
+    Y = rand(Uniform(10, 20), 500, 4)
+
+    rdea = dea(X, Y)
+    rdeabig = deabigdata(X, Y)
+
+    @test efficiency(rdeabig) ≈ efficiency(rdea)
+    @test slacks(rdeabig, :X) ≈ slacks(rdea, :X)
+    @test slacks(rdeabig, :Y) ≈ slacks(rdea, :Y)
+    @test peersmatrix(rdeabig) ≈ peersmatrix(rdea)
+
+    # ------------------
     # Test Vector and Matrix inputs and outputs
     # ------------------
     # Tests against results in R
