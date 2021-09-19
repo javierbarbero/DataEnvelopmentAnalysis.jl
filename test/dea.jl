@@ -98,7 +98,7 @@
     @test slacks(deaoo, :Y) ≈ zeros(11)
 
     @test efficiency(dea(targets(deaoo, :X), targets(deaoo, :Y), orient = :Output, rts = :CRS, slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaoo, :X), targets(deaoo, :Y))) ≈ zeros(11) atol=1e-14
+    @test efficiency(deaadd(targets(deaoo, :X), targets(deaoo, :Y))) ≈ zeros(11) atol=1e-10
 
     # Input oriented VRS
     deaiovrs = dea(X, Y, orient = :Input, rts = :VRS)
@@ -195,7 +195,7 @@
                                 0.000000000   0;
                                 5   11;
                                 0.000000000   4]
-    @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-15
+    @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-10
 
     @test efficiency(dea(targets(deaoovrs, :X), targets(deaoovrs, :Y), orient = :Output, rts = :VRS, slack = false)) ≈ ones(11)
     @test efficiency(deaadd(targets(deaoovrs, :X), targets(deaoovrs, :Y))) ≈ zeros(11) atol=1e-12

@@ -35,7 +35,7 @@
      0.000000000  0  0 1.0348650979  0  0 0.11457435013  0  0   0   0;
      0.000000000  0  0 0.0000000000  0  0 1.14814814815  0  0   0   0;
      0.000000000  0  0 0.4905660377  0  0 0.49056603774  0  0   0   0;
-     0.000000000  0  0 0.0000000000  0  0 0.00000000000  0  0   0   1.000000000]
+     0.000000000  0  0 0.0000000000  0  0 0.00000000000  0  0   0   1.000000000] atol = 1e-8
      @test slacks(deaio, :X) ≈ [0.000000000   0;
                                 0.000000000   0;
                                 0.000000000   0;
@@ -48,11 +48,6 @@
                                 0.000000000   0;
                                 0.000000000   4]
     @test slacks(deaio, :Y) ≈ zeros(11)
-
-    @test efficiency(deabigdata(targets(deaio, :X), targets(deaio, :Y), orient = :Input, rts = :CRS, slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaio, :X), targets(deaio, :Y))) ≈ zeros(11) atol=1e-14
-
-    @test peersmatrix(deaio) == deaio.lambda
 
     # Otuput oriented CRS
     deaoo = deabigdata(X, Y, orient = :Output, rts = :CRS)
@@ -95,9 +90,6 @@
                                 0.000000000   0;
                                 0.000000000   4]
     @test slacks(deaoo, :Y) ≈ zeros(11)
-
-    @test efficiency(deabigdata(targets(deaoo, :X), targets(deaoo, :Y), orient = :Output, rts = :CRS, slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaoo, :X), targets(deaoo, :Y))) ≈ zeros(11) atol=1e-14
 
     # Input oriented VRS
     deaiovrs = deabigdata(X, Y, orient = :Input, rts = :VRS)
@@ -151,9 +143,6 @@
                                   0.000000000;
                                   0.000000000]
 
-    @test efficiency(deabigdata(targets(deaiovrs, :X), targets(deaiovrs, :Y), orient = :Input, rts = :VRS, slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaiovrs, :X), targets(deaiovrs, :Y))) ≈ zeros(11) atol=1e-12
-
     # Output oriented VRS
     deaoovrs = deabigdata(X, Y, orient = :Output, rts = :VRS)
 
@@ -194,19 +183,13 @@
                                 0.000000000   0;
                                 5   11;
                                 0.000000000   4]
-    @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-15
-
-    @test efficiency(deabigdata(targets(deaoovrs, :X), targets(deaoovrs, :Y), orient = :Output, rts = :VRS, slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaoovrs, :X), targets(deaoovrs, :Y))) ≈ zeros(11) atol=1e-12
+    @test slacks(deaoovrs, :Y) ≈ zeros(11) atol=1e-10
 
     # Test no slacks
     deaionoslack = deabigdata(X, Y, slack = false)
     @test efficiency(deaionoslack) == efficiency(deaio)
     @test isempty(slacks(deaionoslack, :X)) == 1
     @test isempty(slacks(deaionoslack, :Y)) == 1
-
-    @test efficiency(deabigdata(targets(deaionoslack, :X), targets(deaionoslack, :Y), slack = false)) ≈ ones(11)
-    @test efficiency(deaadd(targets(deaionoslack, :X), targets(deaionoslack, :Y))) != zeros(11) # Different as there is no slacks in first model
 
     # Print
     show(IOBuffer(), deaio)
