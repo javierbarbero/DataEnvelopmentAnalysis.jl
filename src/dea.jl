@@ -72,7 +72,7 @@ function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
     names::Union{Vector{String},Nothing} = nothing,
-    optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)::RadialDEAModel
+    optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = false)::RadialDEAModel
 
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
