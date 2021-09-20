@@ -1,29 +1,29 @@
-# This file contains functions for the Khezrimotlagh et al. (2019) algorithm (we use KZCT as acronym here)
+# This file contains functions for the Radial Big Data Model, following Khezrimotlagh et al. (2019) algorithm (we use KZCT as acronym here)
 # D. Khezrimotlagh, J. Zhu and W.D. Cook et al. / European Journal of Operational Research 274 (2019) 1047–1054
 
 """
     initialsubset(X,Y)
 
-    Creates the initial subset as in KZCT algorithm:
-    1. Determines p the size of the subset and create an empty vector or matrix to fill out 
-    2. Determines the minimum value for each input m and the maximum value for each output s 
-    3. Select a subset with one DMU per input, with DMU's input equal to the minimum value for this input m and one DMU per output
-    with DMU's output equal to the maximum value for this output s: m + s DMU's selected
-    4. To fill out the subset up to p DMUs, implement the following algorithm:
-        For each unselected DMU_j,
-        {u = 0,
-            {For each i and k_i,
-                If x_ij <= k_ith percentile of x^i then
+Creates the initial subset as in KZCT algorithm:
+1. Determines p the size of the subset and create an empty vector or matrix to fill out 
+2. Determines the minimum value for each input m and the maximum value for each output s 
+3. Select a subset with one DMU per input, with DMU's input equal to the minimum value for this input m and one DMU per output
+with DMU's output equal to the maximum value for this output s: m + s DMU's selected
+4. To fill out the subset up to p DMUs, implement the following algorithm:
+    For each unselected DMU_j,
+    {u = 0,
+        {For each i and k_i,
+            If x_ij <= k_ith percentile of x^i then
+                u = u + 1}
+            {For each r and k'_r 
+                If y_rj >= k'th percentile of y^r then 
                     u = u + 1}
-                {For each r and k'_r 
-                    If y_rj >= k'th percentile of y^r then 
-                        u = u + 1}
-        pre_score_j = u }
-    
-        Where x^i and y^r represent the ith inputs and the rth outputs of all DMUS.
-        The indexes k_i and k'_r are changed from 0 to 100 and refer to the percentiles of x^i and y^r respectively.
-        Sorting DMUs in descending order by the assigned pre-scores, the remaining DMUs (to construct the subsample with size p)
-        are selected as those having the greatest pre-scores. 
+    pre_score_j = u }
+
+Where x^i and y^r represent the ith inputs and the rth outputs of all DMUS.
+The indexes k_i and k'_r are changed from 0 to 100 and refer to the percentiles of x^i and y^r respectively.
+Sorting DMUs in descending order by the assigned pre-scores, the remaining DMUs (to construct the subsample with size p)
+are selected as those having the greatest pre-scores. 
 
 """
 function initialsubset(X::Union{Vector,Matrix},Y::Union{Vector,Matrix}, n::Int64, s::Int64, m::Int64)
@@ -90,17 +90,17 @@ end
 """
     bestpracticesfinder(Subset)
 
-    Identify best-practices in the subsample selected
+Identify best-practices in the subsample selected
 """
-function bestpracticesfinder(scores::Vector, orient::Symbol)
+function bestpracticesfinder(scores::Vector, orient::Symbol, atol::Float64)
     index_bestpractices = Vector{Int64}()
     for i in 1:length(scores)
         if orient == :Input
-            if scores[i] >= 0.99
+            if scores[i] >= 1 - atol
                 push!(index_bestpractices, i)
             end
         elseif orient == :Output
-            if scores[i] <= 1.01
+            if scores[i] <= 1 + atol
                 push!(index_bestpractices, i)
             end
         end
@@ -111,7 +111,20 @@ end
 """
     deabigdata(X, Y)
 
-    Apply Radial DEA Model using KZCT algorithm
+Compute the big data radial model using data envelopment analysis for inputs X and outputs Y.
+
+# Optional Arguments
+- `orient=:Input`: chooses the radially oriented input mode. For the radially oriented output model choose `:Output`.
+- `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
+- `atol=1e-6`: tolerance for DMU to be considered efficient.
+- `names`: a vector of strings with the names of the decision making units.
+"""
+function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
+        orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true, atol::Float64 = 1e-6,
+        names::Union{Vector{String},Nothing} = nothing,
+        optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)
+    
+    #=
     The algorithm is such as:
     1. Start 
     2. D <- get a sample of DMUs 
@@ -123,51 +136,8 @@ end
         6.1. F <- find best-practice DMUs in D^S Union E 
         6.2. Evaluate DMUs in D excluding (D^S Union E) respoect to the F's hull 
     7. End 
+    =#
 
-    Where F is the set of efficient DMUs. 
-
-    # Optional Arguments
-- `orient=:Input`: chooses the radially oriented input mode. For the radially oriented output model choose `:Output`.
-- `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
-- `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
-- `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
-- `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
-- `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deabigdata(X, Y)
-Radial DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Orientation = Input; Returns to Scale = CRS
-────────────────────────────────────────────────────────
-    efficiency       slackX1       slackX2       slackY1
-────────────────────────────────────────────────────────
-1     1.0       -1.10378e-8   -1.55523e-8   -2.14142e-8
-2     0.62229   -3.8778e-11   -3.01925e-11  -3.79858e-11
-3     0.819856   4.18927e-11   3.39628e-11   4.72502e-11
-4     1.0        3.22358e-14   8.91749e-14   1.31448e-13
-5     0.310371   2.29024e-11   3.03865e-11   3.26362e-11
-6     0.555556   4.44444      -6.72088e-12  -2.42811e-12
-7     1.0        6.40683e-11  -9.57711e-13   5.13434e-12
-8     0.757669   2.82994e-10  -2.42352e-17  -6.78179e-17
-9     0.820106   1.64021      -1.38876e-7   -1.86896e-7
-10    0.490566   2.66381e-11   7.62939e-12   1.75776e-11
-11    1.0       -1.47048e-11   4.0          -2.66588e-11
-────────────────────────────────────────────────────────
-```
-"""
-
-function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
-        orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
-        disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-        names::Union{Vector{String},Nothing} = nothing,
-        optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)
-    
     # Check parameters
     nx, m = size(X, 1), size(X, 2)
     ny, s = size(Y, 1), size(Y, 2)
@@ -182,6 +152,8 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     end
 
     n = nx
+    disposX = :Strong
+    disposY = :Strong
 
     # Select initial subset Dˢ using Khezrimotlagh et al. (2019) algorithm 
     Dˢ, D_excluding_Dˢ = initialsubset(X, Y, n, s, m)
@@ -190,7 +162,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Dˢ_evaluation = dea(X[Dˢ, :], Y[Dˢ, :], orient = orient, rts = rts,slack = slack, 
                     disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
-    index_bestpractices = bestpracticesfinder(efficiency(Dˢ_evaluation), orient)
+    index_bestpractices = bestpracticesfinder(efficiency(Dˢ_evaluation), orient, atol)
 
     Bˢ = Dˢ[index_bestpractices]
 
@@ -200,7 +172,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                         disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
                     
-    index_exteriors = bestpracticesfinder(efficiency(D_excluding_Dˢ_evaluation), orient)     
+    index_exteriors = bestpracticesfinder(efficiency(D_excluding_Dˢ_evaluation), orient, atol)     
 
     E = D_excluding_Dˢ[index_exteriors]
 
@@ -215,7 +187,7 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                         disposX = disposX, disposY = disposY,optimizer = optimizer, progress = progress)
         
         # Find the index of best practices DMUs 
-        index_bestpractices = bestpracticesfinder(efficiency(Dˢ_union_E_evaluation), orient)
+        index_bestpractices = bestpracticesfinder(efficiency(Dˢ_union_E_evaluation), orient, atol)
         
         # Best practices DMUs are the efficient DMUs F of the sample D
         F = Dˢ_union_E[index_bestpractices]

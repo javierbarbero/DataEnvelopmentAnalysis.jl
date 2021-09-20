@@ -6,6 +6,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
         "Home" => "index.md",
         "Technical Efficiency Models" => Any[
                 "Radial Models" => "technical/radial.md",
+                "Radial Big Data Models" => "technical/radialbigdata.md",
                 "Directional Distance Function Models" => "technical/directional.md",
                 "Additive Models" => "technical/additive.md",
                 "Generalized Distance Function Models" => "technical/generalizeddf.md",
