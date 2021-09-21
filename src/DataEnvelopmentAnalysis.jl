@@ -11,10 +11,11 @@ module DataEnvelopmentAnalysis
     using Ipopt
     using SparseArrays
     using LinearAlgebra
+    using InvertedIndices 
     using ProgressMeter
 
     using Printf: @sprintf
-    using Statistics: std
+    using Statistics: std, quantile!
     using StatsBase: CoefTable
 
     import StatsBase: nobs, mean
@@ -48,6 +49,7 @@ module DataEnvelopmentAnalysis
     # Technical models
     dea, deaadd, deaaddweights, deaddf, deagdf, 
     dearussell, deaerg, deamddf, deaholder, dearddf,
+    deabigdata,
     efficiency, slacks,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
@@ -59,6 +61,8 @@ module DataEnvelopmentAnalysis
     malmquist,
     nperiods, prodchange
 
+
+
     # Include code of functions
     include("optimizer.jl")
 
@@ -68,6 +72,7 @@ module DataEnvelopmentAnalysis
     include("technical.jl")
     include("dea.jl")
     include("deaadd.jl")
+    include("deabigdata.jl")
     include("deaddf.jl")
     include("deagdf.jl")
     include("dearussell.jl")
