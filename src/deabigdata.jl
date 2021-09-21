@@ -163,6 +163,8 @@ function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                     disposX = disposX, disposY = disposY, optimizer = optimizer, progress = progress)
 
     index_bestpractices = bestpracticesfinder(efficiency(Dˢ_evaluation), orient, atol)
+    
+    length(index_bestpractices) > 0 || throw(ErrorException("No efficient DMUs found in the initial subset. Consider increasing the tolerance `atol`"))
 
     Bˢ = Dˢ[index_bestpractices]
 

@@ -214,6 +214,7 @@
     @test_throws DimensionMismatch deabigdata([1; 2 ; 3], [4 ; 5]) #  Different number of observations
     @test_throws ArgumentError deabigdata([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
     @test_throws ArgumentError deabigdata([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws ErrorException deabigdata(X, Y, atol = 0.0, optimizer = DEAOptimizer(:NLP))
 
     # ------------------
     # Test if no exteriors
