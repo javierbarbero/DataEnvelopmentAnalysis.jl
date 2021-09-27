@@ -1,6 +1,11 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.6.0 (September 27, 2021)
+----------------------------
+- Add Radial big data model.
+- Add Radial model in multiplier form.
+
 Version 0.5.0 (May 5, 2021)
 ----------------------------
 - Change default optimizer of Modified Directional Distance Function model to GLPK.
@@ -27,7 +32,7 @@ Version 0.2.0 (January 3, 2021)
 - Add weak disposability in additive model.
 - Cusotm weights in additive model are now specified with `rhoX` and `rhoY` instead of `wX` and `wY`.
 - Add parameter to specify DMU names in all model functions.
-- Add `peers` and `peersmatrix` functions to retur the peers.
+- Add `peers` and `peersmatrix` functions to return the peers.
 - Add `targets` function to return optimal input and output targets.
 - Add `normfactor` function to return normalization factor in economic models.
 - Compatibility with GLPK 0.14.
