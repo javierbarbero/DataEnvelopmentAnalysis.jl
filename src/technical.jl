@@ -127,3 +127,29 @@ function targets(model::AbstractTechnicalDEAModel, target::Symbol)::Matrix
     throw(ArgumentError("`target` must be :X or :Y"));
 
 end
+
+"""
+    multipliers(model::AbstractTechnicalDEAModel, multiplier::Symbol)
+Return multipliers (shadow prices) of a technical DEA model.
+"""
+function multipliers(model::AbstractTechnicalDEAModel, multiplier::Symbol)::Matrix
+    if multiplier == :X
+        return model.v
+    elseif multiplier == :Y
+        return model.u
+    else
+        throw(ArgumentError("`multiplier` must be :X or :Y"));
+    end
+end
+
+"""
+    rts(model::AbstractTechnicalDEAModel)
+Return the value measuring the returns to scale of a multiplier DEA model.
+"""
+function rts(model::AbstractTechnicalDEAModel)::Vector
+    if isdefined(model, :omega)
+        return model.omega
+    else
+        throw(ArgumentError("`rts` only for DEA models in multiplier form."));
+    end
+end

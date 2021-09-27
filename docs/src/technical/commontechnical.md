@@ -18,4 +18,6 @@ targets(::AbstractTechnicalDEAModel, ::Symbol)
 peers
 peersmatrix
 ispeer
+multipliers
+rts
 ```

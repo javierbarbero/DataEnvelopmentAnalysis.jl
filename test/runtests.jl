@@ -9,6 +9,7 @@ using Test
 @testset "DataEnvelopmentAnalysis" begin
 
     include("dea.jl")
+    include("deam.jl")
     include("deaadd.jl")
     include("deaddf.jl")
     include("deagdf.jl")

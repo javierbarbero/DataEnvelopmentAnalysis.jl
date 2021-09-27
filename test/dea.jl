@@ -264,6 +264,7 @@
 
     @test_throws ArgumentError targets(deaio, :Error) # Invalid target
     @test_throws ArgumentError slacks(deaio, :Error) # Invalid slacks
+    @test_throws ArgumentError rts(deaio) # rts only for DEA models in multiplier form
 
     # ------------------
     # Weak Disposability Tests
