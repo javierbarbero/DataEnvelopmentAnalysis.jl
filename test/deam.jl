@@ -152,7 +152,7 @@
     ] atol = 1e-5
 
     @test efficiency(deam(targets(deamiovrs, :X), targets(deamiovrs, :Y), orient = :Input, rts = :VRS)) ≈ ones(11) atol = 1e-5
-    @test rts(deamiovrs) ≈ [0.0; 0.661826; -0.314757; 0.0; 0.711640; 0.666667; 0.0; -1.626970; -1.214286; 0.135409; 0.0] atol = 1e-5
+    @test rts(deamiovrs) ≈ [0.0; -0.661826; 0.314757; 0.0; -0.711640; -0.666667; 0.0; 1.626970; 1.214286; -0.135409; 0.0] atol = 1e-5
 
     # Output oriented VRS
     deamoovrs = deam(X, Y, orient = :Output, rts = :VRS)

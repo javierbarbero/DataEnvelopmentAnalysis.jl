@@ -93,10 +93,10 @@ function deam(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         @variable(deamodel, omega)  
 
         if orient == :Input
-            @objective(deamodel, Max, sum(u[r] * y0[r] for r in 1:s) + omega)
+            @objective(deamodel, Max, sum(u[r] * y0[r] for r in 1:s) - omega)
 
             @constraint(deamodel, sum(v[i] * x0[i] for i in 1:m) == 1)
-            @constraint(deamodel, [j in 1:nref], sum(u[r] * Yref[j,r] for r in 1:s) - sum(v[i] * Xref[j,i] for i in 1:m) + omega <= 0)
+            @constraint(deamodel, [j in 1:nref], sum(u[r] * Yref[j,r] for r in 1:s) - sum(v[i] * Xref[j,i] for i in 1:m) - omega <= 0)
 
         elseif orient == :Output
             @objective(deamodel, Min, sum(v[i] * x0[i] for i in 1:m) + omega)
