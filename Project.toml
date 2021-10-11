@@ -1,7 +1,7 @@
 name = "DataEnvelopmentAnalysis"
 uuid = "a100299e-89d6-11e9-0fa0-2daf497e6a05"
 authors = ["Javier Barbero <jbarberoeco@gmail.com>"]
-version = "0.6.0"
+version = "0.6.1"
 
 [deps]
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
