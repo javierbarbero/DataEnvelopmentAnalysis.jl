@@ -33,7 +33,9 @@ module DataEnvelopmentAnalysis
     DEAPeers, DEAPeersDMU,
     AbstractTechnicalDEAModel, AbstractRadialDEAModel, AbstractRadialMultiplierDEAModel,
     TechnicalDEAModel,
-    RadialDEAModel, RadialMultiplierDEAModel, AdditiveDEAModel, DirectionalDEAModel, GeneralizedDFDEAModel, 
+    RadialDEAModel, RadialMultiplierDEAModel, AdditiveDEAModel, 
+    DirectionalDEAModel, DirectionalMultiplierDEAModel,
+    GeneralizedDFDEAModel, 
     RussellDEAModel, EnhancedRussellGraphDEAModel, ModifiedDDFDEAModel, 
     AbstractHolderDEAModel, HolderL1DEAModel, HolderL2DEAModel, HolderLInfDEAModel,
     ReverseDDFDEAModel,
@@ -47,7 +49,7 @@ module DataEnvelopmentAnalysis
     # Peers
     peers, peersmatrix, ispeer,
     # Technical models
-    dea, deam, deaadd, deaaddweights, deaddf, deagdf, 
+    dea, deam, deaadd, deaaddweights, deaddf, deaddfm, deagdf, 
     dearussell, deaerg, deamddf, deaholder, dearddf,
     deabigdata,
     efficiency, slacks, multipliers, rts,
@@ -73,6 +75,7 @@ module DataEnvelopmentAnalysis
     include("dea.jl")
     include("deam.jl")
     include("deaadd.jl")
+    include("deaddfm.jl")
     include("deabigdata.jl")
     include("deaddf.jl")
     include("deagdf.jl")

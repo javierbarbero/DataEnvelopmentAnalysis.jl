@@ -1,4 +1,4 @@
-# Tests for Radial DEA Models
+# Tests for Directional DEA Models
 @testset "DirectionalDEAModel" begin
 
     ## Test Directional DF DEA Models with FLS Book data

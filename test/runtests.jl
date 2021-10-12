@@ -12,6 +12,7 @@ using Test
     include("deam.jl")
     include("deaadd.jl")
     include("deaddf.jl")
+    include("deaddfm.jl")
     include("deagdf.jl")
     include("dearussell.jl")
     include("deaerg.jl")
