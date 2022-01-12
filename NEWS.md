@@ -1,6 +1,10 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.7.0 (January 12, 2022)
+----------------------------
+- Add Directional Distance Function model in multiplier form.
+
 Version 0.6.0 (September 27, 2021)
 ----------------------------
 - Add Radial big data model.
