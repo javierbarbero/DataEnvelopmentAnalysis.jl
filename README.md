@@ -62,4 +62,4 @@ julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 
 ## Authors
 
-DataEnvelopmentAnalysis.jl is being developed by [Javier Barbero](http://www.javierbarbero.net) and [José Luís Zofío](http://www.joselzofio.net).
+DataEnvelopmentAnalysis.jl is being developed by [Javier Barbero](http://www.javierbarbero.net) and [José Luis Zofío](http://www.joselzofio.net).

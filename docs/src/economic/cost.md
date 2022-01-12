@@ -1,8 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-end
 ```
 
 # Cost Models
@@ -29,26 +26,16 @@ The measurement of cost efficiency assuming variable returns to scale, **VRS**, 
 *Cost efficiency* defines as the ratio of minimum cost to observed cost: $CE=C\left(\mathbf{y},\mathbf{w}\right)/\mathbf{wx_{o}}$. Thanks to duality results presented by *Shephard (1953)* , and following *Farrell (1957)*, cost efficiency can be decomposed into the radially input oriented technical efficiency measure and the residual difference corresponding to *allocative cost efficiency*. Allocative  efficiency defines as the ratio between minimum cost to production cost at the technically efficient projection of the unit under evaluation.
 
 In this example we compute the cost efficiency measure under variable returns to scale:
-```jldoctest 1
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+```@example cost
+using DataEnvelopmentAnalysis
 
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 
-julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 
-julia> deacost(X, Y, W)
-Cost DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-Orientation = Input; Returns to Scale = VRS
-──────────────────────────────────
-       Cost  Technical  Allocative
-──────────────────────────────────
-1  0.615385      0.75     0.820513
-2  1.0           1.0      1.0
-3  1.0           1.0      1.0
-4  0.5           0.5      1.0
-5  0.347826      0.375    0.927536
-──────────────────────────────────
+W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+
+deacost(X, Y, W)
 ```
 
 ### deacost Function Documentation

@@ -1,10 +1,20 @@
 using Documenter, DataEnvelopmentAnalysis
 
+# Solve nonlinear problem to display Ipopt initial message
+begin
+        X = [1; 2; 3];
+        Y = [1; 1; 1];
+        deagdf(X, Y, alpha = 0.5, rts = :VRS)
+end
+    
+DocMeta.setdocmeta!(DataEnvelopmentAnalysis, :DocTestSetup, :(using DataEnvelopmentAnalysis); recursive=true)
+
 makedocs(sitename = "DataEnvelopmentAnalysis",
         authors = "Javier Barbero and José Luis Zofío.",
         pages = [
         "Home" => "index.md",
         "Technical Efficiency Models" => Any[
+                
                 "Radial Models" => "technical/radial.md",
                 "Radial Big Data Models" => "technical/radialbigdata.md",
                 "Directional Distance Function Models" => "technical/directional.md",

@@ -43,34 +43,6 @@ Model specification:
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaadd(X, Y, :MIP)
-Weighted Additive DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Orientation = Graph; Returns to Scale = VRS
-Weights = MIP
-─────────────────────────────────────────────────────
-      efficiency       slackX1  slackX2       slackY1
-─────────────────────────────────────────────────────
-1    0.0           0.0              0.0   0.0
-2    0.507519      0.0              0.0   7.10526
-3    0.0           0.0              0.0   0.0
-4   -4.72586e-17  -8.03397e-16      0.0   0.0
-5    2.20395       0.0              0.0  17.6316
-6    1.31279e-16   8.10382e-16      0.0   8.64407e-16
-7    0.0           0.0              0.0   0.0
-8    0.0           0.0              0.0   0.0
-9    0.0           0.0              0.0   0.0
-10   1.04322      17.0             15.0   1.0
-11   0.235294      0.0              4.0   0.0
-─────────────────────────────────────────────────────
-```
 """
 function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     model::Symbol = :Default; orient::Symbol = :Graph,

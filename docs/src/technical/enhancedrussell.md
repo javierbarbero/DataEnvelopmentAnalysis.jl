@@ -1,8 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-end
 ```
 
 # Enhanced Russell Graph Slack Based Measure
@@ -37,57 +34,29 @@ After solving the model, input and output slacks are recovered through the follo
 ```
 
 In this example we compute the Enhanced Russell Graph DEA model under variable returns to scale:
-```jldoctest 1
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+```@example ergsbm
+using DataEnvelopmentAnalysis
 
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 
-julia> deaerg(X, Y, rts = :VRS)
-Enhanced Russell Graph Slack Based Measure DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Orientation = Graph; Returns to Scale = VRS
-───────────────────────────────────────
-   efficiency    beta  slackX1  slackY1
-───────────────────────────────────────
-1    1.0       1.0     0.0        0.0
-2    1.0       1.0     0.0        0.0
-3    1.0       1.0     0.0        0.0
-4    1.0       1.0     0.0        0.0
-5    0.4       0.6     2.0        2.0
-6    0.47619   1.0     7.33333    0.0
-7    0.857143  1.0     2.0        0.0
-8    0.2       0.4706  5.412      2.647
-───────────────────────────────────────
+Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+
+deaerg(X, Y, rts = :VRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```jldoctest 1
-julia> deaergvrs = deaerg(X, Y, rts = :VRS);
+```@example ergsbm
+deaergvrs = deaerg(X, Y, rts = :VRS);
+nothing # hide
+```
 
-julia> efficiency(deaergvrs)
-8-element Vector{Float64}:
- 1.0
- 1.0
- 1.0
- 1.0
- 0.39999999999999997
- 0.47619047619047616
- 0.8571428571428574
- 0.2
+```@example ergsbm
+efficiency(deaergvrs)
 ```
 
 Estimated $\beta$'s are returned with the `efficiency` function using `:beta` as the second argument:
-```jldoctest 1
-julia> efficiency(deaergvrs, :beta)
-8-element Vector{Float64}:
- 1.0
- 1.0
- 1.0
- 1.0
- 0.6
- 0.9999999999999998
- 0.9999999999999998
- 0.4706000000000001
+```@example ergsbm
+efficiency(deaergvrs, :beta)
 ```
 
 ### deaerg Function Documentation

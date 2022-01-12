@@ -29,30 +29,6 @@ Compute data envelopment analysis Enhanced Russell Graph Slack Based Measure for
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
-
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353] ;
-
-julia> deaerg(X, Y, rts = :VRS)
-Enhanced Russell Graph Slack Based Measure DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Orientation = Graph; Returns to Scale = VRS
-───────────────────────────────────────
-   efficiency    beta  slackX1  slackY1
-───────────────────────────────────────
-1    1.0       1.0     0.0        0.0
-2    1.0       1.0     0.0        0.0
-3    1.0       1.0     0.0        0.0
-4    1.0       1.0     0.0        0.0
-5    0.4       0.6     2.0        2.0
-6    0.47619   1.0     7.33333    0.0
-7    0.857143  1.0     2.0        0.0
-8    0.2       0.4706  5.412      2.647
-───────────────────────────────────────
-```
 """
 function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}; 
     rts::Symbol = :CRS, slack::Bool = true, 

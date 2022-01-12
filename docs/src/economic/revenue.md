@@ -1,8 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-end
 ```
 
 # Revenue Models
@@ -29,26 +26,16 @@ The measurement of revenue efficiency assuming variable returns to scale, **VRS*
 *Revenue efficiency* defines as the ratio of observed revenue to maximum revenue: $RE=\mathbf{py_{o}}/R\left(\mathbf{x},\mathbf{p}\right) $. Duality results presented in *Shephard (1953)* from an output perspective allow us to decompose $RE$ into the output oriented technical efficiency measure and the residual difference corresponding to the *allocative revenue efficiency*. Allocative efficiency defines as the ratio of revenue at the technically efficient projection of the observation to maximum revenue.
 
 In this example we compute the revnue efficiency measure under variable returns to scale:
-```jldoctest 1
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+```@example revenue
+using DataEnvelopmentAnalysis
 
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 
-julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 
-julia> dearevenue(X, Y, P)
-Revenue DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-Orientation = Output; Returns to Scale = VRS
-──────────────────────────────────
-    Revenue  Technical  Allocative
-──────────────────────────────────
-1  0.644444   0.777778    0.828571
-2  1.0        1.0         1.0
-3  1.0        1.0         1.0
-4  0.5        0.5         1.0
-5  0.456522   0.6         0.76087
-──────────────────────────────────
+P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+dearevenue(X, Y, P)
 ```
 
 ### dearevenue Function Documentation

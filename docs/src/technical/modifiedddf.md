@@ -1,10 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-    # Solve nonlinear problem to display Ipopt initial message
-    deamddf([1; 2; 3], [1; 1; 1],Gx = :Ones, Gy = :Ones, rts = :VRS, slack = false)
-end
 ```
 
 # Modified Directional Distance Function
@@ -29,69 +24,33 @@ with the following condition when assuming variable returns to scale:
 ```
 
 In this example we compute the modified directional distance function model under variable returns to scale using ones as directions for both inputs and outputs::
-```jldoctest 1
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+```@example mddf
+using DataEnvelopmentAnalysis
 
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 
-julia> deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
-Modified DDF DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Returns to Scale = VRS
-Gx = Ones; Gy = Ones
-───────────────────────────────────────────────
-   efficiency       βx     βy  slackX1  slackY1
-───────────────────────────────────────────────
-1     0.0      0.0      0.0        0.0      0.0
-2     0.0      0.0      0.0        0.0      0.0
-3     0.0      0.0      0.0        0.0      0.0
-4     0.0      0.0      0.0        0.0      0.0
-5     4.0      2.0      2.0        0.0      0.0
-6     7.33333  7.33333  0.0        0.0      0.0
-7     2.0      2.0      0.0        0.0      0.0
-8     8.059    5.412    2.647      0.0      0.0
-───────────────────────────────────────────────
+Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+
+deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```jldoctest 1
-julia> deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
+```@example mddf
+deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
+nothing # hide
+```
 
-julia> efficiency(deamddfvrs)
-8-element Vector{Float64}:
- 0.0
- 0.0
- 0.0
- 0.0
- 4.000000000000001
- 7.333333333333334
- 2.0
- 8.059000000000001
+```@example mddf
+efficiency(deamddfvrs)
 ```
 
 Estimated $\beta$ on inputs and outputs are returned with the `efficiency` function:
-```jldoctest 1
-julia> efficiency(deamddfvrs, :X)
-8-element Vector{Float64}:
- 0.0
- 0.0
- 0.0
- 0.0
- 1.999999999999999
- 7.333333333333334
- 2.0
- 5.412000000000001
+```@example mddf
+efficiency(deamddfvrs, :X)
+```
 
-julia> efficiency(deamddfvrs, :Y)
-8-element Vector{Float64}:
- 0.0
- 0.0
- 0.0
- 0.0
- 2.0000000000000018
- 0.0
- 0.0
- 2.6470000000000002
+```@example mddf
+efficiency(deamddfvrs, :Y)
 ```
 
 ### deamddf Function Documentation

@@ -28,31 +28,6 @@ inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 # Optional Arguments
 - `alpha=0.5`: alpha to use for the generalized distance function.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
-
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
-
-julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
-
-julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
-
-julia> deaprofitability(X, Y, W, P)
-Profitability DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-alpha = 0.5; Returns to Scale = VRS
-─────────────────────────────────────────────────────────
-   Profitability       CRS      VRS     Scale  Allocative
-─────────────────────────────────────────────────────────
-1       0.38796   0.636364  0.68185  0.93329     0.609651
-2       1.0       1.0       1.0      1.0         1.0
-3       0.765217  1.0       1.0      1.0         0.765217
-4       0.25      0.25      0.25     1.0         1.0
-5       0.15879   0.26087   0.36     0.724638    0.608696
-─────────────────────────────────────────────────────────
-```
 """
 function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};

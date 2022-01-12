@@ -1,12 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-    # Solve nonlinear problem to display Ipopt initial message
-    X = [1; 2; 3];
-    Y = [1; 1; 1];
-    deagdf(X, Y, alpha = 0.5, rts = :VRS)
-end
 ```
 
 # Generalized Distance Function Models
@@ -29,24 +22,14 @@ The measurement of technical efficiency assuming variable returns to scale, **VR
 ```
 
 In this example we compute the generalized distance function DEA model under variable returns to scale using $0.5$ for the value of $\alpha$:
-```jldoctest 1
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
+```@example gdf
+using DataEnvelopmentAnalysis
 
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+X = [5 3; 2 4; 4 2; 4 8; 7 9];
 
-julia> deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
-Generalized DF DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-alpha = 0.5; Returns to Scale = VRS
-─────────────
-   efficiency
-─────────────
-1     0.68185
-2     1.0
-3     1.0
-4     0.25
-5     0.36
-─────────────
+Y = [7 4; 10 8; 8 10; 5 4; 3 6];
+
+deagdf(X, Y, alpha = 0.5, rts = :VRS, slack = false)
 ```
 
 ### deagdf Function Documentation

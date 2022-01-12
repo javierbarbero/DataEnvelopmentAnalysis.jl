@@ -45,31 +45,6 @@ For the Modified Directional Distance Function, the directions `Gx` and `Gy` can
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
-
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353] ;
-
-julia> dearddf(X, Y, :ERG, orient = :Graph, rts = :VRS)
-Reverse DDF DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Orientation = Graph; Returns to Scale = VRS
-Associated efficiency measure = ERG
-─────────────
-   efficiency
-─────────────
-1    0.0
-2    0.0
-3    0.0
-4    0.0
-5    0.6
-6    0.52381
-7    0.142857
-8    0.8
-─────────────
-```
 """
 function dearddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, measure::Symbol;
     Gx::Union{Symbol,Matrix,Vector,Nothing} = nothing, Gy::Union{Symbol,Matrix,Vector,Nothing} = nothing,

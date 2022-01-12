@@ -84,30 +84,6 @@ using Hölder norm `l`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
-
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
-
-julia> deaholder(X, Y, l = 1, rts = :VRS)
-Hölder L1 DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Orientation = Graph; Returns to Scale = VRS
-────────────────────────────────────────────────
-   efficiency  minimum      slackX1      slackY1
-────────────────────────────────────────────────
-1         0.0       X1  0.0          0.0
-2         0.0       X1  0.0          0.0
-3         0.0       X1  0.0          0.0
-4         0.0       X1  0.0          0.0
-5         3.0       X1  0.0          1.01506e-15
-6         2.0       Y1  2.0          0.0
-7         0.0       Y1  2.0          0.0
-8         6.0       Y1  1.77636e-15  0.0
-────────────────────────────────────────────────
-```
 """
 function deaholder(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     l::Union{Int64,Float64}, weight::Bool = false,

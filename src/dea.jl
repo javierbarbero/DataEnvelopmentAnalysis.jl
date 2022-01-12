@@ -39,33 +39,6 @@ Compute the radial model using data envelopment analysis for inputs X and output
 - `disposX=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `disposY=:Strong`: chooses strong disposability of outputs. For weak disposability choose `:Weak`.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> dea(X, Y)
-Radial DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Orientation = Input; Returns to Scale = CRS
-──────────────────────────────────────────────────
-    efficiency       slackX1      slackX2  slackY1
-──────────────────────────────────────────────────
-1     1.0        0.0          0.0              0.0
-2     0.62229   -4.41868e-15  0.0              0.0
-3     0.819856   0.0          8.17926e-15      0.0
-4     1.0       -8.03397e-16  0.0              0.0
-5     0.310371   1.80764e-15  0.0              0.0
-6     0.555556   4.44444      0.0              0.0
-7     1.0        0.0          0.0              0.0
-8     0.757669   1.60679e-15  0.0              0.0
-9     0.820106   1.64021      0.0              0.0
-10    0.490566   9.68683e-15  0.0              0.0
-11    1.0        0.0          4.0              0.0
-──────────────────────────────────────────────────
-```
 """
 function dea(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,

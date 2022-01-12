@@ -31,33 +31,6 @@ Compute the Russell model using data envelopment analysis for inputs X and outpu
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> dearussell(X, Y, rts = :VRS)
-Russell DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Orientation = Input; Returns to Scale = VRS
-───────────────────────────────────────────────
-    efficiency     effX1     effX2      slackY1
-───────────────────────────────────────────────
-1     1.0       1.0       1.0       0.0
-2     0.79386   0.587719  1.0       9.88357e-15
-3     1.0       1.0       1.0       0.0
-4     1.0       1.0       1.0       0.0
-5     0.603175  0.277778  0.928571  4.0
-6     1.0       1.0       1.0       3.78178e-16
-7     1.0       1.0       1.0       0.0
-8     1.0       1.0       1.0       0.0
-9     1.0       1.0       1.0       0.0
-10    0.485746  0.563492  0.408     0.0
-11    0.882353  1.0       0.764706  0.0
-───────────────────────────────────────────────
-```
 """
 function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,

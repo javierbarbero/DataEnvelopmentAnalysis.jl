@@ -41,31 +41,6 @@ Alternatively, a vector or matrix with the desired directions can be supplied.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [2; 4; 8; 12; 6; 14; 14; 9.412];
-
-julia> Y = [1; 5; 8; 9; 3; 7; 9; 2.353] ;
-
-julia> deamddf(X, Y, Gx = :Ones, Gy = :Ones)
-Modified DDF DEA Model 
-DMUs = 8; Inputs = 1; Outputs = 1
-Returns to Scale = CRS
-Gx = Ones; Gy = Ones
-────────────────────────────────────────────
-   efficiency   βx      βy  slackX1  slackY1
-────────────────────────────────────────────
-1       1.5    0.0   1.5        0.0      0.0
-2       0.0    0.0   0.0        0.0      0.0
-3       2.0    0.0   2.0        0.0      0.0
-4       6.0    0.0   6.0        0.0      0.0
-5       4.5    0.0   4.5        0.0      0.0
-6      10.5    0.0  10.5        0.0      0.0
-7       8.5    0.0   8.5        0.0      0.0
-8       9.412  0.0   9.412      0.0      0.0
-────────────────────────────────────────────
-```
 """
 function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Gx::Union{Symbol, Matrix, Vector}, Gy::Union{Symbol, Matrix, Vector},

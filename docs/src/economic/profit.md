@@ -1,8 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-end
 ```
 
 # Profit Models
@@ -26,32 +23,18 @@ end
 *Profit efficiency* defines as the difference between maximum profit and observed profit. Following the duality results introduced by *Chambers, Chung and Färe (1998)* it is possible to decompose it into technical and allocative efficiencies under variable returns to scale. Profit efficiency can be then decomposed into the directional distance fucntion and the residual difference corresponding to the *allocative profit efficiency*. Allocative efficiency defines then as the difference between maximum profit and profit at the technically efficient projection on the frontier. The approach relies on the directional vector to normalize these components, thereby ensuring that their values can be compared across DMUs.
 
 In this example we compute the profit efficiency measure under variable returns to scale:
-```jldoctest 1
-julia> X = [1 1; 1 1; 0.75 1.5; 0.5 2; 0.5 2; 2 2; 2.75 3.5; 1.375 1.75];
+```@example revenue
+using DataEnvelopmentAnalysis
 
-julia> Y = [1 11; 5 3; 5 5; 2 9; 4 5; 4 2; 3 3; 4.5 3.5];
+X = [1 1; 1 1; 0.75 1.5; 0.5 2; 0.5 2; 2 2; 2.75 3.5; 1.375 1.75];
 
-julia> P = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
+Y = [1 11; 5 3; 5 5; 2 9; 4 5; 4 2; 3 3; 4.5 3.5];
 
-julia> W = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
+P = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
 
-julia> deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)
-Profit DEA Model 
-DMUs = 8; Inputs = 2; Outputs = 2
-Returns to Scale = VRS
-Gx = Monetary; Gy = Monetary
-─────────────────────────────────────
-   Profit     Technical    Allocative
-─────────────────────────────────────
-1     2.0   0.0           2.0
-2     2.0  -5.41234e-16   2.0
-3     0.0   0.0           0.0
-4     2.0   0.0           2.0
-5     2.0   0.0           2.0
-6     8.0   6.0           2.0
-7    12.0  12.0          -1.77636e-15
-8     4.0   3.0           1.0
-─────────────────────────────────────
+W = [2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1; 2 1];
+
+deaprofit(X, Y, W, P, Gx = :Monetary, Gy = :Monetary)
 ```
 
 ### deaprofit Function Documentation

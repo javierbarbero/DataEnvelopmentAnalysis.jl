@@ -1,12 +1,5 @@
 ```@meta
 CurrentModule = DataEnvelopmentAnalysis
-DocTestSetup = quote
-    using DataEnvelopmentAnalysis
-    # Solve nonlinear problem to display Ipopt initial message
-    X = [1; 2; 3];
-    Y = [1; 1; 1];
-    deagdf(X, Y, alpha = 0.5, rts = :VRS)
-end
 ```
 
 # Profitability Models
@@ -26,28 +19,18 @@ The profitabilty function defines as $\mathrm{P}\left(\mathbf{w},\mathbf{p}\righ
 *Profitabilty efficiency* defines as the ratio between maximum profitabilty and observed profitabilty. Following the duality results introduced by *Zofío and Prieto (2006)* it is possible to decompose it into technical and allocative efficiencies under constant returns to scale. Profitabilty efficiency can be then decomposed into the generalizaed distance fucntion and the residual ratio corresponding to the *allocative profit efficiency*. Allocative efficiency defines then as the ratio of profitability at the technically efficient projection on the frontier to maximum profitability.
 
 In this example we compute the profitability efficiency measure:
-```jldoctest 1
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
+```@example profitability
+using DataEnvelopmentAnalysis
 
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
+X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
 
-julia> W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
+Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
 
-julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+W = [2 1; 2 1; 2 1; 2 1; 2 1.0];
 
-julia> deaprofitability(X, Y, W, P)
-Profitability DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-alpha = 0.5; Returns to Scale = VRS
-─────────────────────────────────────────────────────────
-   Profitability       CRS      VRS     Scale  Allocative
-─────────────────────────────────────────────────────────
-1       0.38796   0.636364  0.68185  0.93329     0.609651
-2       1.0       1.0       1.0      1.0         1.0
-3       0.765217  1.0       1.0      1.0         0.765217
-4       0.25      0.25      0.25     1.0         1.0
-5       0.15879   0.26087   0.36     0.724638    0.608696
-─────────────────────────────────────────────────────────
+P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
+
+deaprofitability(X, Y, W, P)
 ```
 
 ### deaprofitability Function Documentation

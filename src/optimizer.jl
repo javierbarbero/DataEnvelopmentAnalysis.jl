@@ -17,11 +17,6 @@ An data structure storing the configuration of a DEA optimizer.
 # Optional Arguments
 - `time_limit=:60`: time limit in seconds.
 - `silent=:true`: suppress optimizer output.
-
-# Examples
-```jldoctest
-julia> myoptimizer = DEAOptimizer(GLPK.Optimizer, time_limit = 10, silent = true);
-```
 """
 struct DEAOptimizer <: AbstractDEAOptimizerModel
     optimizer

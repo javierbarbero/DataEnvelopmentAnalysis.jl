@@ -28,29 +28,6 @@ inputs `X`, outputs `Y` and price of outputs `P`.
 - `rts=:VRS`: chooses variable returns to scale. For constant returns to scale choose `:CRS`.
 - `dispos=:Strong`: chooses strong disposability of inputs. For weak disposability choose `:Weak`.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9.0];
-
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6.0];
-
-julia> P = [3 2; 3 2; 3 2; 3 2; 3 2.0];
-
-julia> dearevenue(X, Y, P)
-Revenue DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-Orientation = Output; Returns to Scale = VRS
-──────────────────────────────────
-    Revenue  Technical  Allocative
-──────────────────────────────────
-1  0.644444   0.777778    0.828571
-2  1.0        1.0         1.0
-3  1.0        1.0         1.0
-4  0.5        0.5         1.0
-5  0.456522   0.6         0.76087
-──────────────────────────────────
-```
 """
 function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     P::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,

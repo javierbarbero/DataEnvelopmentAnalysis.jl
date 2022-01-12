@@ -30,27 +30,6 @@ inputs `X`, outputs `Y`, and `alpha`.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 3; 2 4; 4 2; 4 8; 7 9];
-
-julia> Y = [7 4; 10 8; 8 10; 5 4; 3 6];
-
-julia> deagdf(X, Y, alpha = 0.5, rts = :VRS)
-Generalized DF DEA Model 
-DMUs = 5; Inputs = 2; Outputs = 2
-alpha = 0.5; Returns to Scale = VRS
-─────────────────────────────────────────────────────────────
-   efficiency     slackX1     slackX2     slackY1     slackY2
-─────────────────────────────────────────────────────────────
-1     0.68185  0.605935    4.26672e-8  3.91163e-8  4.67865
-2     1.0      5.34772e-8  6.70059e-8  2.7034e-8   4.8232e-8
-3     1.0      4.82929e-8  7.26916e-8  6.00225e-8  1.66806e-8
-4     0.25     4.6491e-8   9.94558e-8  5.39305e-8  9.75587e-8
-5     0.36     0.2         3.4         3.0         8.07052e-8
-─────────────────────────────────────────────────────────────
-```
 """
 function deagdf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     alpha::Float64 = 0.5, rts::Symbol = :CRS, slack::Bool = true,

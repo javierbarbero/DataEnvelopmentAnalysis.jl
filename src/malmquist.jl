@@ -25,39 +25,6 @@ Compute the Malmquist productivity index using data envelopment analysis for inp
 - `refperiod=:Geomean`: chooses reference period for technological change: `:Base`, `:Comparison` or `:Geomean`.
 - `rts=:CRS`: chooses constant returns to scale. For variable returns to scale choose `:VRS`.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = Array{Float64,3}(undef, 5, 1, 2);
-
-julia> X[:, :, 1] = [2; 3; 5; 4; 4];
-
-julia> X[:, :, 2] = [1; 2; 4; 3; 4];
-
-julia> Y = Array{Float64,3}(undef, 5, 1, 2);
-
-julia> Y[:, :, 1] = [1; 4; 6; 3; 5];
-
-julia> Y[:, :, 2] = [1; 4; 6; 3; 3];
-
-julia> malmquist(X, Y)
-Mamlmquist DEA Model 
-DMUs = 5; Inputs = 1; Outputs = 1; Time periods = 2
-Orientation = Input; Returns to Scale = CRS
-Referene period = Geomean
-─────────────────────────
-         M        EC   TC
-─────────────────────────
-1  2.0      1.33333   1.5
-2  1.5      1.0       1.5
-3  1.25     0.833333  1.5
-4  1.33333  0.888889  1.5
-5  0.6      0.4       1.5
-─────────────────────────
-M  = Malmquist Productivity Index 
-EC = Efficiency Change 
-TC = Technological Change
-```
 """
 function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,

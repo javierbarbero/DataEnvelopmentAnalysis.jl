@@ -39,34 +39,6 @@ Alternatively, a vector or matrix with the desired directions can be supplied.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of outputs against which the units are evaluated.
 - `names`: a vector of strings with the names of the decision making units.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaddf(X, Y, Gx = :Ones, Gy = :Ones)
-Directional DF DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Returns to Scale = CRS
-Gx = Ones; Gy = Ones
-─────────────────────────────────────────────────────
-      efficiency       slackX1       slackX2  slackY1
-─────────────────────────────────────────────────────
-1   -3.43053e-16   0.0           0.0              0.0
-2    3.21996      -3.21359e-15   0.0              0.0
-3    2.12169       0.0          -4.80367e-15      0.0
-4    0.0          -8.03397e-16   0.0              0.0
-5    6.73567      -2.41019e-15   0.0              0.0
-6    1.94595      10.9189        0.0              0.0
-7    0.0           0.0           0.0              0.0
-8    3.63586       6.42718e-15   0.0              0.0
-9    1.83784       4.75676       0.0              0.0
-10  10.2311        6.12173e-15   0.0              0.0
-11   0.0           0.0           4.0              0.0
-─────────────────────────────────────────────────────
-```
 """
 function deaddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Gx::Union{Symbol, Matrix, Vector}, Gy::Union{Symbol, Matrix, Vector},

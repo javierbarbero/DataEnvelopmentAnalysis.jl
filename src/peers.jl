@@ -156,74 +156,18 @@ Return peers of a DEA model.
 # Optional Arguments
 - `atol=1e-10`: tolerance for zero values.
 - `namesref`: a vector of strings with the names of the decision making units in the reference set.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> peers(deaio)
-DEA Peers
-1: 1 ( 1.0 ) 
-2: 4 ( 0.424978317432784 ) 7 ( 0.10928013876843023 ) 
-3: 1 ( 1.134321653189578 ) 4 ( 0.43800539083557943 ) 
-4: 4 ( 1.0 ) 
-5: 4 ( 0.25738077214231636 ) 7 ( 0.04844814534443607 ) 
-6: 7 ( 0.3333333333333333 ) 
-7: 7 ( 1.0 ) 
-8: 4 ( 1.0348650979425895 ) 7 ( 0.11457435012935832 ) 
-9: 7 ( 1.1481481481481481 ) 
-10: 4 ( 0.49056603773584906 ) 7 ( 0.4905660377358491 ) 
-11: 11 ( 1.0 ) 
-```
 """
 peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing) = DEAPeers(model, atol = atol, namesref = namesref) ;
 
 """
     peersmatrix(model::AbstractDEAModel)
 Return peers matrix of a DEA model.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> deaio = dea(X, Y);
-
-julia> peersmatrix(deaio)
-11×11 SparseMatrixCSC{Float64, Int64} with 17 stored entries:
- 1.0       ⋅    ⋅    ⋅         ⋅    ⋅    ⋅            ⋅    ⋅    ⋅    ⋅ 
-  ⋅        ⋅    ⋅   0.424978   ⋅    ⋅   0.10928       ⋅    ⋅    ⋅    ⋅ 
- 1.13432   ⋅    ⋅   0.438005   ⋅    ⋅    ⋅            ⋅    ⋅    ⋅    ⋅ 
-  ⋅        ⋅    ⋅   1.0        ⋅    ⋅   1.48479e-16   ⋅    ⋅    ⋅    ⋅ 
- ⋮                                 ⋮                                ⋮
-  ⋅        ⋅    ⋅   1.03487    ⋅    ⋅   0.114574      ⋅    ⋅    ⋅    ⋅ 
-  ⋅        ⋅    ⋅    ⋅         ⋅    ⋅   1.14815       ⋅    ⋅    ⋅    ⋅ 
-  ⋅        ⋅    ⋅   0.490566   ⋅    ⋅   0.490566      ⋅    ⋅    ⋅    ⋅ 
-  ⋅        ⋅    ⋅    ⋅         ⋅    ⋅    ⋅            ⋅    ⋅    ⋅   1.0
-```
 """
 peersmatrix(model::AbstractDEAModel) = model.lambda ;
 
 """
     ispeer(P::DEAPeers, i::Int64, j::Int64)
 Return `true` if `j` is peer of decision making unit `i`.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> P = peers(dea(X, Y));
-
-julia> ispeer(P, 2, 4)
-true
-```
 """
 function ispeer(P::DEAPeers, i::Int64, j::Int64)
     return P.lambda[i, j] != 0
@@ -232,20 +176,6 @@ end
 """
     ispeer(P::DEAPeers, i::String, j::String)
 Return `true` if `j` is peer of decision making unit `i`.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> firms = ["A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K"]
-
-julia> P = peers(dea(X, Y, names = firms));
-
-julia> ispeer(P, "B", "D")
-true
-```
 """
 function ispeer(P::DEAPeers, i::String, j::String)
     # Get corresponding id's of the names
@@ -275,20 +205,6 @@ end
 """
     ispeer(P::DEAPeersDMU, j::Int64)
 Return `true` if `j` is peer.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> P = peers(dea(X, Y));
-
-julia> P2 = P[2];
-
-julia> ispeer(P2, 4)
-true
-```
 """
 function ispeer(p::DEAPeersDMU, j::Int64)::Bool
     if j <= 0
@@ -301,22 +217,6 @@ end
 """
     ispeer(P::DEAPeers, j::String)
 Return `true` if `j` is peer.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> firms = ["A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K"]
-
-julia> P = peers(dea(X, Y, names = firms));
-
-julia> P2 = P[2]
-
-julia> ispeer(P2, "D")
-true
-```
 """
 function ispeer(p::DEAPeersDMU, j::String)::Bool
     return any(p.dmunamesref .== j)
@@ -326,27 +226,6 @@ end
     sum(P::DEAPeers; dims)
 
 Sum elements of the peers matrix over the given dimension.
-
-# Examples
-```jldoctest
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
-
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
-
-julia> P = peers(dea(X, Y));
-
-julia> sum(P, dims = 2)
-11×1 Matrix{Float64}:
- 1.0
- 0.5342584562012143
- 1.5723270440251573
- 1.0
- ⋮
- 1.1494394480719479
- 1.1481481481481481
- 0.9811320754716981
- 1.0
-```
 """
 Base.sum(P::DEAPeers; dims) = sum(P.lambda; dims = dims)
 
