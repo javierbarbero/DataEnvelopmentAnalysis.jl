@@ -31,7 +31,7 @@ Compute data envelopment analysis Enhanced Russell Graph Slack Based Measure for
 - `names`: a vector of strings with the names of the decision making units.
 """
 function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}; 
-    rts::Symbol = :CRS, slack::Bool = true, 
+    rts::Symbol = :CRS,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
     names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::EnhancedRussellGraphDEAModel
