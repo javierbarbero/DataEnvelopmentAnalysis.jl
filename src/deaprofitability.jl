@@ -8,7 +8,7 @@ struct ProfitabilityDEAModel <: AbstractProfitabilityDEAModel
     m::Int64
     s::Int64
     alpha::Float64
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     crseff::Vector
@@ -32,7 +32,7 @@ inputs `X`, outputs `Y`, price of inputs `W`, and price of outputs `P`.
 function deaprofitability(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
     alpha::Float64 = 0.5,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::ProfitabilityDEAModel
 
     # Check parameters

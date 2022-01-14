@@ -13,8 +13,8 @@ struct DEAPeersDMU <: AbstractDEAPeersDMU
     i::Int64
     J::Vector{Int64}
     V::Vector{Float64}
-    dmuname::String
-    dmunamesref::Vector{String}
+    dmuname::AbstractString
+    dmunamesref::Vector{AbstractString}
 end
 
 
@@ -66,10 +66,10 @@ struct DEAPeers <: AbstractDEAPeers
     I::Vector{Int64}
     J::Vector{Int64}
     V::Vector{Float64}
-    dmunames::Vector{String}
-    dmunamesref::Vector{String}
+    dmunames::Vector{AbstractString}
+    dmunamesref::Vector{AbstractString}
 
-    function DEAPeers(x::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing)
+    function DEAPeers(x::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{<: AbstractString},Nothing} = nothing)
         if ! isdefined(x, :lambda)
             throw(ArgumentError("Model does not have info on peers"));
         end
@@ -157,7 +157,7 @@ Return peers of a DEA model.
 - `atol=1e-10`: tolerance for zero values.
 - `namesref`: a vector of strings with the names of the decision making units in the reference set.
 """
-peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{String},Nothing} = nothing) = DEAPeers(model, atol = atol, namesref = namesref) ;
+peers(model::AbstractDEAModel; atol::Float64 = 1e-10, namesref::Union{Vector{<: AbstractString},Nothing} = nothing) = DEAPeers(model, atol = atol, namesref = namesref) ;
 
 """
     peersmatrix(model::AbstractDEAModel)

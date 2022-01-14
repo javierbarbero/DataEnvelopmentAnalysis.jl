@@ -10,7 +10,7 @@ struct ReverseDDFDEAModel <: AbstractTechnicalDEAModel
     measure::Symbol
     orient::Symbol
     rts::Symbol    
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -50,7 +50,7 @@ function dearddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, measure::Symb
     Gx::Union{Symbol,Matrix,Vector,Nothing} = nothing, Gy::Union{Symbol,Matrix,Vector,Nothing} = nothing,
     orient::Symbol = :Graph, rts::Symbol = :CRS, slack::Bool = false, atol::Float64 = 1e-6, 
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::ReverseDDFDEAModel
 
     # Check parameters

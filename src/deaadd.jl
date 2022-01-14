@@ -12,7 +12,7 @@ struct AdditiveDEAModel <: AbstractTechnicalDEAModel
     rts::Symbol
     disposX::Symbol
     disposY::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -50,7 +50,7 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     rhoX::Union{Matrix,Vector,Nothing} = nothing, rhoY::Union{Matrix,Vector,Nothing} = nothing,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::AdditiveDEAModel
 
     # Check parameters

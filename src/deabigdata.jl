@@ -121,7 +121,7 @@ Compute the big data radial model using data envelopment analysis for inputs X a
 """
 function deabigdata(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
         orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true, atol::Float64 = 1e-6,
-        names::Union{Vector{String},Nothing} = nothing,
+        names::Union{Vector{<: AbstractString},Nothing} = nothing,
         optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = true)
     
     #=

@@ -15,7 +15,7 @@ struct RadialMultiplierDEAModel <: AbstractRadialMultiplierDEAModel
     s::Int64
     orient::Symbol
     rts::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     v::Matrix
     u::Matrix    
@@ -38,7 +38,7 @@ Compute the radial multiplier model using data envelopment analysis for inputs X
 function deam(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     orient::Symbol = :Input, rts::Symbol = :CRS,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing, progress::Bool = false)::RadialMultiplierDEAModel
 
     # Check parameters

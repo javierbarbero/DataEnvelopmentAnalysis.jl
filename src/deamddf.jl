@@ -10,7 +10,7 @@ struct ModifiedDDFDEAModel <: AbstractTechnicalDEAModel
     Gx::Symbol
     Gy::Symbol
     rts::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     betax::Vector
     betay::Vector
@@ -46,7 +46,7 @@ function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     Gx::Union{Symbol, Matrix, Vector}, Gy::Union{Symbol, Matrix, Vector},
     rts::Symbol = :CRS, slack::Bool = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::ModifiedDDFDEAModel
 
     # Check parameters

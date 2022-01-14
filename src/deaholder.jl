@@ -16,7 +16,7 @@ struct HolderL1DEAModel <: AbstractHolderDEAModel
     orient::Symbol
     rts::Symbol
     isweighted::Bool
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     effmin::Vector
     slackX::Matrix
@@ -37,7 +37,7 @@ struct HolderL2DEAModel <: AbstractHolderDEAModel
     orient::Symbol
     rts::Symbol
     isweighted::Bool
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -57,7 +57,7 @@ struct HolderLInfDEAModel <: AbstractHolderDEAModel
     orient::Symbol
     rts::Symbol
     isweighted::Bool
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     slackX::Matrix
     slackY::Matrix
@@ -89,7 +89,7 @@ function deaholder(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     l::Union{Int64,Float64}, weight::Bool = false,
     orient::Symbol = :Graph, rts::Symbol = :CRS, slack = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::AbstractHolderDEAModel
 
     # Check parameters
@@ -136,7 +136,7 @@ function deaholderl1(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     weight::Bool = false,
     orient::Symbol = :Graph, rts::Symbol = :CRS, slack = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::HolderL1DEAModel
     
     # Get parameters
@@ -256,7 +256,7 @@ function deaholderl2(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     weight::Bool = false,
     orient::Symbol = :Graph, rts::Symbol = :CRS, slack = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::HolderL2DEAModel
 
     # Check parameters
@@ -424,7 +424,7 @@ function deaholderlinf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     weight::Bool = true,
     orient::Symbol = :Graph, rts::Symbol = :CRS, slack = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::HolderLInfDEAModel
 
     # Get parameters

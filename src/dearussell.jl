@@ -9,7 +9,7 @@ struct RussellDEAModel <: AbstractTechnicalDEAModel
     s::Int64
     orient::Symbol
     rts::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     thetaX::Matrix
     thetaY::Matrix
@@ -35,7 +35,7 @@ Compute the Russell model using data envelopment analysis for inputs X and outpu
 function dearussell(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     orient::Symbol = :Input, rts::Symbol = :CRS, slack::Bool = true,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::RussellDEAModel
 
     # Check parameters

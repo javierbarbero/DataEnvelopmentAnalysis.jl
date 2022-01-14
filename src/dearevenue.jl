@@ -9,7 +9,7 @@ struct RevenueDEAModel <: AbstractRevenueDEAModel
     s::Int64
     rts::Symbol
     disposX::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     lambda::SparseMatrixCSC{Float64, Int64}
     techeff::Vector
@@ -31,7 +31,7 @@ inputs `X`, outputs `Y` and price of outputs `P`.
 """
 function dearevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     P::Union{Matrix,Vector}; rts::Symbol = :VRS, dispos::Symbol = :Strong,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::RevenueDEAModel
 
     # Check parameters

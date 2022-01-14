@@ -10,7 +10,7 @@ struct MalmquistDEAModel <: AbstractProductivityDEAModel
     orient::Symbol
     rts::Symbol
     refperiod::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     Prod::Matrix
     EC::Matrix
     TC::Matrix
@@ -28,7 +28,7 @@ Compute the Malmquist productivity index using data envelopment analysis for inp
 """
 function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
     orient::Symbol = :Input, rts::Symbol = :CRS, refperiod::Symbol = :Geomean,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::MalmquistDEAModel
 
     # Check parameters

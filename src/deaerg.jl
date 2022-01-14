@@ -8,7 +8,7 @@ struct EnhancedRussellGraphDEAModel <: AbstractTechnicalDEAModel
     m::Int64
     s::Int64
     rts::Symbol
-    dmunames::Union{Vector{String},Nothing}
+    dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     beta::Vector
     tX::Matrix
@@ -33,7 +33,7 @@ Compute data envelopment analysis Enhanced Russell Graph Slack Based Measure for
 function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}; 
     rts::Symbol = :CRS, slack::Bool = true, 
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix,Vector,Nothing} = nothing,
-    names::Union{Vector{String},Nothing} = nothing,
+    names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::EnhancedRussellGraphDEAModel
 
     # Check parameters
