@@ -9,28 +9,28 @@ rng = StableRNG(1234567)
 X = rand(Uniform(10, 20), 500, 6);
 Y = rand(Uniform(10, 20), 500, 4);
 
-# Calculate the Big Data DEA Model
+# Calculate the Big Data DEA Model
 deabig = deabigdata(X, Y)
 
 # Get efficiency scores
 efficiency(deabig)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">500-element Vector{Float64}:
- 0.8198712789846899
- 0.8319857309710267
- 0.8338730125193959
- 0.8323039051434328
- 0.9624014835278344
- 1.0000000000000002
- 0.8904975860007949
- 0.9550860720180689
- 0.8260929594519318
+ 1.0
+ 0.8868101957057366
+ 0.9809137970224112
+ 0.9095398228949567
+ 0.8133308044647775
+ 0.9615173476017789
+ 0.9530047690198238
+ 0.9520378414062535
+ 0.9976137276250171
  1.0000000000000002
  ⋮
- 0.7193218489868543
- 0.793713185104393
+ 0.8788748853115698
+ 0.7094230796807365
+ 0.8824902408415843
+ 0.8497001355183372
+ 0.7863542721343757
  1.0
- 0.8734622126344137
- 0.7325489396791671
- 0.6818743431637253
- 0.850007464222727
- 0.9248278103654963
- 0.9659200339765148</code></pre><h3 id="deabigdata-Function-Documentation"><a class="docs-heading-anchor" href="#deabigdata-Function-Documentation">deabigdata Function Documentation</a><a id="deabigdata-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#deabigdata-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.deabigdata" href="#DataEnvelopmentAnalysis.deabigdata"><code>DataEnvelopmentAnalysis.deabigdata</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">deabigdata(X, Y)</code></pre><p>Compute the big data radial model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the radially oriented input mode. For the radially oriented output model choose <code>:Output</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>atol=1e-6</code>: tolerance for DMU to be considered efficient.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/687205f52ecdb4071fd1a28b38735e13f831d7f1/src/deabigdata.jl#L111-L121">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../radial/">« Radial Models</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Friday 14 January 2022 21:27">Friday 14 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ 1.0
+ 0.7926040040955944
+ 0.7815354570753207</code></pre><h3 id="deabigdata-Function-Documentation"><a class="docs-heading-anchor" href="#deabigdata-Function-Documentation">deabigdata Function Documentation</a><a id="deabigdata-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#deabigdata-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.deabigdata" href="#DataEnvelopmentAnalysis.deabigdata"><code>DataEnvelopmentAnalysis.deabigdata</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">deabigdata(X, Y)</code></pre><p>Compute the big data radial model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the radially oriented input mode. For the radially oriented output model choose <code>:Output</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>atol=1e-6</code>: tolerance for DMU to be considered efficient.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/576fd0be696a140d4335075c9f55322c069b581f/src/deabigdata.jl#L111-L121">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../radial/">« Radial Models</a><a class="docs-footer-nextpage" href="../directional/">Directional Distance Function Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Friday 14 January 2022 21:57">Friday 14 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
