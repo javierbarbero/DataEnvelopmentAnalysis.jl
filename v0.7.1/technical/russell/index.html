@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Russell Models · DataEnvelopmentAnalysis</title><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.svg" alt="DataEnvelopmentAnalysis logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">DataEnvelopmentAnalysis</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Technical Efficiency Models</span><ul><li><a class="tocitem" href="../radial/">Radial Models</a></li><li><a class="tocitem" href="../radialbigdata/">Radial Big Data Models</a></li><li><a class="tocitem" href="../directional/">Directional Distance Function Models</a></li><li><a class="tocitem" href="../additive/">Additive Models</a></li><li><a class="tocitem" href="../generalizeddf/">Generalized Distance Function Models</a></li><li class="is-active"><a class="tocitem" href>Russell Models</a><ul class="internal"><li><a class="tocitem" href="#Russell-Input-Model"><span>Russell Input Model</span></a></li><li><a class="tocitem" href="#Russell-Output-Model"><span>Russell Output Model</span></a></li><li><a class="tocitem" href="#Russell-Graph-Model"><span>Russell Graph Model</span></a></li></ul></li><li><a class="tocitem" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure</a></li><li><a class="tocitem" href="../modifiedddf/">Modified Directional Distance Function</a></li><li><a class="tocitem" href="../holder/">Hölder Distance Function</a></li><li><a class="tocitem" href="../reverseddf/">Reverse Directional Distance Function</a></li><li><a class="tocitem" href="../commontechnical/">Common functions for technical models</a></li></ul></li><li><span class="tocitem">Economic Efficiency Models</span><ul><li><a class="tocitem" href="../../economic/cost/">Cost Models</a></li><li><a class="tocitem" href="../../economic/revenue/">Revenue Models</a></li><li><a class="tocitem" href="../../economic/profit/">Profit Models</a></li><li><a class="tocitem" href="../../economic/profitability/">Profitability Models</a></li><li><a class="tocitem" href="../../economic/commoneconomic/">Common functions for economic models</a></li></ul></li><li><span class="tocitem">Productivity Change Models</span><ul><li><a class="tocitem" href="../../productivity/malmquist/">Malmquist Index</a></li><li><a class="tocitem" href="../../productivity/commonproductivity/">Common functions for productivity change models</a></li></ul></li><li><a class="tocitem" href="../../optimizer/">Configuring Optimizer</a></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Technical Efficiency Models</a></li><li class="is-active"><a href>Russell Models</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Russell Models</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/master/docs/src/technical/russell.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Russell-Models"><a class="docs-heading-anchor" href="#Russell-Models">Russell Models</a><a id="Russell-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Russell-Models" title="Permalink"></a></h1><h2 id="Russell-Input-Model"><a class="docs-heading-anchor" href="#Russell-Input-Model">Russell Input Model</a><a id="Russell-Input-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Russell-Input-Model" title="Permalink"></a></h2><p>Based on the data  matrix <span>$(X,Y)$</span>, we calculate the Russell measure of input efficiency (Färe &amp; Lovell, 1978; and Färe et al., 1985) of each observation <em>o</em> by solving <span>$n$</span> times the following linear programming problem:</p><p class="math-container">\[\begin{aligned}
+  &amp; \underset{\theta_i ,\lambda_j }{\mathop{\min }}\,\quad \quad \quad \;\ \frac{1}{m} \sum_{i=1}^{m}{\theta_i}  \\
+  &amp; \text{subject}\ \text{to}  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io} \qquad i = 1,...,m  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge {y}_{ro} \qquad r = 1,...,s \\
+  &amp; \quad \quad \quad \quad \quad \ \theta_i \le 1 \qquad i = 1,...,m  \\
+  &amp; \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
+\end{aligned}\]</p><p>The measurement of technical efficiency assuming variable returns to scale, <strong>VRS</strong>, adds the following condition:</p><p class="math-container">\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</p><p>In this example we compute the Russell input DEA model under constant returns to scale:</p><pre><code class="language-julia hljs">using DataEnvelopmentAnalysis
+
+X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6 8];
+
+Y = [1; 1; 1; 1; 1; 1; 1; 1];
+
+dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Russell DEA Model 
+DMUs = 8; Inputs = 2; Outputs = 1
+Orientation = Input; Returns to Scale = CRS
+──────────────────────────────────────────
+   efficiency     effX1     effX2  slackY1
+──────────────────────────────────────────
+1    1.0       1.0       1.0           0.0
+2    1.0       1.0       1.0           0.0
+3    1.0       1.0       1.0           0.0
+4    0.583333  0.5       0.666667      0.0
+5    0.4       0.4       0.4           0.0
+6    0.833333  0.666667  1.0           0.0
+7    0.65      0.5       0.8           0.0
+8    0.5625    0.625     0.5           0.0
+──────────────────────────────────────────</code></pre><p>To compute the variable returns to scale model, we simply set the <code>rts</code> parameter to <code>:VRS</code>:</p><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia hljs">efficiency(dearussellio)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element Vector{Float64}:
+ 1.0
+ 1.0
+ 1.0
+ 0.5833333333333334
+ 0.4
+ 0.8333333333333334
+ 0.65
+ 0.5625</code></pre><pre><code class="language-julia hljs">efficiency(dearussellio, :X)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×2 Matrix{Float64}:
+ 1.0       1.0
+ 1.0       1.0
+ 1.0       1.0
+ 0.5       0.666667
+ 0.4       0.4
+ 0.666667  1.0
+ 0.5       0.8
+ 0.625     0.5</code></pre><h2 id="Russell-Output-Model"><a class="docs-heading-anchor" href="#Russell-Output-Model">Russell Output Model</a><a id="Russell-Output-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Russell-Output-Model" title="Permalink"></a></h2><p>It is possible to calculate the Russell measure of output efficiency of each observation by solving the following linear program:</p><p class="math-container">\[\begin{aligned}
+  &amp; \underset{\phi_r ,\lambda_j }{\mathop{\max }}\,\quad \quad \quad \;\ \frac{1}{s} \sum_{r=1}^{s}{\phi_r}  \\
+  &amp; \text{subject}\ \text{to}  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le {x}_{io} \qquad i = 1,...,m  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro} \qquad r = 1,...,s \\
+  &amp; \quad \quad \quad \quad \quad \ \phi_r \ge 1 \qquad r = 1,...,s \\
+  &amp; \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
+\end{aligned}\]</p><p>with the following condition when assuming variable returns to scale:</p><p class="math-container">\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</p><p>In this example we compute the Russell output DEA model under constant returns to scale:</p><pre><code class="language-julia hljs">X = [1; 1; 1; 1; 1; 1; 1; 1];
+
+Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5] ;
+
+dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Russell DEA Model 
+DMUs = 8; Inputs = 1; Outputs = 2
+Orientation = Output; Returns to Scale = CRS
+────────────────────────────────────────
+   efficiency    effY1    effY2  slackX1
+────────────────────────────────────────
+1     1.0      1.0      1.0          0.0
+2     1.0      1.0      1.0          0.0
+3     1.0      1.0      1.0          0.0
+4     1.86667  2.33333  1.4          0.0
+5     2.33333  2.33333  2.33333      0.0
+6     1.5      1.0      2.0          0.0
+7     1.45833  1.16667  1.75         0.0
+8     3.05556  5.11111  1.0          0.0
+────────────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia hljs">efficiency(dearusselloo)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element Vector{Float64}:
+ 1.0
+ 1.0
+ 1.0
+ 1.8666666666666665
+ 2.333333333333333
+ 1.5
+ 1.4583333333333335
+ 3.0555555555555554</code></pre><pre><code class="language-julia hljs">efficiency(dearusselloo, :Y)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×2 Matrix{Float64}:
+ 1.0      1.0
+ 1.0      1.0
+ 1.0      1.0
+ 2.33333  1.4
+ 2.33333  2.33333
+ 1.0      2.0
+ 1.16667  1.75
+ 5.11111  1.0</code></pre><h2 id="Russell-Graph-Model"><a class="docs-heading-anchor" href="#Russell-Graph-Model">Russell Graph Model</a><a id="Russell-Graph-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Russell-Graph-Model" title="Permalink"></a></h2><p>It is possible to calculate the Russell graph measure of technical efficiency of each observation by solving the following linear program:</p><p class="math-container">\[\begin{aligned}
+  &amp; \underset{\theta_i, \phi_r ,\lambda_j }{\mathop{\min }}\,\quad \quad \quad \;\ \frac{1}{m + s} (\sum_{i=1}^{m}{\theta_i} +  \sum_{r=1}^{s}{\frac{1}{\phi_r}})  \\
+  &amp; \text{subject}\ \text{to}  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j x_{ij} }\ \le \theta_i {x}_{io}  \qquad i = 1,...,m  \\
+  &amp; \quad \quad \quad \quad \quad \ \sum_{j=1}^{n}{\lambda_j y_{rj} }\ \ge \phi_r {y}_{ro} \qquad r = 1,...,s \\
+  &amp; \quad \quad \quad \quad \quad \ \theta_i \le 1 \qquad i = 1,...,m  \\
+  &amp; \quad \quad \quad \quad \quad \ \phi_r \ge 1 \qquad r = 1,...,s \\
+  &amp; \quad \quad \quad \quad \quad \ \lambda_j \ge 0 \qquad j = 1,...,n. 
+\end{aligned}\]</p><p>with the following condition when assuming variable returns to scale:</p><p class="math-container">\[\sum\nolimits_{j=1}^{n}\lambda_j=1\]</p><p>In this example we compute the Russell graph DEA model under variable returns to scale:</p><pre><code class="language-julia hljs">X = [2; 4; 8; 12; 6; 14; 14; 9.412];
+
+Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
+
+dearussellgr = dearussell(X, Y, orient = :Graph, rts = :VRS)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Russell DEA Model 
+DMUs = 8; Inputs = 1; Outputs = 1
+Orientation = Graph; Returns to Scale = VRS
+────────────────────────────────
+   efficiency     effX1    effY1
+────────────────────────────────
+1    1.0       1.0       1.0
+2    1.0       1.0       1.0
+3    1.0       1.0       1.0
+4    1.0       1.0       1.0
+5    0.633333  0.666667  1.66667
+6    0.723214  0.571429  1.14286
+7    0.928571  0.857143  1.0
+8    0.447795  0.424989  2.12495
+────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia hljs">efficiency(dearussellgr)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element Vector{Float64}:
+ 0.9999996498695671
+ 0.9999999751109323
+ 0.9999999873188326
+ 0.9999999703570748
+ 0.6333333226351023
+ 0.7232142937165499
+ 0.928571404882466
+ 0.4477946881737884</code></pre><pre><code class="language-julia hljs">efficiency(dearussellgr, :X)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×1 Matrix{Float64}:
+ 1.0000000083567766
+ 0.9999999544726556
+ 0.999999969895237
+ 0.9999999328186796
+ 0.6666666303008444
+ 0.5714285155047499
+ 0.8571428024389582
+ 0.42498937010375143</code></pre><pre><code class="language-julia hljs">efficiency(dearussellgr, :Y)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×1 Matrix{Float64}:
+ 1.0000007086181446
+ 1.0000000042507908
+ 0.999999995257572
+ 0.99999999210453
+ 1.6666666250851112
+ 1.1428570489099181
+ 0.9999999926740262
+ 2.124946848134728</code></pre><h3 id="dearussell-Function-Documentation"><a class="docs-heading-anchor" href="#dearussell-Function-Documentation">dearussell Function Documentation</a><a id="dearussell-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#dearussell-Function-Documentation" title="Permalink"></a></h3><article class="docstring"><header><a class="docstring-binding" id="DataEnvelopmentAnalysis.dearussell" href="#DataEnvelopmentAnalysis.dearussell"><code>DataEnvelopmentAnalysis.dearussell</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">dearussell(X, Y)</code></pre><p>Compute the Russell model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the Russell input mode. For the Russell output model choose <code>:Output</code>. For the Russell graph model choose <code>:Graph</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/4b355aa3596bd7c53d0423adc0fc25466fbda92b/src/dearussell.jl#L23-L34">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../generalizeddf/">« Generalized Distance Function Models</a><a class="docs-footer-nextpage" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Friday 14 January 2022 23:22">Friday 14 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
