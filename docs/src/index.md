@@ -37,6 +37,10 @@ Pages = ["productivity/malmquist.md"]
 Depth = 1
 ```
 
+## Extensions
+
+The [BenchmarkingEconomicEfficiency.jl](https://github.com/javierbarbero/BenchmarkingEconomicEfficiency.jl) package provides an extensive set of functions for economic efficiency measurement using Data Envelopment Analysis (DEA).
+
 ## Authors
 
 DataEnvelopmentAnalysis.jl is being developed by [Javier Barbero](http://www.javierbarbero.net) and [José Luís Zofío](http://www.joselzofio.net).

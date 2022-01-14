@@ -35,15 +35,10 @@ deaddf(X, Y, Gx = :Ones, Gy = :Ones)
 
 To compute the variable returns to scale model, we simply set the `rts` parameter to `:VRS`:
 ```@example ddf
-deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
+deaddfvrs = deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```@example ddf
-deaddfvrs = deaddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
-nothing # hide
-```
-
 ```@example ddf
 efficiency(deaddfvrs)
 ```
@@ -52,8 +47,33 @@ The optimal peers, ``λ``, are returned with the `peers` function and are return
 ```@example ddf
 peers(deaddfvrs)
 ```
+
+## Directional Distance Function Model in Multiplier Form
+
+The dual to the directional distance function DEA model in envelopment form presented above is the multiplier form.
+
+This example computes the directional distance function models DEA model in multiplier form under variable returns to scale:
+```@example ddf
+ddfonesm = deaddfm(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
+```
+
+Input and output virtual multipliers (shadow prices) are returned with the `multipliers` function:
+```@example ddf
+multipliers(ddfonesm, :X)
+```
+
+```@example ddf
+multipliers(ddfonesm, :Y)
+```
+
+The value measuring the returns to scale is returned with the `rts` function:
+```@example ddf
+rts(ddfonesm)
+```
+
 ### deaddf Function Documentation
 
 ```@docs
 deaddf
+deaddfm
 ```

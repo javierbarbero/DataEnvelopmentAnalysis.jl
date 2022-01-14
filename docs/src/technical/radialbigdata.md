@@ -28,7 +28,7 @@ rng = StableRNG(1234567)
 X = rand(Uniform(10, 20), 500, 6);
 Y = rand(Uniform(10, 20), 500, 4);
 
-# Calculate the Big Data DEA Model
+# Calculate the Big Data DEA Model
 deabig = deabigdata(X, Y)
 
 # Get efficiency scores

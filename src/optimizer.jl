@@ -16,7 +16,7 @@ An data structure storing the configuration of a DEA optimizer.
 
 # Optional Arguments
 - `time_limit=:60`: time limit in seconds.
-- `silent=:true`: suppress optimizer output.
+- `silent=true`: suppress optimizer output.
 """
 struct DEAOptimizer <: AbstractDEAOptimizerModel
     optimizer
@@ -41,11 +41,6 @@ end
 Generate a new JuMP model for DEA with the specified optimizer.
 
 This function is used internally and for packages that want to extend the functionality of this package.
-
-# Examples
-```jldoctest
-julia> deamodel = newdeamodel(DEAOptimizer(GLPK.Optimizer));
-```
 """
 function newdeamodel(deaoptimizer::DEAOptimizer)::Model
     deamodel = Model(deaoptimizer.optimizer)

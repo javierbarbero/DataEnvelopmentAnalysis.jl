@@ -31,17 +31,12 @@ X = [2 2; 1 4; 4 1; 4 3; 5 5; 6 1; 2 5; 1.6 8];
 
 Y = [1; 1; 1; 1; 1; 1; 1; 1];
 
-dearussell(X, Y, orient = :Input, rts = :CRS)
+dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS)
 ```
 
 To compute the variable returns to scale model, we simply set the `rts` parameter to `:VRS`:
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```@example russell
-dearussellio = dearussell(X, Y, orient = :Input, rts = :CRS);
-nothing # hide
-```
-
 ```@example russell
 efficiency(dearussellio)
 ```
@@ -75,14 +70,10 @@ X = [1; 1; 1; 1; 1; 1; 1; 1];
 
 Y = [7 7; 4 8; 8 4; 3 5; 3 3; 8 2; 6 4; 1.5 5] ;
 
-dearussell(X, Y, orient = :Output, rts = :CRS)
+dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```@example russell
-dearusselloo = dearussell(X, Y, orient = :Output, rts = :CRS);
-nothing # hide
-```
 ```@example russell
 efficiency(dearusselloo)
 ```
@@ -116,15 +107,10 @@ X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 
 Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
 
-dearussell(X, Y, orient = :Graph, rts = :VRS)
+dearussellgr = dearussell(X, Y, orient = :Graph, rts = :VRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```@example russell
-dearussellgr = dearussell(X, Y, orient = :Graph, rts = :VRS);
-nothing # hide
-```
-
 ```@example russell
 efficiency(dearussellgr)
 ```

@@ -31,15 +31,10 @@ X = [2; 4; 8; 12; 6; 14; 14; 9.412];
 
 Y = [1; 5; 8; 9; 3; 7; 9; 2.353];
 
-deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
+deamddfvrs = deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS)
 ```
 
 Estimated efficiency scores are returned with the `efficiency` function:
-```@example mddf
-deamddfvrs= deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :VRS);
-nothing # hide
-```
-
 ```@example mddf
 efficiency(deamddfvrs)
 ```

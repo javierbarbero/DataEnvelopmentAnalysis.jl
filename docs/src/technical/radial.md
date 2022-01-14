@@ -97,7 +97,7 @@ dea(X, Y, orient = :Output, rts = :VRS)
 
 The dual to the input oriented and output oriented radial DEA models in envelopment form presented above is the multiplier form.
 
-This example computes the radial input-oriented DEA model in multiplier form under constant returns to scale:
+This example computes the radial input-oriented DEA model in multiplier form under variable returns to scale:
 ```@example radial
 deaiovrsm = deam(X, Y, rts = :VRS)
 ```

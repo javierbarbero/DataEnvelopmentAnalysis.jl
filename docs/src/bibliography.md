@@ -12,17 +12,18 @@ end
 - Briec, W. (1998). "**Hölder distance function and measurement of technical efficiency**." *Journal of Productivity Analysis*, 11: 111–131.
 - Caves D.W., Christensen L.R., Diewert, W.E. (1982). "**The Economic Theory of Index Numbers and the Measurement of Input, Output, and Productivity.**" *Econometrica*, 50(6), 1393–1414.
 - Chambers, R.G., Chung, Y., and Färe R. (1996). "**Benefit and Distance Functions.**" *Journal of Economic Theory*, 70(2), 407 – 419.
-- Chambers, R.G., Chung, Y., and Färe R. (1998). "**Profit, Directional Distance Functions, and Nerlovian Efficiency.**” Journal of Optimization Theory and Applications 98(2), 351-364.
+- Chambers, R.G., Chung, Y., and Färe R. (1998). "**Profit, Directional Distance Functions, and Nerlovian Efficiency.**” *Journal of Optimization Theory and Applications*, 98(2), 351-364.
 - Charnes, A., Cooper, W.W., and Rhodes, E. (1978). "**Measuring the efficiency of decision making units.**" *European Journal of Operational Research*, 2(6), 429–444.
 - Charnes, A., Cooper, W.W., Rousseau, J. , and Semple, J. (1987). "**Data Envelopment Analyses and Axiomatic Notions of Efficiency and Reference Sets.**" Research Report, Center for Cybernetic Studies, The University of Texas at Austin.
 - Chavas J., and Cox, T. (1999). "**A Generalized Distance Function and the Analysis of Production Efficiency.**" *Southern Economic Journal*, 66(2), 294-318.
 - Cooper, W.W., Park, K.S. and Pastor, J.T. (1999). "**RAM: A Range Adjusted Measure of Inefficiency for Use with Additive Models, and Relations to Other Models and Measures in DEA**" *Journal of Productivity Analysis* 11(1), 5-42. 
 - Cooper, W.W., and Pastor, J.T. (1995). "**Global Efficiency Measurement in DEA.**” Working Paper, Depto Est e Inv. Oper. Universidad Alicante, Alicante, Spain.
-- Cooper, W.W., Pastor, J.T., Borras, F., Aparicio, J. and Pastor, D. (2011). "**BAM: a bounded adjusted measure of efficiency for use with bounded additive models.**" Journal of Productivity Analysis, 35(2), 85-94.
+- Cooper, W.W., Pastor, J.T., Borras, F., Aparicio, J. and Pastor, D. (2011). "**BAM: a bounded adjusted measure of efficiency for use with bounded additive models.**" *Journal of Productivity Analysis*, 35(2), 85-94.
 - Fare, R., and Lovell, C. K. (1978). "**Measuring the technical efficiency of production**." *Journal of Economic theory*, 19(1), 150-162.
 - Fare, R., Grosskopf, S., and Lovell,C.A.K., (1985). *The Measurement of Efficiency of Production*. Kluwer Nijhof Publishing.
-- Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" American Economic Review, 84(1), 66–83.
-- Farrell, M. J. (1957). "**The Measurement of Productive Efficiency of Production.**" Journal of the Royal Statistical Society, Series A, 120(III), 253-281.
+- Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" *American Economic Review*, 84(1), 66–83.
+- Farrell, M. J. (1957). "**The Measurement of Productive Efficiency of Production.**" *Journal of the Royal Statistical Society*, Series A, 120(III), 253-281.
+- Khezrimotlagh, D., Zhu, J., Cook, W.D., and Toloo, M. (2019). "**Data envelopment analysis and big data.**" *European Journal of Operational Research*, 274(3): 1047-1054
 - Lovell, C. A. K., and Pastor, J. T. (1995). "**Units Invariant and Translation Invariant DEA Models.**" *Operations Research Letters*, 18, 147–151.
 - Pastor, J.T., Aparicio, J., Alcaraz, J., Vidal, F. and Pastor, D. (2016). “**The Reverse Directional Distance Function**” in *Advances in Efficiency and Productivity*, edited by J. Aparicio, C.A.K. Lovell and J.T. Pastor, Springer, Cham. 
 - Pastor, J. T., Ruiz, J. L., and Sirvent, I. (1999). "**An enhanced DEA Russell graph efficiency measure**." *European Journal of Operational Research*, 115(3), 596-607.
