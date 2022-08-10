@@ -28,11 +28,9 @@ module DataEnvelopmentAnalysis
 
     # Types
     AbstractDEAModel,
-    DEAModel,
     AbstractDEAPeers, AbstractDEAPeersDMU,
     DEAPeers, DEAPeersDMU,
     AbstractTechnicalDEAModel, AbstractRadialDEAModel, AbstractRadialMultiplierDEAModel,
-    TechnicalDEAModel,
     RadialDEAModel, RadialMultiplierDEAModel, AdditiveDEAModel, 
     DirectionalDEAModel, DirectionalMultiplierDEAModel,
     GeneralizedDFDEAModel, 
