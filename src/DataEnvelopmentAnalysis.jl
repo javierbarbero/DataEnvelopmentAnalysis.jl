@@ -13,10 +13,10 @@ module DataEnvelopmentAnalysis
     using LinearAlgebra
     using InvertedIndices 
     using ProgressMeter
-
     using Printf: @sprintf
-    using Statistics: std, quantile!
-    using StatsBase: CoefTable
+    using SnoopPrecompile
+    using Statistics: std, quantile!    
+    using StatsBase: CoefTable    
 
     import StatsBase: nobs, mean
 
@@ -98,6 +98,15 @@ module DataEnvelopmentAnalysis
     function __init__()
 
         nothing
+    end
+
+    @precompile_setup begin
+        X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17.0]
+        Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12.0]
+
+        @precompile_all_calls begin
+            dea(X, Y)
+        end
     end
 
 end # module
