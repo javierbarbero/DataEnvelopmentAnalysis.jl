@@ -38,6 +38,9 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Malmquist Index" => "productivity/malmquist.md"
                 "Common functions for productivity change models" => "productivity/commonproductivity.md"
                 ],
+        "Statistical Analysis" => Any[
+                "Bootstrap Radial DEA Model" => "statistical/radialboot.md"
+                ],
         "Configuring Optimizer" => "optimizer.md",
         "Bibliography" => "bibliography.md"
         ],

@@ -37,6 +37,12 @@ Pages = ["productivity/malmquist.md"]
 Depth = 1
 ```
 
+Statistical Analysis:
+```@contents
+Pages = ["statistical/radialboot.md"]
+Depth = 1
+```
+
 ## Extensions
 
 The [BenchmarkingEconomicEfficiency.jl](https://github.com/javierbarbero/BenchmarkingEconomicEfficiency.jl) package provides an extensive set of functions for economic efficiency measurement using Data Envelopment Analysis (DEA).

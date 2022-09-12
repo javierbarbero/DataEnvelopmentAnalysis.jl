@@ -15,9 +15,14 @@ module DataEnvelopmentAnalysis
     using ProgressMeter
     using Printf: @sprintf
     using SnoopPrecompile
-    using Statistics: std, quantile!    
-    using StatsBase: CoefTable    
+    using Statistics: std, quantile, quantile!, var   
+    using StatsBase: CoefTable, iqr, minimum, sample
+    using Distributed: @distributed
+    using Distributions: Normal
+    using SharedArrays: SharedMatrix, SharedVector, sdata
+    using Random: AbstractRNG, default_rng
 
+    import StatsAPI: confint
     import StatsBase: nobs, mean
 
 
@@ -42,6 +47,7 @@ module DataEnvelopmentAnalysis
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
+    AbstractBootstrapDEAModel, BootstrapRadialDEAModel,
     # All models
     nobs, ninputs, noutputs,
     # Peers
@@ -51,6 +57,8 @@ module DataEnvelopmentAnalysis
     dearussell, deaerg, deamddf, deaholder, dearddf,
     deabigdata,
     efficiency, slacks, multipliers, rts,
+    # Bootstrap models
+    deaboot, confint, bandwidth,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 
@@ -71,6 +79,7 @@ module DataEnvelopmentAnalysis
 
     include("technical.jl")
     include("dea.jl")
+    include("deaboot.jl")
     include("deam.jl")
     include("deaadd.jl")
     include("deaddfm.jl")

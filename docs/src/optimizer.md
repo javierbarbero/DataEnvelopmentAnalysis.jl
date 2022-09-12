@@ -12,6 +12,8 @@ DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA mode
 | Function       | Specific Options | Problem type | Default Optimizer |
 | ---------------|--------:|------------:|------------------:| 
 | `dea`          |         | LP           | GLPK              |
+| `deam`         |         | LP           | GLPK              |
+| `deaboot`      |         | LP           | GLPK              |
 | `deabigdata`   |         | LP           | GLPK              |
 | `deaddf`       |         | LP           | GLPK              |
 | `deaadd`       |         | LP           | GLPK              |
