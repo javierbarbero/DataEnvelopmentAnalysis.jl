@@ -2,7 +2,7 @@
 
 DataEnvelopmentAnalysis.jl is a Julia package that provides functions for efficiency and productivity measurement using Data Envelopment Analysis (DEA). Particularly, it implements a variety of technical efficiency models, economic efficiency models and productivity change models.
 
-The package is being developed for Julia `1.0` and above on Linux, macOS, and Windows.
+The package is being developed for Julia `1.6` and above on Linux, macOS, and Windows.
 
 The packes uses internally the [JuMP](https://github.com/JuliaOpt/JuMP.jl) modelling language for mathematicall optimization with solvers [GLPK](https://github.com/jump-dev/GLPK.jl) and [Ipopt](https://github.com/jump-dev/Ipopt.jl).
 
