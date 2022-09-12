@@ -19,4 +19,19 @@
     @test bandwidth(ooboot) ≈ 0.1398634 atol = 1e-5
     @test confint(ooboot) ≈ [1.0  1.44558; 1.83333  2.17557; 1.0  1.32604; 1.08333  1.26799; 1.0  1.28106] atol = 1e-5
 
+    # Print
+    show(IOBuffer(), ioboot)
+    show(IOBuffer(), deaboot(X, Y, disposX = :Weak, disposY = :Weak, nreps = 2))
+
+    # Test errors
+    @test_throws DimensionMismatch deaboot([1; 2 ; 3], [4 ; 5]) #  Different number of observations
+    @test_throws DimensionMismatch deaboot([1; 2], [4 ; 5], Xref = [1; 2; 3; 4]) # Different number of observations in reference sets
+    @test_throws DimensionMismatch deaboot([1 1; 2 2], [4 4; 5 5], Xref = [1 1 1; 2 2 2]) # Different number of inputs
+    @test_throws DimensionMismatch deaboot([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
+    @test_throws ArgumentError deaboot([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
+    @test_throws ArgumentError deaboot([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+
+    @test_throws ArgumentError deaboot([1; 2 ; 3], [4 ; 5; 6], disposX = :Error)  # Invalid inputs disposability
+    @test_throws ArgumentError deaboot([1; 2 ; 3], [4 ; 5; 6], disposY = :Error)  # Invalid outputs disposability
+
 end
