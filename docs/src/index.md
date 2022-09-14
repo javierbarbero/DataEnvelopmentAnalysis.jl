@@ -39,7 +39,7 @@ Depth = 1
 
 Statistical Analysis:
 ```@contents
-Pages = ["statistical/radialboot.md"]
+Pages = ["statistical/radialboot.md", "statistical/rtstest.md"]
 Depth = 1
 ```
 

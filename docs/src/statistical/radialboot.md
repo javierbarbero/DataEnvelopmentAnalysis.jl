@@ -4,7 +4,7 @@ CurrentModule = DataEnvelopmentAnalysis
 
 # Bootstrap Radial Model
 
-The bootstrap radial DEA model (Simar and Wilson, 1998) can be calculated with the `deaboot` function, indicating the number of bootstrap replications in the `nreps` parameters. The other parameters work the same as in the radial DEA model.
+The bootstrap radial DEA model (Simar and Wilson, 1998) can be calculated with the `deaboot` function, indicating the number of bootstrap replications in the `nreps` parameter. The other parameters work the same as in the radial DEA model.
 
 A random number generator can be specified in the `rng` parameter for reproducibility.
 

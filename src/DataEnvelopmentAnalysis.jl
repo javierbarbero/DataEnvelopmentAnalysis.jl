@@ -47,7 +47,7 @@ module DataEnvelopmentAnalysis
     CostDEAModel, RevenueDEAModel, ProfitDEAModel, ProfitabilityDEAModel,
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
-    AbstractBootstrapDEAModel, BootstrapRadialDEAModel,
+    AbstractBootstrapDEAModel, BootstrapRadialDEAModel, DEAReturnsToScaleTest,
     # All models
     nobs, ninputs, noutputs,
     # Peers
@@ -58,7 +58,8 @@ module DataEnvelopmentAnalysis
     deabigdata,
     efficiency, slacks, multipliers, rts,
     # Satatistical Analysis
-    deaboot, confint, bandwidth, bias,
+    deaboot, confint, bandwidth, bias, 
+    deartstest, criticalvalue,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 
@@ -102,6 +103,7 @@ module DataEnvelopmentAnalysis
     include("malmquist.jl")
 
     include("deaboot.jl")
+    include("deartstest.jl")
 
     include("progressbarmeter.jl")
     
