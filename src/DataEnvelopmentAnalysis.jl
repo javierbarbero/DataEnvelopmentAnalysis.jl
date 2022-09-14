@@ -57,8 +57,8 @@ module DataEnvelopmentAnalysis
     dearussell, deaerg, deamddf, deaholder, dearddf,
     deabigdata,
     efficiency, slacks, multipliers, rts,
-    # Bootstrap models
-    deaboot, confint, bandwidth,
+    # Satatistical Analysis
+    deaboot, confint, bandwidth, bias,
     # Economic models
     deamincost, deamaxrevenue, deamaxprofit,
     deacost, dearevenue, deaprofit, deaprofitability, 
@@ -79,7 +79,6 @@ module DataEnvelopmentAnalysis
 
     include("technical.jl")
     include("dea.jl")
-    include("deaboot.jl")
     include("deam.jl")
     include("deaadd.jl")
     include("deaddfm.jl")
@@ -101,6 +100,8 @@ module DataEnvelopmentAnalysis
 
     include("productivity.jl")
     include("malmquist.jl")
+
+    include("deaboot.jl")
 
     include("progressbarmeter.jl")
     

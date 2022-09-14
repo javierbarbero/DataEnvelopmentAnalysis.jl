@@ -11,6 +11,7 @@
     @test ioboot.effref ≈ [1.0; 0.625; 1.0; 0.9; 1.0] atol = 1e-5
     @test bandwidth(ioboot) ≈ 0.1341004 atol = 1e-5
     @test confint(ioboot) ≈ [0.75  1.0; 0.535644  0.625; 0.816986  1.0; 0.706839  0.9; 0.734459  1.0] atol = 1e-5
+    @test bias(ioboot) ≈ [0.063620; 0.018820; 0.059520; 0.030180; 0.092630] atol = 1e-5
 
     ooboot = deaboot(X, Y, orient = :Output, rts = :VRS, rng = StableRNG(1234567))
 
@@ -18,6 +19,7 @@
     @test ooboot.effref ≈ [1; 11/6; 1; 13/12; 1.0] atol = 1e-5
     @test bandwidth(ooboot) ≈ 0.1398634 atol = 1e-5
     @test confint(ooboot) ≈ [1.0  1.44558; 1.83333  2.17557; 1.0  1.32604; 1.08333  1.26799; 1.0  1.28106] atol = 1e-5
+    @test bias(ooboot) ≈ [-0.096844; -0.041552; -0.075607; -0.025132; -0.05909] atol = 1e-5
 
     # Print
     show(IOBuffer(), ioboot)

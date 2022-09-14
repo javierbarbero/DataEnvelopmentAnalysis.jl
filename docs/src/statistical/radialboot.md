@@ -26,6 +26,11 @@ Bias-corrected efficiency scores are returned with the `efficiency` function:
 efficiency(ioboot)
 ```
 
+The bias, calculated as the difference between the reference efficiency score and the bias-corrected efficiency score, is returned with the `bias` function:
+```@example radialboot
+bias(ioboot)
+```
+
 Confidence intervals at the $95\%$, or any other desired level, are calculated with the `confint` function: 
 ```@example radialboot
 confint(ioboot, level = 0.95)
@@ -40,6 +45,7 @@ bandwidth(ioboot)
 
 ```@docs
 deaboot
+bias(::BootstrapRadialDEAModel)
 confint(::BootstrapRadialDEAModel)
 bandwidth(::BootstrapRadialDEAModel)
 ```

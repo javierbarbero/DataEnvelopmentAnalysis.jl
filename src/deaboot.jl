@@ -20,7 +20,7 @@ struct BootstrapRadialDEAModel <: AbstractBootstrapDEAModel
     dmunames::Union{Vector{AbstractString},Nothing}
     eff::Vector
     effref::Vector
-    effbc::Vector
+    effbias::Vector
     effB::Matrix
     h::Float64
 end
@@ -41,7 +41,7 @@ Compute the bootstrap radial model using data envelopment analysis for inputs X 
 - `names`: a vector of strings with the names of the decision making units.
 """
 function deaboot(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
-    nreps::Int = 200, rng::AbstractRNG = default_rng(),
+    nreps::Int = 200, rng::AbstractRNG = default_rng(), effref::Union{Vector,Nothing} = nothing,
     orient::Symbol = :Input, rts::Symbol = :CRS,
     Xref::Union{Matrix,Vector,Nothing} = nothing, Yref::Union{Matrix, Vector,Nothing} = nothing,
     disposX::Symbol = :Strong, disposY::Symbol = :Strong,
@@ -87,8 +87,10 @@ function deaboot(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     # Radial DEA Model
     n = nx
 
-    effref = efficiency(dea(X, Y, orient = orient, rts = rts, slack = false, 
-        Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, optimizer = optimizer))
+    if isnothing(effref)
+        effref = efficiency(dea(X, Y, orient = orient, rts = rts, slack = false, 
+            Xref = Xref, Yref = Yref, disposX = disposX, disposY = disposY, optimizer = optimizer))
+    end
 
     h = dea_bandwidth(effref, orient)
 
@@ -156,6 +158,7 @@ function deaboot(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
     if orient == :Input
         effB = 1 ./ effB
         effbc = 1 ./ effbc
+        effbias = effref .- effbc
     end
 
     return BootstrapRadialDEAModel(n, m, s, orient, rts, disposX, disposY, names, effbc, effref, effbias, effB, h)
@@ -226,6 +229,14 @@ function bandwidth(model::BootstrapRadialDEAModel)
     return model.h
 end
 
+"""
+    bias(model::BootstrapRadialDEAModel)
+Return the bias from bootstrap DEA model.
+"""
+function bias(model::BootstrapRadialDEAModel)
+    return model.effbias
+end
+
 function Base.show(io::IO, x::BootstrapRadialDEAModel)
     compact = get(io, :compact, false)
 
@@ -238,6 +249,7 @@ function Base.show(io::IO, x::BootstrapRadialDEAModel)
 
     effref = x.effref
     eff = efficiency(x)
+    effbias = bias(x)
     effc = confint(x, level = 0.95)
     effL = effc[:, 1]
     effU = effc[:, 2]
@@ -256,7 +268,7 @@ function Base.show(io::IO, x::BootstrapRadialDEAModel)
         if disposX == :Weak print(io, "Weak disposability of inputs \n") end
         if disposY == :Weak print(io, "Weak disposability of outputs \n") end
 
-        show(io, CoefTable(hcat(effref, eff, effL, effU), ["effRef", "effBC", "Lower 95%", "Upper 95%"], dmunames))   
+        show(io, CoefTable(hcat(effref, eff, effbias, effL, effU), ["Reference", "Corrected", "Bias", "Lower 95%", "Upper 95%"], dmunames))   
         
         print(io, "\nBandwidth = ", round(x.h, digits = 5))
     end
