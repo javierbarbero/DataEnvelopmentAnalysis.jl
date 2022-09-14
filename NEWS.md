@@ -1,6 +1,13 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.8.0 (September 14, 2022)
+----------------------------
+- Add Bootstrap Radial DEA Model.
+- Add Returns to Scale (RTS) Test.
+- Compatibility with JuMP 1.0, GLPK 1.0, and Ipopt 1.0.
+- Set the minimum Julia version to 1.6.
+
 Version 0.7.0 (January 12, 2022)
 ----------------------------
 - Add Directional Distance Function model in multiplier form.

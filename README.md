@@ -35,6 +35,10 @@ The package can be installed with the Julia package manager:
 julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 ```
 
+## Documentation
+
+The latest stable release documentation is available [here](https://javierbarbero.github.io/DataEnvelopmentAnalysis.jl/stable).
+
 ## Available models
 
 **Technical efficiency DEA models**
@@ -59,6 +63,11 @@ julia> using Pkg; Pkg.add("DataEnvelopmentAnalysis")
 **Productivity change models**
 
 * Mamlmquist index.
+
+**Statistical Analysis**
+
+* Bootstrap Radial DEA Model.
+* Returns to Scale (RTS) Test.
 
 ## Authors
 

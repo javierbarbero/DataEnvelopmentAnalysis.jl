@@ -28,6 +28,8 @@ end
 - Pastor, J.T., Aparicio, J., Alcaraz, J., Vidal, F. and Pastor, D. (2016). “**The Reverse Directional Distance Function**” in *Advances in Efficiency and Productivity*, edited by J. Aparicio, C.A.K. Lovell and J.T. Pastor, Springer, Cham. 
 - Pastor, J. T., Ruiz, J. L., and Sirvent, I. (1999). "**An enhanced DEA Russell graph efficiency measure**." *European Journal of Operational Research*, 115(3), 596-607.
 - Pastor, J.T., Lovell, C.A.K., and Aparicio, J. (2012). "**Families of linear efficiency programs based on Debreu’s loss function.**" *Journal of Productivity Analysis* 38(2), 109-120.
+- Simar, L., and Wilson, P. (1988). "**Sensitivity Analysis of Efficiency Scores: How to Bootstrap in Nonparametric Frontier Models**," Management Science, 44(1), 49-61.
+- Simar, L., and Wilson, P. (2002). "**NNon-parametric tests of returns to scale**," European Journal of Operational Research 139, 115–132.
 - Shephard, R.W. (1953). *Cost and production functions.* Princeton University Press, Princeton, New Jersey.
 - Tone, K. (2001). "**A slacks-based measure of efficiency in data envelopment analysis**." *European Journal of Operational Research*, 130(3), 498-509.
 - Zofío, J.L. and Prieto, A.M. (2006). "**Return to Dollar, Generalized Distance Function and the Fisher Productivity Index**" *Spanish Economic Review*, 8(2), 113-138.
