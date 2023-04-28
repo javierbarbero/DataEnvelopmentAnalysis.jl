@@ -14,7 +14,7 @@ module DataEnvelopmentAnalysis
     using InvertedIndices 
     using ProgressMeter
     using Printf: @sprintf
-    using SnoopPrecompile
+    using PrecompileTools
     using Statistics: std, quantile, quantile!, var   
     using StatsBase: CoefTable, iqr, minimum, sample
     using Distributed: @distributed
@@ -112,11 +112,11 @@ module DataEnvelopmentAnalysis
         nothing
     end
 
-    @precompile_setup begin
+    @setup_workload begin
         X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17.0]
         Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12.0]
 
-        @precompile_all_calls begin
+        @compile_workload begin
             dea(X, Y)
         end
     end
