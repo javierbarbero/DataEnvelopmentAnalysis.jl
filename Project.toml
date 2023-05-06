@@ -1,7 +1,7 @@
 name = "DataEnvelopmentAnalysis"
 uuid = "a100299e-89d6-11e9-0fa0-2daf497e6a05"
-authors = ["Javier Barbero <jbarberoeco@gmail.com>"]
-version = "0.8.0"
+authors = ["Javier Barbero"]
+version = "0.8.1"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
