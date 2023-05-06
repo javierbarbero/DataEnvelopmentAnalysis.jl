@@ -1,5 +1,5 @@
 # Tests for BootstrapRadial DEA Returns To Scale Test
-@testset "BootstrapRadialDEAModel" begin
+@testset "ReturnsToScaleTest" begin
 
     X = [2, 4, 3, 5, 6]
     Y = [1, 2, 3, 4, 5]
