@@ -186,8 +186,11 @@ function deaadd(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             end
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
+        elseif rts == :FDH
+            @constraint(deamodel, sum(lambda) == 1)
+            set_binary.(lambda[1:nref])
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            throw(ArgumentError("`rts` must be :CRS, :VRS or :FDH"));
         end
 
         # Fix values of slacks when weight are zero

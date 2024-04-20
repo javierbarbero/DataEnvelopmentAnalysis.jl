@@ -396,6 +396,63 @@
                                 5;
                                 0]
 
+    # FDH
+    deaaddfdh = deaadd(X, Y, rts = :FDH)
+
+    @test typeof(deaaddfdh) == AdditiveDEAModel
+
+    @test nobs(deaaddfdh) == 11
+    @test ninputs(deaaddfdh) == 2
+    @test noutputs(deaaddfdh) == 1
+    @test efficiency(deaaddfdh) ≈ [0;
+                               0.0;
+                               0.0;
+                               0.0;
+                               18.0;
+                               0.0;
+                               0.0;
+                               0.0;
+                               0.0;
+                               35.0;
+                               4.0]
+
+    @test convert(Matrix, peers(deaaddfdh)) ≈
+    [ 1  0  0  0  0  0  0  0  0   0   0;
+      0  1  0  0  0  0  0  0  0   0   0;
+      0  0  1  0  0  0  0  0  0   0   0;
+      0  0  0  1  0  0  0  0  0   0   0;
+      1  0  0  0  0  0  0  0  0   0   0;
+      0  0  0  0  0  1  0  0  0   0   0;
+      0  0  0  0  0  0  1  0  0   0   0;
+      0  0  0  0  0  0  0  1  0   0   0;
+      0  0  0  0  0  0  0  0  1   0   0;
+      0  0  0  1  0  0  0  0  0   0   0;
+      1  0  0  0  0  0  0  0  0   0   0]
+
+    @test deaaddfdh.slackX ≈ [0 0;
+      0 0;
+      0 0;
+      0 0;      
+      13.0 1.0;
+      0 0;
+      0 0;
+      0 0;
+      0 0;
+      25.0 10.0;
+      0 4.0]
+
+    @test deaaddfdh.slackY ≈ [0;
+        0;
+        0;
+        0;
+        4.0 ;
+        0;
+        0;
+        0;
+        0;
+        0;
+        0]
+
     # Test model with Custom weights
     deaddcustomcrs = deaadd(X, Y, rhoX = 1 ./ X, rhoY = 1 ./ Y, rts = :CRS)
     @test deaddcustomcrs.weights == :Custom

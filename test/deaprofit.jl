@@ -37,6 +37,13 @@ end
 
     @test peersmatrix(deaprofitdollar) == deaprofitdollar.lambda
 
+    # FDH Profit model
+    deaprofitdollarfdh = deaprofit(X, Y, W, P, Gx = GxGydollar, Gy = GxGydollar, rts = :FDH)
+
+    @test efficiency(deaprofitdollarfdh, :Economic)   ≈ [2; 2; 0; 2; 2; 8; 12; 4] atol = 1e-3
+    @test efficiency(deaprofitdollarfdh, :Technical)  ≈ [0; 0; 0; 0; 0; 6; 12; 1.5] atol = 1e-3
+    @test efficiency(deaprofitdollarfdh, :Allocative) ≈ [2; 2; 0; 2; 2; 2; 0; 2.5] atol = 1e-3
+
     # Check directions checking technical efficiency
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Zeros, Gy = :Ones), :Technical) == efficiency(deaddf(X, Y, Gx = :Zeros, Gy = :Ones, rts = :VRS))
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Ones, Gy = :Zeros), :Technical) == efficiency(deaddf(X, Y, Gx = :Ones, Gy = :Zeros, rts = :VRS))

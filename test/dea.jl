@@ -200,7 +200,56 @@
     @test efficiency(dea(targets(deaoovrs, :X), targets(deaoovrs, :Y), orient = :Output, rts = :VRS, slack = false)) ≈ ones(11)
     @test efficiency(deaadd(targets(deaoovrs, :X), targets(deaoovrs, :Y))) ≈ zeros(11) atol=1e-12
 
-    # Test no slacks
+    # Input oriented FDH
+    deafdh = dea(X, Y, orient = :Input, rts = :FDH)
+
+    @test typeof(deafdh) == RadialDEAModel
+
+    @test nobs(deafdh) == 11
+    @test ninputs(deafdh) == 2
+    @test noutputs(deafdh) == 1
+    @test efficiency(deafdh) ≈ [1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                0.8888888889;
+                                1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                0.5952380952;
+                                1.0000000000]
+    @test convert(Matrix, peers(deafdh)) ≈
+        [1  0  0  0  0  0  0  0  0   0   0;
+        0  1  0  0  0  0  0  0  0   0   0;
+        0  0  1  0  0  0  0  0  0   0   0;
+        0  0  0  1  0  0  0  0  0   0   0;
+        0  1  0  0  0  0  0  0  0   0   0;
+        0  0  0  0  0  1  0  0  0   0   0;
+        0  0  0  0  0  0  1  0  0   0   0;
+        0  0  0  0  0  0  0  1  0   0   0;
+        0  0  0  0  0  0  0  0  1   0   0;
+        0  0  0  0  0  0  1  0  0   0   0;
+        0  0  0  0  0  0  0  0  0   0   1]
+     @test slacks(deafdh, :X) ≈ [0.0 0.0;
+                                 0.0 0.0;
+                                 0.0 0.0;
+                                 0.0 0.0;
+                                 0.0 0.44444444444444287;
+                                 0.0 0.0;
+                                 0.0 0.0;
+                                 0.0 0.0;
+                                 0.0 0.0;
+                                 3.552713678800501e-15 4.880952380952383;
+                                 0.0 4.0]
+    @test slacks(deafdh, :Y) ≈ [0.0; 0.0; 0.0; 0.0; 6.0; 0.0; 0.0; 0.0; 0.0; 1.0; 0.0];
+
+    @test efficiency(dea(targets(deafdh, :X), targets(deafdh, :Y), orient = :Input, rts = :FDH, slack = false)) ≈ ones(11)
+    @test efficiency(deaadd(targets(deafdh, :X), targets(deafdh, :Y), rts = :FDH)) ≈ zeros(11) atol=1e-14
+
+    @test peersmatrix(deafdh) == deafdh.lambda
+
+    ## Test no slacks
     deaionoslack = dea(X, Y, slack = false)
     @test efficiency(deaionoslack) == efficiency(deaio)
     @test isempty(slacks(deaionoslack, :X)) == 1

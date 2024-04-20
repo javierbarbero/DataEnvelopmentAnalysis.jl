@@ -44,7 +44,7 @@ Alternatively, a vector or matrix with the desired directions can be supplied.
 function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
     Gx::Union{Symbol,Matrix,Vector}, Gy::Union{Symbol,Matrix,Vector},
-    monetary::Bool = false,
+    rts::Symbol = :VRS, monetary::Bool = false,
     names::Union{Vector{<: AbstractString},Nothing} = nothing,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)::ProfitDEAModel
 
@@ -131,14 +131,14 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
     # Get maximum profit targets and lambdas
     n = nx
 
-    Xtarget, Ytarget, plambdaeff = deamaxprofit(X, Y, W, P, optimizer = optimizer)
+    Xtarget, Ytarget, plambdaeff = deamaxprofit(X, Y, W, P, rts = rts, optimizer = optimizer)
 
     # Profit, technical and allocative efficiency
     maxprofit = sum(P .* Ytarget, dims = 2) .- sum(W .* Xtarget, dims = 2)
 
     pefficiency  = vec(maxprofit .- ( sum(P .* Y, dims = 2) .- sum(W .* X, dims = 2)))
     normalization = vec(sum(P .* Gy, dims = 2) .+ sum(W .* Gx, dims = 2))
-    techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = :VRS, slack = false, optimizer = optimizer))
+    techefficiency = efficiency(deaddf(X, Y, Gx = Gx, Gy = Gy, rts = rts, slack = false, optimizer = optimizer))
 
     if monetary
         techefficiency = techefficiency .* normalization

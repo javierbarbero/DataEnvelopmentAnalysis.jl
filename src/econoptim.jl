@@ -62,8 +62,11 @@ function deamincost(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             # No contraint to add for constant returns to scale
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
+        elseif rts == :FDH
+            @constraint(deamodel, sum(lambda) == 1)
+            set_binary.(lambda[1:n])
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            throw(ArgumentError("`rts` must be :CRS, :VRS or :FDH"));
         end
 
         # Optimize and return results
@@ -146,8 +149,11 @@ function deamaxrevenue(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
             # No contraint to add for constant returns to scale
         elseif rts == :VRS
             @constraint(deamodel, sum(lambda) == 1)
+        elseif rts == :FDH
+            @constraint(deamodel, sum(lambda) == 1)
+            set_binary.(lambda[1:n])
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            throw(ArgumentError("`rts` must be :CRS, :VRS or :FDH"));
         end
 
         # Optimize and return results
@@ -169,7 +175,7 @@ end
 
 
 function deamaxprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
-    W::Union{Matrix,Vector}, P::Union{Matrix,Vector};
+    W::Union{Matrix,Vector}, P::Union{Matrix,Vector}; rts::Symbol = :VRS,
     optimizer::Union{DEAOptimizer,Nothing} = nothing)
 
     # Check parameters
@@ -224,7 +230,15 @@ function deamaxprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         @constraint(deamodel, [j in 1:m], sum(X[t,j] * lambda[t] for t in 1:n) <= Xeff[j])
         @constraint(deamodel, [j in 1:s], sum(Y[t,j] * lambda[t] for t in 1:n) >= Yeff[j])
 
-        @constraint(deamodel, sum(lambda) == 1)
+        # Add return to scale constraints
+        if rts == :VRS
+            @constraint(deamodel, sum(lambda) == 1)
+        elseif rts == :FDH
+            @constraint(deamodel, sum(lambda) == 1)
+            set_binary.(lambda[1:n])
+        else
+            throw(ArgumentError("`rts` must be :VRS or :FDH"));
+        end
 
         # Optimize and return results
         JuMP.optimize!(deamodel)

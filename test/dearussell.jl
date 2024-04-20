@@ -112,6 +112,25 @@
     dearusselloovrs  = dearussell(X, Y, orient = :Output, rts = :VRS)
     @test efficiency(dearusselloovrs) ≈ [1.0; 1.0; 1.0; 1.8666666666666665; 2.333333333333333; 1.5; 1.4583333333333335; 3.0555555555555554]
 
+    # Output oriented FDH
+    dearussellfdh = dearussell(X, Y, orient = :Output, rts = :FDH)
+
+    @test efficiency(dearussellfdh, :Y) ≈ [1 1; 1 1; 1 1; 7/3 1.4; 7/3 7/3; 1 2; 7/6 7/4; 14/3 1.4]
+    @test efficiency(dearussellfdh) ≈ [1.0; 1.0; 1.0; 1.8666666666666665; 2.333333333333333; 1.5; 1.4583333333333335; 3.033333333333333]
+    @test convert(Matrix, peers(dearussellfdh)) ≈ 
+            [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+            0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+            0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+            1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+            1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+            0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+            1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+            1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0] atol = 1e-10
+    @test slacks(dearussellfdh, :X) ≈ zeros(8,1)
+    @test slacks(dearussellfdh, :Y) ≈ zeros(8,2) atol = 1e-14
+
+    @test efficiency(dearussell(targets(dearussellfdh, :X), targets(dearussellfdh, :Y), orient = :Output, rts = :FDH)) ≈ ones(8,1)
+
     ## Test if one-by-one DEA using evaluation and reference sets match initial results
     dearussell_oo_ref_eff = zeros(size(X, 1))
     dearussell_oovrs_ref_eff = zeros(size(X, 1))
@@ -242,6 +261,7 @@
     @test_throws DimensionMismatch dearussell([1 1; 2 2], [4 4; 5 5], Yref = [4 4 4; 5 5 5]) # Different number of inputs
     @test_throws ArgumentError dearussell([1; 2; 3], [4; 5; 6], orient = :Error) # Invalid orientation
     @test_throws ArgumentError dearussell([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
+    @test_throws ArgumentError dearussell([1; 2; 3], [4; 5; 6], orient = :Graph, rts = :FDH) # FDH not implemented for orientation :Graph
 
     @test_throws ArgumentError efficiency(dearussellio, :Error) # Invalid efficiency type
     

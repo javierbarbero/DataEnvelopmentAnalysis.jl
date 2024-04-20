@@ -66,6 +66,26 @@
 
     @test efficiency(deacost(targets(deacostvrs, :X), targets(deacostvrs, :Y), W, rts = :VRS)) ≈ ones(5)
 
+    # Cost FDH
+    deacostfdh = deacost(X, Y, W, rts = :FDH)
+    @test efficiency(deacostfdh) ≈ [0.6153846154;
+                                1.0000000000;
+                                1.0000000000;
+                                0.5000000000;
+                                0.3478260870]
+    @test efficiency(deacostfdh, :Technical) ≈ [0.8000;
+                                1.0000;
+                                1.0000;
+                                0.5000;
+                                0.4444]  atol = 1e-3
+    @test efficiency(deacostfdh, :Allocative) ≈ [0.7692307692;
+                                1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                0.7826086957]
+
+    @test efficiency(deacost(targets(deacostfdh, :X), targets(deacostfdh, :Y), W, rts = :FDH)) ≈ ones(5)
+
     # Check defaults
     @test efficiency(deacost(X, Y, W)) == efficiency(deacostvrs)
     @test efficiency(deacostvrs, :Economic) == efficiency(deacostvrs)

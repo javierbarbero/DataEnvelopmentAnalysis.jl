@@ -300,6 +300,36 @@
 
     @test efficiency(deaddfmeanvrs) ≈ [0; 0.08056567388; 0; 0;0.23098350118; 0; 0; 0; 0; 0.24886877828; 0]
 
+    # Observed FDH
+    deaddffdh = deaddf(X, Y, Gx = X, Gy = Y, rts = :FDH)
+
+    @test efficiency(deaddffdh) ≈ [0.0000000000;
+                                0.0000000000;
+                                0.0000000000;
+                                0.0000000000;
+                                0.1111111111;
+                                0.0000000000;
+                                0.0000000000;
+                                0.0000000000;
+                                0.0000000000;
+                                0.1200000000;
+                                0.0000000000]
+    @test slacks(deaddffdh, :X) ≈ [0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0.4444444444444464;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                0.000000000   0;
+                                9.96   0;
+                                0.000000000   4]
+    @test slacks(deaddffdh, :Y) ≈ [0.0; 0.0; 0.0; 0.0; 5.11111111111112; 0.0; 0.0; 0.0; 0.0; 0.879999999999999; 0.0]
+
+    @test efficiency(deaddf(targets(deaddffdh, :X), targets(deaddffdh, :Y), Gx = :Observed, Gy = :Observed, rts = :FDH, slack = false)) ≈ zeros(11) atol=1e-15
+    @test efficiency(deaadd(targets(deaddffdh, :X), targets(deaddffdh, :Y), rts = :FDH)) ≈ zeros(11) atol=1e-13
+
     # Test no slacks
     deaddfnoslack = deaddf(X, Y, Gx = X, Gy = Y, slack = false)
     @test efficiency(deaddfnoslack) == efficiency(deaddfobs)

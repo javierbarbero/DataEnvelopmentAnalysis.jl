@@ -66,6 +66,26 @@
 
     @test efficiency(dearevenue(targets(dearevenuevrs, :X), targets(dearevenuevrs, :Y), P, rts = :VRS)) ≈ ones(5)
 
+    # Revnue FDH
+    dearevenuefdh = dearevenue(X, Y, P, rts = :FDH)
+    @test efficiency(dearevenuefdh) ≈ [0.6590909091;
+                                1.0000000000;
+                                1.0000000000;
+                                0.5000000000;
+                                0.4565217391]
+    @test efficiency(dearevenuefdh, :Technical) ≈ [0.875;
+                                1.000;
+                                1.000;
+                                0.500;
+                                0.600]  atol = 1e-3
+    @test efficiency(dearevenuefdh, :Allocative) ≈ [0.7532467532;
+                                1.0000000000;
+                                1.0000000000;
+                                1.0000000000;
+                                0.7608695652]
+
+    @test efficiency(dearevenue(targets(dearevenuefdh, :X), targets(dearevenuefdh, :Y), P, rts = :FDH)) ≈ ones(5)
+
     # Check defaults
     @test efficiency(dearevenue(X, Y, P)) == efficiency(dearevenuevrs)
     @test efficiency(dearevenuevrs, :Economic) == efficiency(dearevenuevrs)
