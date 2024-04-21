@@ -21,6 +21,9 @@ function slacks(model::AbstractTechnicalDEAModel, slack::Symbol)::Matrix
         return model.slackX
     elseif slack == :Y
         return model.slackY
+    elseif slack == :B
+        isenvironmental(model) || throw(ArgumentError("Model is not an environmental model"))
+        return model.slackB
     end
 
     throw(ArgumentError("`slack` must be :X or :Y"));
@@ -37,6 +40,9 @@ function targets(model::AbstractTechnicalDEAModel, target::Symbol)::Matrix
         return model.Xtarget
     elseif target == :Y
         return model.Ytarget
+    elseif target == :B
+        isenvironmental(model) || throw(ArgumentError("Model is not an environmental model"))
+        return model.Btarget
     end
 
     throw(ArgumentError("`target` must be :X or :Y"));

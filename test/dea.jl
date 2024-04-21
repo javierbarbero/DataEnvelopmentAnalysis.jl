@@ -10,6 +10,7 @@
     deaio = dea(X, Y, orient = :Input, rts = :CRS)
 
     @test typeof(deaio) == RadialDEAModel
+    @test isenvironmental(deaio) == false;
 
     @test nobs(deaio) == 11
     @test ninputs(deaio) == 2

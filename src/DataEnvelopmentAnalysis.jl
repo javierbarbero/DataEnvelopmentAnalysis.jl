@@ -48,6 +48,7 @@ module DataEnvelopmentAnalysis
     AbstractProductivityDEAModel,
     MalmquistDEAModel,
     AbstractBootstrapDEAModel, BootstrapRadialDEAModel, DEAReturnsToScaleTest,
+    EnvironmentalDEAModel,
     # All models
     nobs, ninputs, noutputs,
     # Peers
@@ -68,7 +69,9 @@ module DataEnvelopmentAnalysis
     targets,
     # Productivity models
     malmquist,
-    nperiods, prodchange
+    nperiods, prodchange,
+    # Environmental models
+    deaenv, isenvironmental, nbadoutputs
 
 
 
@@ -98,6 +101,8 @@ module DataEnvelopmentAnalysis
     include("dearevenue.jl")
     include("deaprofit.jl")
     include("deaprofitability.jl")
+
+    include("deaenv.jl")
 
     include("productivity.jl")
     include("malmquist.jl")

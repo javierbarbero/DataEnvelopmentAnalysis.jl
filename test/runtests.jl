@@ -26,6 +26,8 @@ using Test
     include("deaprofit.jl")
     include("deaprofitability.jl")
 
+    include("deaenv.jl")
+
     include("malmquist.jl")
 
     include("deaboot.jl")

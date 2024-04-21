@@ -24,6 +24,22 @@ Return number of outputs of a DEA model.
 noutputs(model::AbstractDEAModel) = model.s
 
 """
+    noutputs(model::AbstractDEAModel)
+Return number of bad outputs of a DEA model.
+"""
+function nbadoutputs(model::AbstractDEAModel)
+    isenvironmental(model) || throw(ArgumentError("Model is not an environmental model"))
+
+    return model.b
+end
+
+"""
+    isenvironmental(model::AbstractDEAModel)
+Return true if the model is an environmental DEA model
+"""
+isenvironmental(model::AbstractDEAModel) = false;
+
+"""
     names(model::AbstractDEAModel)
 Return the names of the decision making units (DMUs)
 """
