@@ -47,36 +47,17 @@ Models can be solved using a different optimizer by passing a `DEAOptimizer` obj
     For example, you cannot solve a Generalized Distance Function DEA model using the GLPK solver because it is a linear programming solver and `deagdf` requires a nonlinear programming solver.
 
 The following is an example of solving the radial DEA model using the `Ipopt` sovler:
-```jldoctest
-julia> using Ipopt
+```@example
+using Ipopt
+using DataEnvelopmentAnalysis
 
-julia> using DataEnvelopmentAnalysis
+X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
 
-julia> X = [5 13; 16 12; 16 26; 17 15; 18 14; 23 6; 25 10; 27 22; 37 14; 42 25; 5 17];
+Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
 
-julia> Y = [12; 14; 25; 26; 8; 9; 27; 30; 31; 26; 12];
+myoptimizer = DEAOptimizer(Ipopt.Optimizer, time_limit = 10, silent = true);
 
-julia> myoptimizer = DEAOptimizer(Ipopt.Optimizer, time_limit = 10, silent = true);
-
-julia> dea(X, Y, slack = false, optimizer = myoptimizer)
-Radial DEA Model 
-DMUs = 11; Inputs = 2; Outputs = 1
-Orientation = Input; Returns to Scale = CRS
-──────────────
-    efficiency
-──────────────
-1     1.0
-2     0.62229
-3     0.819856
-4     1.0
-5     0.310371
-6     0.555555
-7     1.0
-8     0.757669
-9     0.820106
-10    0.490566
-11    1.0
-──────────────
+dea(X, Y, slack = false, optimizer = myoptimizer)
 ```
 
 ### Optimizer API

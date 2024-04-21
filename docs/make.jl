@@ -13,8 +13,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
         authors = "Javier Barbero and José Luis Zofío.",
         pages = [
         "Home" => "index.md",
-        "Technical Efficiency Models" => Any[
-                
+        "Technical Efficiency Models" => Any[                
                 "Radial Models" => "technical/radial.md",
                 "Radial Big Data Models" => "technical/radialbigdata.md",
                 "Directional Distance Function Models" => "technical/directional.md",
