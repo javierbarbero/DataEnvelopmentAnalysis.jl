@@ -77,6 +77,28 @@
     show(IOBuffer(), deaergcrs)
     show(IOBuffer(), deaergvrs)
 
+    # FDH
+    if (Base.find_package("Gurobi") !== nothing)
+        using Gurobi
+        @info ("Testing deaerg :FDH with Gurobi")
+
+        deaerg_fdh = deaerg(X, Y, rts = :FDH, optimizer = DEAOptimizer(Gurobi.Optimizer))
+
+        @test efficiency(deaerg_fdh) ≈  [1.0; 1.0; 1.0; 1.0; 0.4; 0.5; 6/7; 0.2]
+        @test Matrix(peersmatrix(deaerg_fdh)) ≈ [ 1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+                0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+                0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+                0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+                0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+                0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+                0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+                0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0]
+    else
+        @info ("deaerg with :FDH not tested as Gurobi is not installed")
+
+        @test_throws ErrorException deaerg(X, Y, rts = :FDH)
+    end
+
     # ------------------
     # Test errors
     # ------------------

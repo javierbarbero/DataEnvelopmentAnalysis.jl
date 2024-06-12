@@ -98,6 +98,15 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             # No contraint to add for constant returns to scale
         elseif rts == :VRS
             @constraint(deamodel, sum(mu) == beta)
+        elseif rts == :FDH
+            @constraint(deamodel, sum(mu) == beta)
+
+            # Add FDH constraints
+            @variable(deamodel, lambda[1:nref] >= 0)
+            set_binary.(lambda[1:nref])
+
+            @constraint(deamodel, sum(lambda) == 1)
+            @constraint(deamodel, [t in 1:nref], mu[t] == beta * lambda[t])
         else
             throw(ArgumentError("`rts` must be :CRS or :VRS"));
         end
