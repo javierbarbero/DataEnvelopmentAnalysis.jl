@@ -160,8 +160,11 @@ function deamddf(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
                 # No contraint to add for constant returns to scale
             elseif rts == :VRS
                 @constraint(deamodel, sum(lambda) == 1)
+            elseif rts == :FDH
+                @constraint(deamodel, sum(lambda) == 1)
+                set_binary.(lambda[1:nref])
             else
-                throw(ArgumentError("`rts` must be :CRS or :VRS"));
+                throw(ArgumentError("`rts` must be :CRS, :VRS, or :FDH"));
             end
 
             # Optimize and return results

@@ -98,6 +98,22 @@
     # Test Custom direction
     @test efficiency(deamddf(X, Y, Gx = ones(8,1), Gy = ones(8,1), rts = :VRS)) ≈ efficiency(deamddfvrs)
 
+    # Modified DDF FDH
+    deamddffdh = deamddf(X, Y, Gx = :Ones, Gy = :Ones, rts = :FDH)
+
+    @test efficiency(deamddffdh) ≈ [0.0; 0.0; 0.0; 0.0; 4.0; 7.0; 2.0;  8.059] atol = 1e-5
+    @test efficiency(deamddffdh, :X) ≈ [0.0; 0.0; 0.0; 0.0; 2.0; 6; 2.0; 5.412] atol = 1e-5
+    @test efficiency(deamddffdh, :Y) ≈ [0.0; 0.0; 0.0; 0.0; 2.0; 1.0; 0.0; 2.647] atol = 1e-5
+    @test convert(Matrix, peers(deamddffdh)) ≈ [
+        1.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0
+        0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+        0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+        0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+        0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0
+        0.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0
+        0.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0
+        0.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0]  atol = 1e-5
+
     # Print
     show(IOBuffer(), deamddfcrs)
     show(IOBuffer(), deamddfnoslack)

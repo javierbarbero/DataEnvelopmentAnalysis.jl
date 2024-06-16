@@ -108,7 +108,7 @@ function deaerg(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
             @constraint(deamodel, sum(lambda) == 1)
             @constraint(deamodel, [t in 1:nref], mu[t] == beta * lambda[t])
         else
-            throw(ArgumentError("`rts` must be :CRS or :VRS"));
+            throw(ArgumentError("`rts` must be :CRS, :VRS, or :FDH"));
         end
 
         # Optimize and return results
