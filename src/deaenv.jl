@@ -136,6 +136,7 @@ function deaenv(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, B::Union{Matri
 
     (nGx == nx) & (mGx == m) || throw(DimensionMismatch("size of Gx and X ($(size(Gx)), $(size(X))) are not equal"));
     (nGy == ny) & (sGy == s) || throw(DimensionMismatch("size of Gy and Y ($(size(Gy)), $(size(Y))) are not equal"));
+    (nGb == nb) & (bGb == b) || throw(DimensionMismatch("size of Gb and B ($(size(Gb)), $(size(B))) are not equal"));
 
     # Default optimizer
     if optimizer === nothing 

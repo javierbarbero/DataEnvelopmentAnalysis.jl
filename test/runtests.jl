@@ -29,6 +29,7 @@ using Test
     include("deaenv.jl")
 
     include("malmquist.jl")
+    include("malmluen.jl")
 
     include("deaboot.jl")
     include("deartstest.jl")

@@ -18,7 +18,7 @@ end
 
 """
     malmquist(X, Y)
-Compute the Malmquist productivity index using data envelopment analysis for inputs X and outputs Y.
+Compute the Malmquist productivity index using data envelopment analysis for inputs `X` and outputs `Y`.
 
 # Optional Arguments
 - `orient=:Input`: chooses between input oriented radial model `:Input` or output oriented radial model `:Output`.
@@ -44,7 +44,7 @@ function malmquist(X::Array{Float64,3}, Y::Array{Float64,3};
 
     # Default optimizer
     if optimizer === nothing 
-        optimizer = DEAOptimizer(GLPK.Optimizer)
+        optimizer = DEAOptimizer(:LP)
     end
 
     # Compute efficiency for each DMU
