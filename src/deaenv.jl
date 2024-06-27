@@ -25,7 +25,7 @@ end
 """
     deaenv(X, Y, B; Gx, Gy, Gb)
 Compute data envelopment analysis environmental model for inputs
-`X`, good outputs `Y`, and bad outputs `B`, using directions `Gx`, `Gy`, and `Gb``.
+`X`, good outputs `Y`, and bad outputs `B`, using directions `Gx`, `Gy`, and `Gb`.
 
 # Direction specification:
 
@@ -38,7 +38,6 @@ The directions `Gx`, `Gy`, and `Gb` can be one of the following symbols.
 Alternatively, a vector or matrix with the desired directions can be supplied.
 
 # Optional Arguments
-- `rts=:CRS`: chooses constant returns to scale.
 - `slack=true`: computes input and output slacks.
 - `Xref=X`: Identifies the reference set of inputs against which the units are evaluated.
 - `Yref=Y`: Identifies the reference set of good outputs against which the units are evaluated.

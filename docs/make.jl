@@ -24,6 +24,7 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Modified Directional Distance Function" => "technical/modifiedddf.md",
                 "Hölder Distance Function" => "technical/holder.md",
                 "Reverse Directional Distance Function" => "technical/reverseddf.md",
+                "Environmental Model" => "technical/environmental.md",
                 "Common functions for technical models" => "technical/commontechnical.md"
                 ],
         "Economic Efficiency Models" => Any[
@@ -34,7 +35,8 @@ makedocs(sitename = "DataEnvelopmentAnalysis",
                 "Common functions for economic models" => "economic/commoneconomic.md"
                 ],
         "Productivity Change Models" => Any[
-                "Malmquist Index" => "productivity/malmquist.md"
+                "Malmquist Index" => "productivity/malmquist.md",
+                "Malmquist-Luenberger" => "productivity/malmquistluenberger.md",
                 "Common functions for productivity change models" => "productivity/commonproductivity.md"
                 ],
         "Statistical Analysis" => Any[

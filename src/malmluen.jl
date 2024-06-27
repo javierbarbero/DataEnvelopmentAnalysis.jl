@@ -20,7 +20,7 @@ struct MalmquistLuenbergerDEAModel <: AbstractProductivityDEAModel
 end
 
 """
-    malmluen(X, Y)
+    malmluen(X, Y, B; Gx, Gy, Gb)
 Compute the Malmquist-Luenberger productivity index using data envelopment analysis for inputs `X`, 
 good outputs `Y`, and bad outputs `B`, using directions `Gx`, `Gy`, and `Gb`.
 

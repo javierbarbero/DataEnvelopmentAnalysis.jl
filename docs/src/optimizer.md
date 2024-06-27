@@ -27,12 +27,13 @@ DataEnvelopmentAnalysis.jl will use a default optimizer/solver for each DEA mode
 | `deaholder`    |`l = Inf`| LP           | GLPK              |
 | `dearddf`      | `:ERG`  | LP           | GLPK              |
 | `dearddf`      | `:MDDF` | LP           | GLPK              |
+| `deaenv`       |         | LP           | GLPK              |
 | `deacost`      |         | LP           | GLPK              |
 | `dearevenue`   |         | LP           | GLPK              |
 | `deaprofit`    |         | LP           | GLPK              |
 | `deaprofitability` |         | NLP          | Ipopt         |
 | `malmquist`    |          |LP           | GLPK              |
-
+| `malmluen`     |          |LP           | GLPK              |
 
 Where:
 - LP = Linear programming.

@@ -95,5 +95,6 @@
     @test_throws ArgumentError malmluen(X, Y, B, Gx = :Error) # Invalid inuts direction
     @test_throws ArgumentError malmluen(X, Y, B, Gy = :Error) # Invalid good outputs direction
     @test_throws ArgumentError malmluen(X, Y, B, Gb = :Error) # Invalid bad outputs direction
+    @test_throws ArgumentError malmluen(X, Y, B, refperiod = :Error) # Invalid bad outputs direction
 
 end

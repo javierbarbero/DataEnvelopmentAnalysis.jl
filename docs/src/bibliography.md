@@ -8,6 +8,7 @@ end
 # Bibliography
 
 - Aparicio, J., Pastor, J. T., and Ray, S. C. (2013). "**An overall measure of technical inefficiency at the firm and at the industry level: the ‘lost profit on outlay’**." *European Journal of Operational Research*, 226(1), 154-162.
+- Aparicio J., Pastor J. T., Zofío J. L. (2013). "**On the Inconsistency of the Malmquist-Luenberger Index." *European Journal of Operational Research*, 229(3), 738–742. 
 - Banker, R., Charnes, A., and Cooper, W.W. (1984). "**Some Models for Estimating Technical and Scale Inefficiencies in Data Envelopment Analysis.**" *Management Science*, 30(9), 1078–1092.
 - Briec, W. (1998). "**Hölder distance function and measurement of technical efficiency**." *Journal of Productivity Analysis*, 11: 111–131.
 - Caves D.W., Christensen L.R., Diewert, W.E. (1982). "**The Economic Theory of Index Numbers and the Measurement of Input, Output, and Productivity.**" *Econometrica*, 50(6), 1393–1414.
@@ -19,6 +20,7 @@ end
 - Cooper, W.W., Park, K.S. and Pastor, J.T. (1999). "**RAM: A Range Adjusted Measure of Inefficiency for Use with Additive Models, and Relations to Other Models and Measures in DEA**" *Journal of Productivity Analysis* 11(1), 5-42. 
 - Cooper, W.W., and Pastor, J.T. (1995). "**Global Efficiency Measurement in DEA.**” Working Paper, Depto Est e Inv. Oper. Universidad Alicante, Alicante, Spain.
 - Cooper, W.W., Pastor, J.T., Borras, F., Aparicio, J. and Pastor, D. (2011). "**BAM: a bounded adjusted measure of efficiency for use with bounded additive models.**" *Journal of Productivity Analysis*, 35(2), 85-94.
+- Chung, Y. H., Färe, R., Grosskopf, S. (1997). "**Productivity and Undesirable Outputs: A Directional Distance Function Approach.**" *Journal of Environmental Management*, 51(3), 229–240.
 - Fare, R., and Lovell, C. K. (1978). "**Measuring the technical efficiency of production**." *Journal of Economic theory*, 19(1), 150-162.
 - Fare, R., Grosskopf, S., and Lovell,C.A.K., (1985). *The Measurement of Efficiency of Production*. Kluwer Nijhof Publishing.
 - Fare, R., Grosskopf, S., Norris, M. and Zhang, Z. (1994). "**Productivity Growth, Technical Progress, and Efficiency Change in Industrialized Countries.**" *American Economic Review*, 84(1), 66–83.
