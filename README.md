@@ -52,6 +52,7 @@ The latest stable release documentation is available [here](https://javierbarber
 * Modified directional distance function.
 * Hölder distance function.
 * Reverse directional distance function.
+* Environmental model.
 
 **Economic efficiency DEA models**
 
@@ -63,6 +64,7 @@ The latest stable release documentation is available [here](https://javierbarber
 **Productivity change models**
 
 * Mamlmquist index.
+* Malmquist-Luenberger index.
 
 **Statistical Analysis**
 

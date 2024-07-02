@@ -1,6 +1,11 @@
 DataEnvelopmentAnalysis.jl release notes
 ========================================
 
+Version 0.9.0 (July 2, 2024)
+----------------------------
+- Add DEA environmental model.
+- Add Malmquist-Luenberger environmental productivity index.
+
 Version 0.8.0 (September 14, 2022)
 ----------------------------
 - Add Bootstrap Radial DEA Model.
