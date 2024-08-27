@@ -131,7 +131,7 @@ function deaenv(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector}, B::Union{Matri
     # Check directions dimensions
     nGx, mGx = size(Gx, 1), size(Gx, 2)
     nGy, sGy = size(Gy, 1), size(Gy, 2)
-    nGb, bGb = size(Gy, 1), size(Gy, 2)
+    nGb, bGb = size(Gb, 1), size(Gb, 2)
 
     (nGx == nx) & (mGx == m) || throw(DimensionMismatch("size of Gx and X ($(size(Gx)), $(size(X))) are not equal"));
     (nGy == ny) & (sGy == s) || throw(DimensionMismatch("size of Gy and Y ($(size(Gy)), $(size(Y))) are not equal"));
