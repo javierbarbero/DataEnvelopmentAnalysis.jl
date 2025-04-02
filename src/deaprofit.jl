@@ -34,6 +34,7 @@ The directions `Gx` and `Gy` can be one of the following symbols.
 - `:Observed`: use observed values.
 - `:Mean`: use column means.
 - `:Monetary`: use direction so that profit inefficiency is expressed in monetary values.
+- `:Euclidean`: use prices normalized by the Euclidean norm of all input and output prices so profit inefficiency is the Euclidean distance between profit hyperplanes.
 
 Alternatively, a vector or matrix with the desired directions can be supplied.
 
@@ -86,6 +87,8 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         elseif Gx == :Monetary
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
             Gx = repeat(GxGydollar, 1, m);
+        elseif Gx == :Euclidean
+            Gx = W ./ sqrt.(sum(P.^2, dims = 2) + sum(W.^2, dims = 2));
         else
             throw(ArgumentError("Invalid `Gx`"));
         end
@@ -108,6 +111,8 @@ function deaprofit(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector},
         elseif Gy == :Monetary
             GxGydollar = 1 ./ (sum(P, dims = 2) + sum(W, dims = 2));
             Gy = repeat(GxGydollar, 1, s);
+        elseif Gy == :Euclidean
+            Gy = P ./ sqrt.(sum(P.^2, dims = 2) + sum(W.^2, dims = 2));
         else
             throw(ArgumentError("Invalid `Gy`"));
         end

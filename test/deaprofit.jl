@@ -50,6 +50,12 @@ end
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Observed, Gy = :Observed), :Technical) == efficiency(deaddf(X, Y, Gx = :Observed, Gy = :Observed, rts = :VRS))
     @test efficiency(deaprofit(X, Y, W, P, Gx = :Mean, Gy = :Mean), :Technical) == efficiency(deaddf(X, Y, Gx = :Mean, Gy = :Mean, rts = :VRS))
 
+    # Test Euclidean Norm direction
+    Gxeuclidean = W ./ sqrt.(sum(P.^2, dims = 2) + sum(W.^2, dims = 2))
+    Gyeuclidean = P ./ sqrt.(sum(P.^2, dims = 2) + sum(W.^2, dims = 2))
+
+    @test efficiency(deaprofit(X, Y, W, P, Gx = :Euclidean, Gy = :Euclidean)) == efficiency(deaprofit(X, Y, W, P, Gx = Gxeuclidean, Gy = Gyeuclidean))
+
     # Print
     show(IOBuffer(), deaprofitdollar)
 
