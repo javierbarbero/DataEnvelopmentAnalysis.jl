@@ -412,7 +412,7 @@ function deaholderl2(X::Union{Matrix,Vector}, Y::Union{Matrix,Vector};
 
     # Display warning if model not solved with SOS constraints
     if noSOS
-        @warn ("Model solved with $(optimizer.optimizer) is innacuate. Use a solver that supports SOS1 constraints.")
+        @warn ("Model solved with $(optimizer.optimizer) is innacurate. Use a solver that supports SOS1 constraints.")
     end
 
     return HolderL2DEAModel(n, m, s, orient, rts, weight, names, effi, slackX, slackY, lambdaeff, Xtarget, Ytarget)

@@ -77,7 +77,7 @@
         @test efficiency(holderio2weight) ≈ [0.0; 0.0; 0.0; 0.554700; 0.8; 0.0; 0.468521; 0.375] atol = 1e-5
     else
         # Function runs without error
-        @test occursin("Model solved with Ipopt.Optimizer is innacuate. Use a solver that supports SOS1 constraints.", string(logs))
+        @test occursin("Use a solver that supports SOS1 constraints.", string(logs))
 
         # Weighted (weakly)
         logs, value = Test.collect_test_logs() do
@@ -204,7 +204,7 @@
         @test efficiency(holderoo2weight) ≈ [0.0; 0.0; 0.0; 0.6; 5/3; 0.0; 0.325396; 0.6] atol = 1e-5
     else
         # Function runs without error
-        @test occursin("Model solved with Ipopt.Optimizer is innacuate. Use a solver that supports SOS1 constraints.", string(logs))
+        @test occursin("Use a solver that supports SOS1 constraints.", string(logs))
 
         # Weighted (weakly)
         logs, value = Test.collect_test_logs() do
@@ -331,7 +331,7 @@
         @test efficiency(holdergr2weight) ≈  [0.0; 0.0; 0.0; 0.0; 0.485071; 2/7; 0.0; 0.710103] atol = 1e-5
     else
         # Function runs without error
-        @test occursin("Model solved with Ipopt.Optimizer is innacuate. Use a solver that supports SOS1 constraints.", string(logs))
+        @test occursin("Use a solver that supports SOS1 constraints.", string(logs))
 
         # Weighted (weakly)
         logs, value = Test.collect_test_logs() do

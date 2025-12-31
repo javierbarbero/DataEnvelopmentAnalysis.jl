@@ -253,7 +253,7 @@
     @test_throws ArgumentError deam([1; 2; 3], [4; 5; 6], rts = :Error) # Invalid returns to scale
 
     @test_throws ArgumentError targets(deamio, :Error)    # Invalid target
-    @test_throws ErrorException slacks(deamio, :X)        # No slacks in multiplier model
+    @test_throws FieldError slacks(deamio, :X)        # No slacks in multiplier model
     @test_throws ArgumentError multipliers(deamio, :Error) # Invalid slacks
 
     # ------------------
