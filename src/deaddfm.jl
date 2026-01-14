@@ -217,6 +217,6 @@ function Base.show(io::IO, x::DirectionalMultiplierDEAModel)
         print(io, "Gx = ", string(x.Gx), "; Gy = ", string(x.Gy))
         print(io, "\n")
 
-        show(io, CoefTable(hcat(eff, v, u), ["efficiency"; ["v$i" for i in 1:m ]; ["u$i" for i in 1:s ]], dmunames))
+        show(io, MIME"text/plain"(), CoefTable(hcat(eff, v, u), ["efficiency"; ["v$i" for i in 1:m ]; ["u$i" for i in 1:s ]], dmunames))
     end
 end

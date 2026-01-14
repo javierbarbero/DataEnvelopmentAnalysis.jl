@@ -265,9 +265,9 @@ function Base.show(io::IO, x::EnvironmentalDEAModel)
         print(io, "\n")
 
         if hasslacks == true
-            show(io, CoefTable(hcat(eff, slackX, slackY, slackB), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]; ["slackB$i" for i in 1:b ]], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(eff, slackX, slackY, slackB), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]; ["slackB$i" for i in 1:b ]], dmunames))
         else
-            show(io, CoefTable(hcat(eff), ["efficiency"], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(eff), ["efficiency"], dmunames))
         end
     end
 

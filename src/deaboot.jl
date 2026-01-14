@@ -268,7 +268,7 @@ function Base.show(io::IO, x::BootstrapRadialDEAModel)
         if disposX == :Weak print(io, "Weak disposability of inputs \n") end
         if disposY == :Weak print(io, "Weak disposability of outputs \n") end
 
-        show(io, CoefTable(hcat(effref, eff, effbias, effL, effU), ["Reference", "Corrected", "Bias", "Lower 95%", "Upper 95%"], dmunames))   
+        show(io, MIME"text/plain"(), CoefTable(hcat(effref, eff, effbias, effL, effU), ["Reference", "Corrected", "Bias", "Lower 95%", "Upper 95%"], dmunames))   
         
         print(io, "\nBandwidth = ", round(x.h, digits = 5))
     end

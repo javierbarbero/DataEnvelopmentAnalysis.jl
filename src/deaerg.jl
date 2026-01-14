@@ -162,7 +162,7 @@ function Base.show(io::IO, x::EnhancedRussellGraphDEAModel)
         print(io, "Orientation = Graph")
         print(io, "; Returns to Scale = ", string(x.rts))
         print(io, "\n")
-        show(io, CoefTable(hcat(eff, beta, slackX, slackY), ["efficiency"; "beta"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
+        show(io, MIME"text/plain"(), CoefTable(hcat(eff, beta, slackX, slackY), ["efficiency"; "beta"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
     end
 
 end
