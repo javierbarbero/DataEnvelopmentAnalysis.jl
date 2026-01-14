@@ -110,27 +110,27 @@ Orientation = Graph; Returns to Scale = VRS
 7    0.928571  0.857143  1.0
 8    0.447795  0.424989  2.12495
 ────────────────────────────────</code></pre><p>Estimated efficiency scores are returned with the <code>efficiency</code> function:</p><pre><code class="language-julia hljs">efficiency(dearussellgr)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8-element Vector{Float64}:
- 0.9999996498258777
- 0.9999999762772531
- 0.9999999919610139
- 0.9999999704218
+ 0.9999996492279167
+ 0.9999999749520232
+ 0.9999999913580742
+ 0.9999999703644951
  0.6333333226351024
  0.7232142937165499
- 0.9285714048857246
+ 0.9285714048857328
  0.4477946881737884</code></pre><pre><code class="language-julia hljs">efficiency(dearussellgr, :X)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×1 Matrix{Float64}:
- 1.0000000083735106
- 0.9999999519889116
- 0.9999999795026832
- 0.9999999329480895
+ 1.0000000084319445
+ 0.9999999519036574
+ 0.9999999790875087
+ 0.9999999328388507
  0.6666666303008444
- 0.5714285155047499
- 0.8571428024479952
+ 0.57142851550475
+ 0.8571428024480117
  0.42498937010375143</code></pre><pre><code class="language-julia hljs">efficiency(dearussellgr, :Y)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">8×1 Matrix{Float64}:
- 1.0000007087222573
- 0.9999999994344054
- 0.9999999955806556
- 0.9999999921044895
+ 1.000000709976615
+ 1.0000000019996111
+ 0.9999999963713605
+ 0.9999999921098606
  1.6666666250851108
- 1.1428570489099181
- 0.999999992676546
- 2.124946848134728</code></pre><h3 id="dearussell-Function-Documentation"><a class="docs-heading-anchor" href="#dearussell-Function-Documentation">dearussell Function Documentation</a><a id="dearussell-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#dearussell-Function-Documentation" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="DataEnvelopmentAnalysis.dearussell"><a class="docstring-binding" href="#DataEnvelopmentAnalysis.dearussell"><code>DataEnvelopmentAnalysis.dearussell</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">dearussell(X, Y)</code></pre><p>Compute the Russell model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the Russell input mode. For the Russell output model choose <code>:Output</code>. For the Russell graph model choose <code>:Graph</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/c00b584e6589534dbefe39b2a9e065b30986fda0/src/dearussell.jl#L23-L34">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../generalizeddf/">« Generalized Distance Function Models</a><a class="docs-footer-nextpage" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 31 December 2025 12:22">Wednesday 31 December 2025</span>. Using Julia version 1.12.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ 1.1428570489099183
+ 0.9999999926765463
+ 2.124946848134728</code></pre><h3 id="dearussell-Function-Documentation"><a class="docs-heading-anchor" href="#dearussell-Function-Documentation">dearussell Function Documentation</a><a id="dearussell-Function-Documentation-1"></a><a class="docs-heading-anchor-permalink" href="#dearussell-Function-Documentation" title="Permalink"></a></h3><article><details class="docstring" open="true"><summary id="DataEnvelopmentAnalysis.dearussell"><a class="docstring-binding" href="#DataEnvelopmentAnalysis.dearussell"><code>DataEnvelopmentAnalysis.dearussell</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">dearussell(X, Y)</code></pre><p>Compute the Russell model using data envelopment analysis for inputs X and outputs Y.</p><p><strong>Optional Arguments</strong></p><ul><li><code>orient=:Input</code>: chooses the Russell input mode. For the Russell output model choose <code>:Output</code>. For the Russell graph model choose <code>:Graph</code>.</li><li><code>rts=:CRS</code>: chooses constant returns to scale. For variable returns to scale choose <code>:VRS</code>.</li><li><code>slack=true</code>: computes input and output slacks.</li><li><code>Xref=X</code>: Identifies the reference set of inputs against which the units are evaluated.</li><li><code>Yref=Y</code>: Identifies the reference set of outputs against which the units are evaluated.</li><li><code>names</code>: a vector of strings with the names of the decision making units.</li></ul></div><a class="docs-sourcelink" target="_blank" href="https://github.com/javierbarbero/DataEnvelopmentAnalysis.jl/blob/18bdc73b34cdc80dfa1fbd047e842fd33ac50ec4/src/dearussell.jl#L23-L34">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../generalizeddf/">« Generalized Distance Function Models</a><a class="docs-footer-nextpage" href="../enhancedrussell/">Enhanced Russell Graph Slack Based Measure »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 14 January 2026 10:09">Wednesday 14 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
