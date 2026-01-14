@@ -131,12 +131,12 @@ function Base.show(io::IO, x::MalmquistDEAModel)
         print(io, "Referene period = ", string(x.refperiod))
         print(io, "\n")
         if periods == 2
-            show(io, CoefTable(hcat(Prod, EC, TC), ["M", "EC", "TC"], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(Prod, EC, TC), ["M", "EC", "TC"], dmunames))
         end
         if periods > 2
-            show(io, CoefTable(hcat(Prod, EC, TC),
-                               vcat(["M$i" for i in 1:2], ["EC$i" for i in 1:2], ["TC$i" for i in 1:2 ]),
-                               dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(Prod, EC, TC),
+                                         vcat(["M$i" for i in 1:2], ["EC$i" for i in 1:2], ["TC$i" for i in 1:2 ]),
+                                         dmunames))
         end
         print(io, "\n")
         print(io, "M  = Malmquist Productivity Index \n")

@@ -231,21 +231,21 @@ function Base.show(io::IO, x::RussellDEAModel)
         if x.orient == :Input
             thetaX = x.thetaX
             if hasslacks == true
-                show(io, CoefTable(hcat(eff, thetaX, slackY), ["efficiency"; ["effX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
+                show(io, MIME"text/plain"(), CoefTable(hcat(eff, thetaX, slackY), ["efficiency"; ["effX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
             else
-                show(io, CoefTable(hcat(eff, thetaX), ["efficiency"; ["effX$i" for i in 1:m ] ], dmunames))
+                show(io, MIME"text/plain"(), CoefTable(hcat(eff, thetaX), ["efficiency"; ["effX$i" for i in 1:m ] ], dmunames))
             end
         elseif x.orient == :Output
             thetaY = x.thetaY
             if hasslacks == true
-                show(io, CoefTable(hcat(eff, thetaY, slackX), ["efficiency"; ["effY$i" for i in 1:s ]; ["slackX$i" for i in 1:m ]], dmunames))
+                show(io, MIME"text/plain"(), CoefTable(hcat(eff, thetaY, slackX), ["efficiency"; ["effY$i" for i in 1:s ]; ["slackX$i" for i in 1:m ]], dmunames))
             else
-                show(io, CoefTable(hcat(eff, thetaY), ["efficiency"; ["effY$i" for i in 1:s ] ], dmunames))
+                show(io, MIME"text/plain"(), CoefTable(hcat(eff, thetaY), ["efficiency"; ["effY$i" for i in 1:s ] ], dmunames))
             end
         elseif x.orient == :Graph
             thetaX = x.thetaX
             thetaY = x.thetaY
-            show(io, CoefTable(hcat(eff, thetaX, thetaY), ["efficiency"; ["effX$i" for i in 1:m ]; ["effY$i" for i in 1:s ] ], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(eff, thetaX, thetaY), ["efficiency"; ["effX$i" for i in 1:m ]; ["effY$i" for i in 1:s ] ], dmunames))
         end
     end
 

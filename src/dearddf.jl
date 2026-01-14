@@ -259,9 +259,9 @@ function Base.show(io::IO, x::ReverseDDFDEAModel)
         print(io, "\n")
 
         if hasslacks == true
-            show(io, CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(eff, slackX, slackY), ["efficiency"; ["slackX$i" for i in 1:m ]; ["slackY$i" for i in 1:s ]], dmunames))
         else
-            show(io, CoefTable(hcat(eff), ["efficiency"], dmunames))
+            show(io, MIME"text/plain"(), CoefTable(hcat(eff), ["efficiency"], dmunames))
         end
     end
 
